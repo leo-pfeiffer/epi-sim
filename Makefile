@@ -38,5 +38,5 @@ destroy:
 
 .PHONY: build
 build:
-	docker compose build
+	docker compose up --build -d
 	make ps
