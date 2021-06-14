@@ -4,7 +4,7 @@ from typing import Dict, Any, Final, Callable
 import networkx
 from epydemic.generator import NetworkGenerator
 from networkx import Graph
-from mpmath import polylog
+from mpmath import polylog, mpf
 import numpy as np
 
 from model.utils import discrete_rejection_sample
@@ -49,23 +49,40 @@ class PowerLawCutoffNetwork(NetworkGenerator):
         # get the distribution function
         p = self.distribution(tau, kappa)
 
+        # generate and return graph
+        return self._generate_with_degree_distribution(p=p, n=n, max_deg=kappa)
+
+    @staticmethod
+    def _generate_with_degree_distribution(p, n, max_deg) -> Graph:
+        """
+        Generate random graph with a specified degree distribution.
+        :param p: Probability distribution function.
+        :param n: Number of nodes in the graph.
+        :param max_deg: Maximum degree of the nodes.
+        :return: Network
+        """
+
+        # initialise values
         rng = np.random.default_rng()
         nodes = []
         degree_sum = 0
 
         # create list of random node degrees
         for i in range(n):
-            k = discrete_rejection_sample(p=p, a=1, b=kappa, rng=rng)
+            k = discrete_rejection_sample(p=p, a=1, b=max_deg, rng=rng)
             nodes.append(k)
             degree_sum += k
 
         # keep randomly randomly replacing until degree sum is even
         while degree_sum % 2:
+
+            # delete old node
             i = rng.integers(0, len(nodes) - 1)
             degree_sum -= nodes[i]
             del nodes[i]
 
-            k = discrete_rejection_sample(p=p, a=1, b=kappa, rng=rng)
+            # add new node
+            k = discrete_rejection_sample(p=p, a=1, b=max_deg, rng=rng)
             nodes.append(k)
             degree_sum += k
 
@@ -73,7 +90,7 @@ class PowerLawCutoffNetwork(NetworkGenerator):
         return networkx.configuration_model(nodes, create_using=Graph())
 
     @staticmethod
-    def distribution(tau: float, kappa: int) -> Callable[[int], float]:
+    def distribution(tau: float, kappa: int) -> Callable[[int], mpf]:
         """
         Probability distribution function of the power law with cutoff distribution.
         # todo describe that this is technically continuous but type hints suggest discrete since that's how we use it
@@ -85,5 +102,12 @@ class PowerLawCutoffNetwork(NetworkGenerator):
         # calculate normalisation constant
         C = 1 / polylog(tau, np.exp(-1. / kappa))
 
-        # return distribution function
-        return lambda k: float(C * np.power(k, -tau) * np.exp(-k / kappa))
+        # todo potentially allow k to be an array. would only have to change assertions
+        # define the probability distribution function
+        def p(k):
+            assert not k % 1
+            assert k > 0
+            return C * np.power(k, -tau) * np.exp(-k / kappa)
+
+        # return the callable
+        return p
