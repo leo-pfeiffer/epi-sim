@@ -92,17 +92,19 @@ class PowerLawCutoffNetwork(NetworkGenerator):
     @staticmethod
     def distribution(tau: float, kappa: int) -> Callable[[int], mpf]:
         """
-        Probability distribution function of the power law with cutoff distribution.
-        # todo describe that this is technically continuous but type hints suggest discrete since that's how we use it
-        :param tau: exponent of the power law distribution
-        :param kappa: cutoff value
-        :return: Value from the probability distribution function
+        Probability distribution function of the power law with cutoff distribution. The distribution
+        is discrete and only defined for whole numbers greater or equal one.
+        :param tau: exponent of the power law distribution.
+        :param kappa: cutoff value.
+        :return: Value from the probability distribution function.
         """
 
         # calculate normalisation constant
         C = 1 / polylog(tau, np.exp(-1. / kappa))
 
-        # todo potentially allow k to be an array. would only have to change assertions
+        # todo potentially allow k to be an array:
+        #   Would only have to change assertions.
+        #   Might be helpful if I find a way to speed up the random generator.
         # define the probability distribution function
         def p(k):
             assert not k % 1
