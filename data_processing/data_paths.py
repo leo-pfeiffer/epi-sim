@@ -1,0 +1,5 @@
+DATA = 'data/'
+RAW = 'data/raw/'
+OUT = 'data/out/'
+GRAPHICS = 'data/graphics/'
+GRAPHS = 'data/graphs/'
