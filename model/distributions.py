@@ -1,8 +1,8 @@
 import numpy as np
-from typing import Union, Dict
+from typing import Union
 
-from utils import binary_search
-from network import NetworkData
+from model.utils import binary_search
+from model.network import NetworkData
 
 
 def household_size(network_data: NetworkData,

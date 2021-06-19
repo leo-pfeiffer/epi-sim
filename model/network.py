@@ -1,115 +1,160 @@
-# Human Contact Network
-from typing import Dict, Any, Final, Callable
-
-import networkx
-from epydemic.generator import NetworkGenerator
-from networkx import Graph
-from mpmath import polylog, mpf
 import numpy as np
+import networkx as nx
+from typing import Dict
 
-from model.utils import discrete_rejection_sample
+from model.network_data import NetworkData
+from model.distributions import household_size, household_contact, draw_cbg
 
 
-class PowerLawCutoffNetwork(NetworkGenerator):
-    """
-    Generate a network with node degrees following a power law distribution with cutoff as described by
-        Newman, M. E., Watts, D. J., and Strogatz, S. H. (2002). Random graph models of social networks.
-        Proceedings of the national academy of sciences, 99(suppl 1):2566–2572.
-    The exponent of the power law distribution is given by the `TAU` and the cutoff value for degrees is `KAPPA`.
-    The network has `N` nodes.
+class Network:
+    def __init__(self, network_data, trip_count_change, N=10000,
+                 baseline=3, multiplier=False, seed=None):
+        self.network_data: NetworkData = network_data
+        self.trip_count_change: Dict[str, float] = trip_count_change
+        self.N: int = N
+        self.baseline: float = baseline
+        self.multiplier: bool = multiplier
 
-    :param params: (optional) experiment parameters
-    :param limit: (optional) maximum number of instances to generate
-    """
+        self._rng = np.random.default_rng(seed=seed)
+        self._g: nx.Graph = nx.Graph()
 
-    N: Final[str] = 'PLC.n'
-    TAU: Final[str] = 'PLC.tau'
-    KAPPA: Final[str] = 'PLC.kappa'
+    @property
+    def g(self):
+        return self._g
 
-    def __init__(self, params=None, limit=None):
-        super(PowerLawCutoffNetwork, self).__init__(params, limit)
+    def create(self):
 
-    def topology(self) -> str:
-        """
-        Return a flag to identify the topology
-        :return: topology flag
-        """
-        return 'PLC'
+        households, cbg_degree_map = self._create_households()
+        stubs, cbg_degree_map = self._create_stubs(households, cbg_degree_map)
+        stubs = self._create_stub_pairs(stubs, cbg_degree_map)
+        self._break_up_pairs(stubs)
 
-    def _generate(self, params: Dict[str, Any]) -> Graph:
-        """
-        Generate a graph with node degrees following a power law distribution with cutoff.
-        :param params: experiment parameters
-        :return: Graph
-        """
-        n = params[self.N]
-        tau = params[self.TAU]
-        kappa = params[self.KAPPA]
+    def _create_households(self):
 
-        # get the distribution function
-        p = self.distribution(tau, kappa)
+        household_id = 1
+        households = []
 
-        # generate and return graph
-        return self._generate_with_degree_distribution(p=p, n=n, max_deg=kappa)
+        cbg_degree_map = {}
+        total_node_ct = 0
 
-    @staticmethod
-    def _generate_with_degree_distribution(p, n, max_deg) -> Graph:
-        """
-        Generate random graph with a specified degree distribution.
-        :param p: Probability distribution function.
-        :param n: Number of nodes in the graph.
-        :param max_deg: Maximum degree of the nodes.
-        :return: Network
-        """
+        # add the nodes and create the household connections
+        for cbg, demographic in self.network_data.demographics.items():
 
-        # initialise values
-        rng = np.random.default_rng()
-        nodes = []
-        degree_sum = 0
+            # target number of nodes for current CBG
+            N_cbg = int(demographic['population_prop'] * self.N)
 
-        # create list of random node degrees
-        for i in range(n):
-            k = discrete_rejection_sample(p=p, a=1, b=max_deg, rng=rng)
-            nodes.append(k)
-            degree_sum += k
+            # current number of nodes of this CBG
+            n = 0
 
-        # keep randomly randomly replacing until degree sum is even
-        while degree_sum % 2:
+            # initialise for later
+            cbg_degree_map[cbg] = []
 
-            # delete old node
-            i = rng.integers(0, len(nodes) - 1)
-            degree_sum -= nodes[i]
-            del nodes[i]
+            # add households
+            while n < N_cbg:
+                # create household network
+                size = household_size(self.network_data, cbg, seed=self._rng)
+                house_net = nx.complete_graph(size)
 
-            # add new node
-            k = discrete_rejection_sample(p=p, a=1, b=max_deg, rng=rng)
-            nodes.append(k)
-            degree_sum += k
+                # add unique labels
+                nx.relabel_nodes(house_net, lambda l: total_node_ct + l,
+                                 copy=False)
 
-        # create and return the graph
-        return networkx.configuration_model(nodes, create_using=Graph())
+                # add nodes and edges of the household to the main network
+                self.g.add_nodes_from(house_net.nodes, household=household_id,
+                                      household_size=size, cbg=cbg)
 
-    @staticmethod
-    def distribution(tau: float, kappa: int) -> Callable[[int], mpf]:
-        """
-        Probability distribution function of the power law with cutoff distribution. The distribution
-        is discrete and only defined for whole numbers greater or equal one.
-        :param tau: exponent of the power law distribution.
-        :param kappa: cutoff value.
-        :return: Value from the probability distribution function.
-        """
+                self.g.add_edges_from(house_net.edges, household=household_id,
+                                      household_size=size, cbg=cbg)
 
-        # calculate normalisation constant
-        C = 1 / polylog(tau, np.exp(-1. / kappa))
+                households.append(house_net)
 
-        # todo potentially allow k to be an array:
-        #   Would only have to change assertions.
-        #   Might be helpful if I find a way to speed up the random generator.
-        # define the probability distribution function
-        def p(k):
-            assert not k % 1
-            assert k > 0
-            return C * np.power(k, -tau) * np.exp(-k / kappa)
+                # update iteration values
+                n += size
+                household_id += 1
+                total_node_ct += size
 
-        # return the callable
-        return p
+        return households, cbg_degree_map
+
+    def _create_stubs(self, households, cbg_degree_map):
+
+        # create stubs for connections to outside of household
+        stubs = []
+        for i in range(len(households)):
+
+            nodes = list(households[i].nodes)
+
+            # if len(nodes) > 0:
+            cbg = self.g.nodes[nodes[0]]['cbg']
+
+            for node in nodes:
+                # draw random degree
+                degree = household_contact(self.trip_count_change,
+                                           self.baseline, cbg,
+                                           self.multiplier, seed=self._rng)
+
+                # append `degree` number of copies of the current node
+                new_stubs = [node] * degree
+                stubs.extend(new_stubs)
+                cbg_degree_map[cbg].extend(new_stubs)
+
+        # add one more if number of stubs is odd
+        if len(stubs) % 2:
+            unique_stubs = list(set(stubs))
+            j = self._rng.integers(len(unique_stubs))
+
+            stubs.append(unique_stubs[j])
+            cbg_degree_map[self.g.nodes[unique_stubs[j]]['cbg']] \
+                .append(unique_stubs[j])
+
+        return stubs, cbg_degree_map
+
+    def _create_stub_pairs(self, stubs, cbg_degree_map):
+
+        for i in range(0, len(stubs), 2):
+
+            print(f"Creating stub pairs: {i} of {len(stubs)}", end="\r")
+
+            while True:
+
+                # draw a CBG from the rewire distribution
+                cbg = self.g.nodes[stubs[i]]['cbg']
+                target_cbg = draw_cbg(self.network_data, cbg, seed=self._rng)
+
+                # make sure the drawn CBG has any available stubs at all
+                if len(cbg_degree_map[target_cbg]) == 0:
+                    continue
+
+                # draw random stub from required CBG (preserving degree dist.)
+                target_node = self._rng.choice(cbg_degree_map[target_cbg])
+                j = stubs.index(target_node)
+
+                # swap nodes
+                stubs[i + 1], stubs[j] = stubs[j], stubs[i + 1]
+                break
+
+        return stubs
+
+    def _break_up_pairs(self, stubs):
+        swaps = 1
+        while swaps != 0:
+
+            print("Breaking up pairs...", end="\n")
+
+            # iterate by two successive stubs at a time
+            swaps = 0
+            for i in range(0, len(stubs), 2):
+
+                # break up if successive stubs are of same household
+                if self.g.nodes[stubs[i]]['household'] == \
+                        self.g.nodes[stubs[i + 1]]['household']:
+                    # swap with random other stub
+                    j = self._rng.integers(len(stubs))
+                    stubs[i + 1], stubs[j] = stubs[j], stubs[i + 1]
+
+                    swaps += 1
+
+        # connect pairs of stubs
+        for i in range(0, len(stubs), 2):
+            # label inter-household edges as household 0 of size 0
+            self.g.add_edge(stubs[i], stubs[i + 1], household=0,
+                            household_size=0)
