@@ -2,7 +2,7 @@ import numpy as np
 from typing import Union
 
 from model.utils import binary_search
-from model.network import NetworkData
+from model.network_data import NetworkData
 
 
 def household_size(network_data: NetworkData,
