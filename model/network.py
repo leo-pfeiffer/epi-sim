@@ -112,8 +112,6 @@ class Network:
 
         for i in range(0, len(stubs), 2):
 
-            print(f"Creating stub pairs: {i} of {len(stubs)}", end="\r")
-
             while True:
 
                 # draw a CBG from the rewire distribution
@@ -137,8 +135,6 @@ class Network:
     def _break_up_pairs(self, stubs):
         swaps = 1
         while swaps != 0:
-
-            print("Breaking up pairs...", end="\n")
 
             # iterate by two successive stubs at a time
             swaps = 0

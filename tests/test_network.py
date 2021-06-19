@@ -1,47 +1,77 @@
-# Unit tests for network generators
 import pytest
+from tests.factory import *
+from model.network import Network
+from model.network_data import NetworkData
+
+BASELINE = 3
+N = 100
+SEED = 1
+PRE = create_network_data()
+POST = create_network_data(True)
+TRIP_COUNT_CHANGE = NetworkData.calc_trip_count_change(PRE, POST)
 
 
-def test_plc_generate(plc):
-    """
-    Test we can generate the network
-    """
-    _ = plc.generate()
+def test_create_network_instance():
+    network = Network(PRE, TRIP_COUNT_CHANGE, N, BASELINE, False, SEED)
+    assert isinstance(network, Network)
 
 
-def test_plc_topology(plc):
-    """
-    Test we get the right topology name for the PLC network.
-    """
-    assert plc.topology() == 'PLC'
+def test_create_households():
+    # setup
+    network = Network(PRE, TRIP_COUNT_CHANGE, N, BASELINE, False, SEED)
+
+    # test
+    households, cbg_degree_map = network._create_households()
+
+    assert pytest.approx(len(network.g.nodes), N/10) == N
+
+    num_exceeds_std = 0
+    for household in households:
+
+        nodes = list(household.nodes)
+        cbg = network.g.nodes[nodes[0]]['cbg']
+        size_is = household.order()
+        size_should = PRE.demographics[cbg]['household_size']
+
+        if abs(size_is - size_should) > size_should / 2:
+            num_exceeds_std += 1
+
+    # normal distribution should exceed std in only 32% of cases
+    assert num_exceeds_std < 0.32 * len(households)
+
+    # todo test node proportion equals population proportion
 
 
-def test_plc_distribution_smaller_one(plc_distribution):
-    """
-    Test the PLC distribution returns only probabilities between 0 and 1.
-    """
-    for x in range(1, 11):
-        assert 0 < plc_distribution(x) < 1
+def test_create_stubs():
+    # setup
+    network = Network(PRE, TRIP_COUNT_CHANGE, N, BASELINE, False, SEED)
+    households, cbg_degree_map = network._create_households()
+
+    # test
+    stubs, cbg_degree_map = network._create_stubs(households, cbg_degree_map)
+
+    # todo
 
 
-def test_plc_distribution_sum_to_one(plc_distribution):
-    """
-    Test the PLC distribution returns values that sum to 1.
-    """
-    vals = []
-    for x in range(1, 100):
-        vals.append(plc_distribution(x))
-    assert pytest.approx(sum(vals), abs=1e-3) == 1
+def test_create_stub_pairs():
+    network = Network(PRE, TRIP_COUNT_CHANGE, N, BASELINE, False, SEED)
+    households, cbg_degree_map = network._create_households()
+    stubs, cbg_degree_map = network._create_stubs(households, cbg_degree_map)
+
+    # test
+    stubs = network._create_stub_pairs(stubs, cbg_degree_map)
+
+    # todo
 
 
-def test_plc_distribution_assertions(plc_distribution):
-    """
-    Test the PLC distribution raises Errors when passing invalid values.
-    """
-    # must be whole number
-    with pytest.raises(AssertionError) as err:
-        plc_distribution(k=1.5)  # noqa
+def test_break_up_pairs():
+    # setup
+    network = Network(PRE, TRIP_COUNT_CHANGE, N, BASELINE, False, SEED)
+    households, cbg_degree_map = network._create_households()
+    stubs, cbg_degree_map = network._create_stubs(households, cbg_degree_map)
+    stubs = network._create_stub_pairs(stubs, cbg_degree_map)
 
-    # must be greater than one
-    with pytest.raises(AssertionError) as err:
-        plc_distribution(k=0)  # noqa
+    # test
+    network._break_up_pairs(stubs)
+
+    # todo

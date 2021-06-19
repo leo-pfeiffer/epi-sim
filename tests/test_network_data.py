@@ -2,7 +2,7 @@ import pytest
 from tests.factory import *
 
 
-def test_create_network_data():
+def test_create_network_data_instance():
     demographics = create_demographics()
     comb_counts, trip_counts = create_counts()
     network_data = NetworkData(demographics, comb_counts, trip_counts)
