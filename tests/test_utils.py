@@ -1,5 +1,6 @@
 # Unit tests for model utils
-from model.utils import discrete_rejection_sample
+from model.utils import discrete_rejection_sample, binary_search
+import numpy as np
 
 
 def test_discrete_rejection_sample_expected():
@@ -17,3 +18,12 @@ def test_discrete_rejection_sample_range():
     for i in range(1000):
         x = discrete_rejection_sample(p, 0, 5)
         assert 0 <= x < 10
+
+
+def test_binary_search():
+    ls = np.array([0.2, 0.2, 0.2, 0.2, 0.2]).cumsum()
+    assert binary_search(ls, 0, len(ls) - 1, 0.1) == 0
+    assert binary_search(ls, 0, len(ls) - 1, 0.2) == 0
+    assert binary_search(ls, 0, len(ls) - 1, 0.3) == 1
+    assert binary_search(ls, 0, len(ls) - 1, 0.9) == 4
+    assert binary_search(ls, 0, len(ls) - 1, 1) == 4
