@@ -1,5 +1,5 @@
 import pytest
-from model.network import PowerLawCutoffNetwork
+from model.power_law_cutoff import PowerLawCutoffNetwork
 
 
 @pytest.fixture()

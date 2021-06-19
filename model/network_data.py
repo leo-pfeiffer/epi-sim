@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import numpy as np
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, Tuple
 
 from dataclasses import dataclass, field
 
@@ -33,10 +33,6 @@ class NetworkData:
         :returns: Adjacency list with probabilites.
         """
 
-        # todo unit test:
-        # assert 1 - sum(adj_list_pre[ordered_cbgs[0]]) < 0.0001
-        # assert 1 - sum(adj_list_post[ordered_cbgs[0]]) < 0.0001
-
         self.adjacency_list: Dict[str, List[float]] = {}
 
         for i in self.ordered_cbgs:
@@ -61,11 +57,10 @@ class NetworkData:
         :returns: Cummulative probabilities for each item in the adjacency list.
         """
 
-        # todo unit test
-        # assert 1 - cum_prob_pre[ordered_cbgs[0]][-1] < 0.0001
-        # assert 1 - cum_prob_post[ordered_cbgs[0]][-1] < 0.0001
-
-        assert self.adjacency_list
+        # make sure the adjacency list has been initialised
+        if not hasattr(self, 'adjacency_list'):
+            raise AttributeError('Attribute adjacency_list not found. Make sure'
+                                 'to run create_adjacency_list first.')
 
         self.cum_prob: Dict[str, np.array] = {}
 
