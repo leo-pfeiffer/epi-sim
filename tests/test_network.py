@@ -4,10 +4,17 @@ from model.network import Network
 from model.network_data import NetworkData
 
 BASELINE = 3
-N = 100
+N = 1000
 SEED = 1
 PRE = create_network_data()
 POST = create_network_data(True)
+
+PRE.create_adjacency_list()
+PRE.create_cum_prob()
+
+POST.create_adjacency_list()
+POST.create_cum_prob()
+
 TRIP_COUNT_CHANGE = NetworkData.calc_trip_count_change(PRE, POST)
 
 
@@ -23,7 +30,7 @@ def test_create_households():
     # test
     households, cbg_degree_map = network._create_households()
 
-    assert pytest.approx(len(network.g.nodes), N/10) == N
+    assert abs(len(network.g.nodes) - N) < N / 10
 
     num_exceeds_std = 0
     for household in households:
@@ -50,7 +57,10 @@ def test_create_stubs():
     # test
     stubs, cbg_degree_map = network._create_stubs(households, cbg_degree_map)
 
-    # todo
+    # number of stubs
+    num_nodes = len(stubs) + len(network.g.nodes)
+    assert abs(num_nodes - N*BASELINE) < N
+    assert len(stubs) % 2 == 0
 
 
 def test_create_stub_pairs():
@@ -61,7 +71,8 @@ def test_create_stub_pairs():
     # test
     stubs = network._create_stub_pairs(stubs, cbg_degree_map)
 
-    # todo
+    assert len(stubs) % 2 == 0
+    # todo add some more useful tests
 
 
 def test_break_up_pairs():
@@ -74,4 +85,7 @@ def test_break_up_pairs():
     # test
     network._break_up_pairs(stubs)
 
-    # todo
+    for i in range(0, len(stubs), 2):
+        h1 = network.g.nodes[stubs[i]]['household']
+        h2 = network.g.nodes[stubs[i + 1]]['household']
+        assert h1 != h2
