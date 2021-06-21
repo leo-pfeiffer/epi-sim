@@ -14,7 +14,7 @@ CBG_DEGREE_MAP = Dict[str, List[int]]
 
 class MobilityNetwork:
     """
-    A networkx Network created from mobility data.
+    Mobility Network created from mobility data.
     :param network_data: NetworkData containing mobility data from which to
         create the network.
     :param N: Number of nodes (approximate) in the network.
@@ -68,7 +68,7 @@ class MobilityNetwork:
     def _create_households(self) -> HOUSEHOLDS:
         """
         Part of the creation process to built household clusters for each CBG.
-        The number of households per CBG is proportional to the population of
+        The number of nodes per CBG is proportional to the population of
         the CBG. The household size is drawn from a distribution parametrised
         with the (real world) mean household size.
         :return: List of household graphs.
