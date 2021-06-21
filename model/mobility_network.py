@@ -91,7 +91,8 @@ class MobilityNetwork:
             # add households
             while n < N_cbg:
                 # create household network
-                size = household_size(self.network_data, cbg, seed=self._rng)
+                mu = self.network_data.demographics[cbg]['household_size']
+                size = household_size(mu=mu, seed=self._rng)
                 house_net = nx.complete_graph(size)
 
                 # add unique labels

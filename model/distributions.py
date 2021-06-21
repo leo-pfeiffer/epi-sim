@@ -5,21 +5,19 @@ from model.utils import binary_search
 from model.network_data import NetworkData
 
 
-def household_size(network_data: NetworkData,
-                   cbg: str,
+def household_size(mu: float, std: Union[float, None] = None,
                    seed: Union[int, np.random.Generator, None] = None) -> int:
     """
     Household size distribution is drawn from normal distribution with mean
     according to mean household size of CBG.
-    :param network_data:
-    :param seed: random seed.
-    :param cbg: CBG of the household.
+    :param mu: Mean of the distribution.
+    :param std: (optional) Standard deviation of the distribution.
+    :param seed: (optional) Random seed.
     :returns: Household size.
     """
     rng = np.random.default_rng(seed=seed)
-    mu = network_data.demographics[cbg]['household_size']
-    sd = mu / 2
-    return max(int(rng.normal(mu, sd)), 1)
+    std = mu / 2 if std is None else std
+    return max(int(rng.normal(mu, std)), 1)
 
 
 # todo type hint

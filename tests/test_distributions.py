@@ -24,7 +24,7 @@ def test_household_size():
 
     nums = []
     for _ in range(10000):
-        r = household_size(PRE, 'cbg1', SEED)
+        r = household_size(mu=mu_should, seed=SEED)
         assert r >= 1
         assert r % 1 == 0
         nums.append(r)
