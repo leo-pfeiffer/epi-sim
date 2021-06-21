@@ -63,7 +63,8 @@ class MobilityNetwork:
         households = self._create_households()
         stubs, cbg_degree_map = self._create_stubs(households)
         stubs = self._create_stub_pairs(stubs, cbg_degree_map)
-        self._break_up_pairs(stubs)
+        stubs = self._break_up_pairs(stubs)
+        self._connect_stubs(stubs)
 
     def _create_households(self) -> HOUSEHOLDS:
         """
@@ -194,7 +195,7 @@ class MobilityNetwork:
 
         return stubs
 
-    def _break_up_pairs(self, stubs: STUBS) -> None:
+    def _break_up_pairs(self, stubs: STUBS) -> STUBS:
         """
         Part of the creation process to break up any intra-household stub pairs
         since stubs are supposed to connect between households.
@@ -215,6 +216,14 @@ class MobilityNetwork:
                     stubs[i + 1], stubs[j] = stubs[j], stubs[i + 1]
 
                     swaps += 1
+
+        return stubs
+
+    def _connect_stubs(self, stubs: STUBS) -> None:
+        """
+        Part of the creation process to connect the stubs.
+        :param stubs:
+        """
 
         # connect pairs of stubs
         for i in range(0, len(stubs), 2):

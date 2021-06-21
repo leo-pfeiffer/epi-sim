@@ -94,3 +94,20 @@ def test_break_up_pairs():
         h1 = network.g.nodes[stubs[i]]['household']
         h2 = network.g.nodes[stubs[i + 1]]['household']
         assert h1 != h2
+
+
+def test_connect_stubs():
+    # setup
+    network = MobilityNetwork(PRE, N, BASELINE, False, TRIP_COUNT_CHANGE, SEED)
+    households = network._create_households()
+    stubs, cbg_degree_map = network._create_stubs(households)
+    stubs = network._create_stub_pairs(stubs, cbg_degree_map)
+    stubs = network._break_up_pairs(stubs)
+
+    # test
+    network._connect_stubs(stubs)
+
+    for i in range(0, len(stubs), 2):
+        assert (stubs[i], stubs[i+1]) in network.g.edges
+
+
