@@ -170,8 +170,10 @@ class MobilityNetwork:
         connections between CBGs that are favoured in the mobility data too.
         :param stubs: List of stubs.
         :param cbg_degree_map: Map of stub nodes to CBG
-        :return:
         """
+
+        # todo for validation, compare adjacency list of graph to empirical
+        #  adjacency list
 
         for i in range(0, len(stubs), 2):
 
