@@ -6,6 +6,20 @@ This project was developed using Python 3.9.2. All package requirements are list
 To build the project using docker compose, you also need those installed on your machine
 ([Docker](https://docs.docker.com/engine/install/), [Docker compose](https://docs.docker.com/compose/install/)).
 
+## Generate mobility network
+To generate the mobility network, run:
+
+```shell
+make generate-data-paths
+```
+
+Then, run the following notebooks in order (all inside `data_processing`):
+- `extraction.ipynb`
+- `transformation.ipynb`
+- `network_creation.ipynb`
+
+To analyse the resulting mobility network, use the `network_analysis.ipynb` notebook.
+
 ## Build web app with docker compose
 The web application can be built using docker compose using Nginx as the HTTP server and uWSGI as the application 
 server.
