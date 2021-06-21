@@ -1,4 +1,5 @@
 DATA = 'data/'
+REMOTE_RAW = 'http://209.182.235.76/data/msc/'
 RAW = 'data/raw/'
 OUT = 'data/out/'
 GRAPHICS = 'data/graphics/'
