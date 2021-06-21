@@ -3,7 +3,7 @@ import networkx as nx
 from typing import Dict, Union, List, Tuple
 
 from model.network_data import NetworkData
-from model.distributions import household_size, household_contact, draw_cbg
+from model.distributions import household_size_dist, node_degree_dist, draw_cbg
 from model.types import RANDOM_SEED, TRIP_COUNT_CHANGE
 
 # special types for convenience...
@@ -92,7 +92,7 @@ class MobilityNetwork:
             while n < N_cbg:
                 # create household network
                 mu = self.network_data.demographics[cbg]['household_size']
-                size = household_size(mu=mu, seed=self._rng)
+                size = household_size_dist(mu=mu, seed=self._rng)
                 house_net = nx.complete_graph(size)
 
                 # add unique labels
@@ -138,9 +138,13 @@ class MobilityNetwork:
 
             for node in nodes:
                 # draw random degree
-                degree = household_contact(self.trip_count_change,
-                                           self.baseline, cbg,
-                                           self.multiplier, seed=self._rng)
+
+                if self.multiplier:
+                    exponent = self.baseline * self.trip_count_change[cbg]
+                else:
+                    exponent = self.baseline
+
+                degree = node_degree_dist(exponent, seed=self._rng)
 
                 # append `degree` number of copies of the current node
                 new_stubs = [node] * degree

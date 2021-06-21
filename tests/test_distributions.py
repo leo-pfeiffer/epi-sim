@@ -1,5 +1,5 @@
 import pytest
-from model.distributions import household_size, household_contact, draw_cbg
+from model.distributions import household_size_dist, node_degree_dist, draw_cbg
 from tests.factory import *
 import numpy as np
 
@@ -14,17 +14,17 @@ PRE.create_cum_prob()
 POST.create_adjacency_list()
 POST.create_cum_prob()
 
-TRIP_COUNT_CHANGE = NetworkData.calc_trip_count_change(PRE, POST)
+_TRIP_COUNT_CHANGE = NetworkData.calc_trip_count_change(PRE, POST)
 
 
-def test_household_size():
+def test_household_size_dist():
 
     mu_should = PRE.demographics['cbg1']['household_size']
     sigma_should = mu_should / 2
 
     nums = []
     for _ in range(10000):
-        r = household_size(mu=mu_should, seed=SEED)
+        r = household_size_dist(mu=mu_should, seed=SEED)
         assert r >= 1
         assert r % 1 == 0
         nums.append(r)
@@ -34,12 +34,12 @@ def test_household_size():
     assert abs(np.std(nums) - sigma_should) < 0.25
 
 
-def test_household_contact():
+def test_node_degree_dist():
 
     # No multiplier
     nums = []
     for _ in range(10000):
-        r = household_contact(TRIP_COUNT_CHANGE, BASELINE, 'cbg1', False, SEED)
+        r = node_degree_dist(BASELINE, SEED)
         assert r >= 1
         assert r % 1 == 0
         nums.append(r)
@@ -50,12 +50,13 @@ def test_household_contact():
     # With multiplier
     nums = []
     for _ in range(10000):
-        r = household_contact(TRIP_COUNT_CHANGE, BASELINE, 'cbg1', True, SEED)
+        exponent = BASELINE * _TRIP_COUNT_CHANGE['cbg1']
+        r = node_degree_dist(exponent, SEED)
         assert r >= 1
         assert r % 1 == 0
         nums.append(r)
 
-    m = TRIP_COUNT_CHANGE['cbg1']
+    m = _TRIP_COUNT_CHANGE['cbg1']
     assert abs(np.mean(nums) - BASELINE * m) < 0.5
     assert abs(np.std(nums) - BASELINE * m) < 0.5
 

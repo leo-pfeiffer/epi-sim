@@ -3,15 +3,16 @@ from typing import Union
 
 from model.utils import binary_search
 from model.network_data import NetworkData
+from model.types import RANDOM_SEED
 
 
-def household_size(mu: float, std: Union[float, None] = None,
-                   seed: Union[int, np.random.Generator, None] = None) -> int:
+def household_size_dist(mu: float, std: Union[float, None] = None,
+                        seed: Union[RANDOM_SEED, None] = None) -> int:
     """
-    Household size distribution is drawn from normal distribution with mean
-    according to mean household size of CBG.
+    Return a random household size from (discrete) normal distribution.
     :param mu: Mean of the distribution.
-    :param std: (optional) Standard deviation of the distribution.
+    :param std: (optional) Standard deviation of the distribution. If not
+        specified, std = mu / 2
     :param seed: (optional) Random seed.
     :returns: Household size.
     """
@@ -20,35 +21,26 @@ def household_size(mu: float, std: Union[float, None] = None,
     return max(int(rng.normal(mu, std)), 1)
 
 
-# todo type hint
-def household_contact(trip_count_change, baseline: float, cbg: str,
-                      multiplier: bool,
-                      seed: Union[int, np.random.Generator, None] = None) -> int:
+def node_degree_dist(exponent: float,
+                     seed: Union[RANDOM_SEED, None] = None) -> int:
     """
-    Number of connections from a node to another node outside the household.
-    :param trip_count_change:
-    :param seed: random seed.
-    :param baseline: baseline value for the exponent of the degree distribution.
-    :param cbg: CBG of the current household.
-    :param multiplier: reduce exponent by factor.
+    Return node degree from a discrete exponential distribution.
+    :param exponent: Exponent of the exponential distribution.
+    :param seed: (optional) Random seed.
     :returns: Number of connections to outside the household.
     """
     rng = np.random.default_rng(seed=seed)
-    if multiplier:
-        exponent = baseline * trip_count_change[cbg]
-    else:
-        exponent = baseline
     return max(int(rng.exponential(exponent)), 1)
 
 
 def draw_cbg(network_data: NetworkData, cbg: str,
-             seed: Union[int, np.random.Generator, None] = None) -> str:
+             seed: Union[RANDOM_SEED, None] = None) -> str:
     """
-    For a given CBG draw from the corresponding rewire distribution and return
-    a random CBG to rewire to.
-    :param network_data:
-    :param seed: random seed.
-    :param cbg: CBG to be rewired.
+    Draw a random target CBG for a given CBG. The selection of the target CBG
+    is based on the distribution of trips from the given CBG to all other CBGs.
+    :param network_data: NetworkData
+    :param cbg: Origin CBG.
+    :param seed: (optional) Random seed.
     """
     rng = np.random.default_rng(seed=seed)
     r = rng.random()
