@@ -5,6 +5,8 @@ from typing import Dict, List, Tuple
 
 from dataclasses import dataclass, field
 
+from model.types import TRIP_COUNT_CHANGE
+
 
 @dataclass
 class NetworkData:
@@ -68,7 +70,8 @@ class NetworkData:
             self.cum_prob[key] = np.array(self.adjacency_list[key]).cumsum()
 
     @staticmethod
-    def calc_trip_count_change(pre_data: NetworkData, post_data: NetworkData):
+    def calc_trip_count_change(pre_data: NetworkData,
+                               post_data: NetworkData) -> TRIP_COUNT_CHANGE:
 
         # percentage change of number of trips: post / pre
         trip_count_change = {}

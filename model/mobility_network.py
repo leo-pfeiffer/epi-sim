@@ -1,19 +1,49 @@
 import numpy as np
 import networkx as nx
-from typing import Dict
+from typing import Dict, Union, List, Tuple
 
 from model.network_data import NetworkData
 from model.distributions import household_size, household_contact, draw_cbg
+from model.types import RANDOM_SEED, TRIP_COUNT_CHANGE
+
+# special types for convenience...
+HOUSEHOLDS = List[nx.Graph]
+STUBS = List[int]
+CBG_DEGREE_MAP = Dict[str, List[int]]
 
 
 class MobilityNetwork:
-    def __init__(self, network_data, trip_count_change, N=10000,
-                 baseline=3, multiplier=False, seed=None):
+    """
+    A networkx Network created from mobility data.
+    :param network_data: NetworkData containing mobility data from which to
+        create the network.
+    :param N: Number of nodes (approximate) in the network.
+    :param baseline: Baseline value for the exponent of the exponential
+        distribution used for the node degrees.
+    :param multiplier: (optional) True the trip_count_change multiplier should
+        be applied to the exponent of the exponential distribution for the
+        node degrees.
+    :param trip_count_change: (optional) Change of trip counts between a pair
+        of networks. Required if multiplier=True.
+    :param seed: (optional) Random seed for reproducibility.
+    """
+
+    def __init__(self, network_data: NetworkData,
+                 N: int = 10000,
+                 baseline: int = 3,
+                 multiplier: bool = False,
+                 trip_count_change: Union[TRIP_COUNT_CHANGE, None] = None,
+                 seed: Union[RANDOM_SEED, None] = None):
+
         self.network_data: NetworkData = network_data
-        self.trip_count_change: Dict[str, float] = trip_count_change
         self.N: int = N
         self.baseline: float = baseline
         self.multiplier: bool = multiplier
+
+        if self.multiplier:
+            assert self.trip_count_change is not None
+
+        self.trip_count_change = trip_count_change
 
         self._rng = np.random.default_rng(seed=seed)
         self._g: nx.Graph = nx.Graph()
@@ -23,18 +53,30 @@ class MobilityNetwork:
         return self._g
 
     def create(self):
+        """
+        Create the network. This executes all steps of the creation process in
+        order. The algorithm is adapted from
+            Dobson (2020). Epidemic Modelling. (pp. 157)
+        but adapted to base the network on mobility data.
+        """
 
-        households, cbg_degree_map = self._create_households()
-        stubs, cbg_degree_map = self._create_stubs(households, cbg_degree_map)
+        households = self._create_households()
+        stubs, cbg_degree_map = self._create_stubs(households)
         stubs = self._create_stub_pairs(stubs, cbg_degree_map)
         self._break_up_pairs(stubs)
 
-    def _create_households(self):
+    def _create_households(self) -> HOUSEHOLDS:
+        """
+        Part of the creation process to built household clusters for each CBG.
+        The number of households per CBG is proportional to the population of
+        the CBG. The household size is drawn from a distribution parametrised
+        with the (real world) mean household size.
+        :return: List of household graphs.
+        """
 
         household_id = 1
         households = []
 
-        cbg_degree_map = {}
         total_node_ct = 0
 
         # add the nodes and create the household connections
@@ -45,9 +87,6 @@ class MobilityNetwork:
 
             # current number of nodes of this CBG
             n = 0
-
-            # initialise for later
-            cbg_degree_map[cbg] = []
 
             # add households
             while n < N_cbg:
@@ -73,9 +112,19 @@ class MobilityNetwork:
                 household_id += 1
                 total_node_ct += size
 
-        return households, cbg_degree_map
+        return households
 
-    def _create_stubs(self, households, cbg_degree_map):
+    def _create_stubs(self, households: HOUSEHOLDS) -> \
+            Tuple[STUBS, CBG_DEGREE_MAP]:
+        """
+        Part of the creation process to create (still) unconnected nodes as
+        extra-household connections.
+        :param households: List of household graphs.
+        :return: List of stubs containing copies of existing nodes; A map
+            with the stubs per CBG.
+        """
+
+        cbg_degree_map = {k: [] for k in self.network_data.demographics.keys()}
 
         # create stubs for connections to outside of household
         stubs = []
@@ -108,13 +157,21 @@ class MobilityNetwork:
 
         return stubs, cbg_degree_map
 
-    def _create_stub_pairs(self, stubs, cbg_degree_map):
+    def _create_stub_pairs(self, stubs: STUBS,
+                           cbg_degree_map: CBG_DEGREE_MAP):
+        """
+        Part of the creation process to pair the stubs in a way that favours
+        connections between CBGs that are favoured in the mobility data too.
+        :param stubs: List of stubs.
+        :param cbg_degree_map: Map of stub nodes to CBG
+        :return:
+        """
 
         for i in range(0, len(stubs), 2):
 
             while True:
 
-                # draw a CBG from the rewire distribution
+                # draw a CBG from the CBG connection distribution
                 cbg = self.g.nodes[stubs[i]]['cbg']
                 target_cbg = draw_cbg(self.network_data, cbg, seed=self._rng)
 
@@ -132,7 +189,12 @@ class MobilityNetwork:
 
         return stubs
 
-    def _break_up_pairs(self, stubs):
+    def _break_up_pairs(self, stubs: STUBS) -> None:
+        """
+        Part of the creation process to break up any intra-household stub pairs
+        since stubs are supposed to connect between households.
+        :param stubs: List of stubs.
+        """
         swaps = 1
         while swaps != 0:
 
