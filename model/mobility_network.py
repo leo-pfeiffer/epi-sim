@@ -6,7 +6,7 @@ from model.network_data import NetworkData
 from model.distributions import household_size, household_contact, draw_cbg
 
 
-class Network:
+class MobilityNetwork:
     def __init__(self, network_data, trip_count_change, N=10000,
                  baseline=3, multiplier=False, seed=None):
         self.network_data: NetworkData = network_data
