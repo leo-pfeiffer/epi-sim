@@ -1,3 +1,8 @@
+# setup
+.PHONY: generate-data-paths
+generate-data-paths:
+	sh ./data_processing/generate_data_paths.sh
+
 # unit tests
 .PHONY: test
 test:
