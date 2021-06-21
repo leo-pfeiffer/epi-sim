@@ -39,11 +39,11 @@ class MobilityNetwork:
         self.N: int = N
         self.baseline: float = baseline
         self.multiplier: bool = multiplier
-
-        if self.multiplier:
-            assert self.trip_count_change is not None
-
         self.trip_count_change = trip_count_change
+
+        if self.multiplier and not self.trip_count_change:
+            raise ValueError('When multiplier=True, the trip_count_change '
+                             'argument cannot be None.')
 
         self._rng = np.random.default_rng(seed=seed)
         self._g: nx.Graph = nx.Graph()

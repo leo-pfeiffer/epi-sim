@@ -23,6 +23,11 @@ def test_create_network_instance():
     assert isinstance(network, MobilityNetwork)
 
 
+def test_raises_value_error():
+    with pytest.raises(ValueError):
+        _ = MobilityNetwork(PRE, N, BASELINE, True, seed=SEED)
+
+
 def test_create_households():
     # setup
     network = MobilityNetwork(PRE, N, BASELINE, False, TRIP_COUNT_CHANGE, SEED)
