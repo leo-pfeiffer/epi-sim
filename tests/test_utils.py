@@ -8,7 +8,7 @@ def test_discrete_rejection_sample_expected():
     p = lambda x: int(x == 1)
 
     # must always return 1
-    assert discrete_rejection_sample(p, 0, 2) == 1
+    assert discrete_rejection_sample(p, 0, 2, seed=0) == 1
 
 
 def test_discrete_rejection_sample_range():
@@ -16,7 +16,7 @@ def test_discrete_rejection_sample_range():
 
     # test a few times to make sure ...
     for i in range(1000):
-        x = discrete_rejection_sample(p, 0, 5)
+        x = discrete_rejection_sample(p, 0, 5, seed=0)
         assert 0 <= x < 10
 
 
