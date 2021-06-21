@@ -1,19 +1,23 @@
 # Model utils
-
 from typing import Callable, Union
 import numpy as np
 
+from model.types import RANDOM_SEED
 
-def discrete_rejection_sample(p: Callable[[int], Union[float, int]], a: int, b: int,
-                              rng=np.random.default_rng()):
+
+def discrete_rejection_sample(p: Callable[[int], Union[float, int]], a: int,
+                              b: int, seed=Union[RANDOM_SEED, None]) -> int:
     """
-    Perform rejection sampling for a using the provided discrete probability distribution function `p`.
-    :param p: Probability distribution function
-    :param a: Lower bound of the sample values
-    :param b: Upper bound of the sample values
-    :param rng: Numpy random generator: Todo type hint
-    :return: Sampled value
+    Perform rejection sampling for a using the provided discrete probability
+    distribution function `p`.
+    :param p: Probability distribution function.
+    :param a: Lower bound of the sample values.
+    :param b: Upper bound of the sample values.
+    :param seed: Random seed.
+    :return: Sampled integer.
     """
+    rng = np.random.default_rng(seed=seed)
+
     while True:
         # draw a random integer from the specified range
         x = rng.integers(a, b)
@@ -23,10 +27,11 @@ def discrete_rejection_sample(p: Callable[[int], Union[float, int]], a: int, b: 
             return x
 
 
-def binary_search(arr, left, right, x) -> int:
+def binary_search_lowest_idx(arr, left, right, x) -> int:
     """
-    Generic binary search function that finds the element
-    *furthest to the left* of an array.
+    Generic binary search function that finds an element in an array. If the
+    element is not unique in the array, the element with the lowest index is
+    returned.
     :param arr: Array like object.
     :param left: Most left index to start the search.
     :param right: Most right index to start the search.

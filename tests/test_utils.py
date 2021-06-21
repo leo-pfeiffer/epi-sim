@@ -1,5 +1,5 @@
 # Unit tests for model utils
-from model.utils import discrete_rejection_sample, binary_search
+from model.utils import discrete_rejection_sample, binary_search_lowest_idx
 import numpy as np
 
 
@@ -22,8 +22,8 @@ def test_discrete_rejection_sample_range():
 
 def test_binary_search():
     ls = np.array([0.2, 0.2, 0.2, 0.2, 0.2]).cumsum()
-    assert binary_search(ls, 0, len(ls) - 1, 0.1) == 0
-    assert binary_search(ls, 0, len(ls) - 1, 0.2) == 0
-    assert binary_search(ls, 0, len(ls) - 1, 0.3) == 1
-    assert binary_search(ls, 0, len(ls) - 1, 0.9) == 4
-    assert binary_search(ls, 0, len(ls) - 1, 1) == 4
+    assert binary_search_lowest_idx(ls, 0, len(ls) - 1, 0.1) == 0
+    assert binary_search_lowest_idx(ls, 0, len(ls) - 1, 0.2) == 0
+    assert binary_search_lowest_idx(ls, 0, len(ls) - 1, 0.3) == 1
+    assert binary_search_lowest_idx(ls, 0, len(ls) - 1, 0.9) == 4
+    assert binary_search_lowest_idx(ls, 0, len(ls) - 1, 1) == 4

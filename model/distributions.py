@@ -1,7 +1,7 @@
 import numpy as np
 from typing import Union
 
-from model.utils import binary_search
+from model.utils import binary_search_lowest_idx
 from model.network_data import NetworkData
 from model.types import RANDOM_SEED
 
@@ -47,5 +47,5 @@ def draw_cbg(network_data: NetworkData, cbg: str,
 
     # return index where p >= r for the first time
     arr = network_data.cum_prob[cbg]
-    idx = binary_search(arr, 0, len(arr) - 1, r)
+    idx = binary_search_lowest_idx(arr, 0, len(arr) - 1, r)
     return network_data.ordered_cbgs[idx]

@@ -69,7 +69,7 @@ class PowerLawCutoffNetwork(NetworkGenerator):
 
         # create list of random node degrees
         for i in range(n):
-            k = discrete_rejection_sample(p=p, a=1, b=max_deg, rng=rng)
+            k = discrete_rejection_sample(p=p, a=1, b=max_deg, seed=rng)
             nodes.append(k)
             degree_sum += k
 
@@ -82,7 +82,7 @@ class PowerLawCutoffNetwork(NetworkGenerator):
             del nodes[i]
 
             # add new node
-            k = discrete_rejection_sample(p=p, a=1, b=max_deg, rng=rng)
+            k = discrete_rejection_sample(p=p, a=1, b=max_deg, seed=rng)
             nodes.append(k)
             degree_sum += k
 
