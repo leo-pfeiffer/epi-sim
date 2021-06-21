@@ -13,6 +13,11 @@ To generate the mobility network, run:
 make generate-data-paths
 ```
 
+This generates the required data directories (if they are not available yet).
+To add your own mobility CSV file, put them into the generated 
+`data_processing/data/raw` directory. This is optional: if you don't do it, the
+notebooks will pull the files from my server.
+
 Then, run the following notebooks in order (all inside `data_processing`):
 - `extraction.ipynb`
 - `transformation.ipynb`
