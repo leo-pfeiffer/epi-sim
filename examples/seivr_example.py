@@ -1,8 +1,8 @@
-from epydemic import ERNetwork, StochasticDynamics
+from epydemic import ERNetwork, StochasticDynamics, Monitor
 import matplotlib.pyplot as plt
 from epyc import Experiment
 
-from model.compartmental_model.seivr import MonitoredSEIVR
+from model.compartmental_model.seivr import MonitoredSEIVR, SEIVR
 
 params = dict()
 
@@ -25,7 +25,8 @@ params[SEIVR.VACCINE_RRR] = 0.95
 params[Monitor.DELTA] = 10
 
 # run the compound process
-e = StochasticDynamics(MonitoredSEIVR(), g=ERNetwork())
+seivr = MonitoredSEIVR()
+e = StochasticDynamics(seivr, g=ERNetwork())
 e.process().setMaximumTime(T)
 rc = e.set(params).run()
 
