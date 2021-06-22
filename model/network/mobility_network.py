@@ -3,9 +3,9 @@ import networkx as nx
 from typing import Dict, Union, List, Tuple, Any, Final
 from epydemic import NetworkGenerator
 
-from model.network_data import NetworkData
+from model.network.network_data import NetworkData
 from model.distributions import household_size_dist, node_degree_dist, draw_cbg
-from model.types import RANDOM_SEED, TRIP_COUNT_CHANGE
+from model.types import RANDOM_SEED
 
 # special types for convenience...
 HOUSEHOLDS = List[nx.Graph]

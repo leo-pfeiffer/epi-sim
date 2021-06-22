@@ -2,7 +2,7 @@ import numpy as np
 from typing import Union
 
 from model.utils import binary_search_lowest_idx
-from model.network_data import NetworkData
+from model.network.network_data import NetworkData
 from model.types import RANDOM_SEED
 
 

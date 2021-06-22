@@ -1,7 +1,8 @@
 from networkx import Graph
 import pytest
 from tests.factory import *
-from model.mobility_network import MobilityNetwork, MobilityNetworkGenerator
+from model.network.mobility_network import MobilityNetwork, \
+    MobilityNetworkGenerator
 
 BASELINE = 3
 N = 1000

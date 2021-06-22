@@ -1,4 +1,4 @@
-from model.network_data import NetworkData
+from model.network.network_data import NetworkData
 
 
 def create_cbgs():
