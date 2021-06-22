@@ -256,9 +256,18 @@ class MobilityNetworkGenerator(NetworkGenerator):
         super(MobilityNetworkGenerator, self).__init__(params, limit)
 
     def topology(self) -> str:
+        """
+        Return a flag to identify the topology
+        :return: topology flag
+        """
         return 'MN'
 
     def _generate(self, params: Dict[str, Any]) -> nx.Graph:
+        """
+        Generate the graph of a mobility network.
+        :param params: experiment parameters
+        :return: Graph
+        """
 
         network_data = params[self.NETWORK_DATA]
         n = params[self.N]
