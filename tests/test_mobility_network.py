@@ -1,6 +1,7 @@
+from networkx import Graph
 import pytest
 from tests.factory import *
-from model.mobility_network import MobilityNetwork
+from model.mobility_network import MobilityNetwork, MobilityNetworkGenerator
 
 BASELINE = 3
 N = 1000
@@ -110,3 +111,15 @@ def test_connect_stubs():
         assert (stubs[i], stubs[i+1]) in network.g.edges
 
 
+def test_mobility_network_generator():
+    params = {
+        MobilityNetworkGenerator.NETWORK_DATA: PRE,
+        MobilityNetworkGenerator.N: N,
+        MobilityNetworkGenerator.BASELINE: BASELINE,
+        MobilityNetworkGenerator.MULTIPLIER: False,
+        MobilityNetworkGenerator.SEED: SEED
+    }
+
+    mng = MobilityNetworkGenerator(params=params)
+    g = mng.generate()
+    assert isinstance(g, Graph)

@@ -2,7 +2,6 @@ import numpy as np
 import networkx as nx
 from typing import Dict, Union, List, Tuple, Any, Final
 from epydemic import NetworkGenerator
-from networkx import Graph
 
 from model.network_data import NetworkData
 from model.distributions import household_size_dist, node_degree_dist, draw_cbg
@@ -259,7 +258,7 @@ class MobilityNetworkGenerator(NetworkGenerator):
     def topology(self) -> str:
         return 'MN'
 
-    def _generate(self, params: Dict[str, Any]) -> Graph:
+    def _generate(self, params: Dict[str, Any]) -> nx.Graph:
 
         network_data = params[self.NETWORK_DATA]
         n = params[self.N]
