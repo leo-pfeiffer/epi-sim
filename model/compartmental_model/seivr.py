@@ -1,6 +1,6 @@
 from typing import Any, Dict, Final
 
-from epydemic import CompartmentedModel
+from epydemic import CompartmentedModel, Monitor
 from epydemic.types import Node, Edge
 
 
@@ -92,7 +92,8 @@ class SEIVR(CompartmentedModel):
         self.infect(t, e)
 
     def infect(self, t: float, e: Edge):
-        raise NotImplementedError
+        # todo
+        ...
 
     def symptoms(self, t, n: Node):
         self.changeCompartment(n, self.INFECTED)
@@ -102,3 +103,9 @@ class SEIVR(CompartmentedModel):
 
     def vaccinate(self, t, n: Node):
         self.changeCompartment(n, self.VACCINATED)
+
+
+class MonitoredSEIVR(SEIVR, Monitor):
+
+    def __init__(self):
+        super(MonitoredSEIVR, self).__init__()
