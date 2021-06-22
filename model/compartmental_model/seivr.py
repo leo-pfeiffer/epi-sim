@@ -58,12 +58,13 @@ class SEIVR(CompartmentedModel):
         self.addCompartment(self.REMOVED, 0.0)
 
         # track edges
-        self.trackEdgesBetweenCompartments(self.SUSCEPTIBLE, self.EXPOSED,name=self.SE)
+        self.trackEdgesBetweenCompartments(self.SUSCEPTIBLE, self.EXPOSED, name=self.SE)
         self.trackEdgesBetweenCompartments(self.SUSCEPTIBLE, self.INFECTED, name=self.SI)
         self.trackEdgesBetweenCompartments(self.EXPOSED, self.VACCINATED, name=self.EV)
         self.trackEdgesBetweenCompartments(self.INFECTED, self.VACCINATED, name=self.IV)
 
         # track nodes
+        self.trackNodesInCompartment(self.SUSCEPTIBLE)
         self.trackNodesInCompartment(self.EXPOSED)
         self.trackNodesInCompartment(self.INFECTED)
         self.trackNodesInCompartment(self.VACCINATED)
@@ -71,8 +72,8 @@ class SEIVR(CompartmentedModel):
         # infection events
         self.addEventPerElement(self.SE, p_infect_a, self.infect_asymptomatic)
         self.addEventPerElement(self.SI, p_infect_s, self.infect_symptomatic)
-        self.addEventPerElement(self.EV, vac_rrr, self.infect_vac_asymptomatic)
-        self.addEventPerElement(self.IV, vac_rrr, self.infect_vac_symptomatic)
+        self.addEventPerElement(self.EV, vac_rrr * p_infect_a, self.infect_vac_asymptomatic)
+        self.addEventPerElement(self.IV, vac_rrr * p_infect_s, self.infect_vac_symptomatic)
 
         # other events ...
         self.addEventPerElement(self.EXPOSED, p_symptoms, self.symptoms)
@@ -92,8 +93,9 @@ class SEIVR(CompartmentedModel):
         self.infect(t, e)
 
     def infect(self, t: float, e: Edge):
-        # todo
-        ...
+        n, _ = e
+        self.changeCompartment(n, self.EXPOSED)
+        self.markOccupied(e, t)
 
     def symptoms(self, t, n: Node):
         self.changeCompartment(n, self.INFECTED)
@@ -109,3 +111,8 @@ class MonitoredSEIVR(SEIVR, Monitor):
 
     def __init__(self):
         super(MonitoredSEIVR, self).__init__()
+
+    def build(self, params: Dict[str, Any]):
+        super().build(params)
+
+        self.trackNodesInCompartment(SEIVR.REMOVED)
