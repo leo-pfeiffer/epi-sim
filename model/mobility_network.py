@@ -237,22 +237,39 @@ class MobilityNetwork:
             self.g.add_edge(stubs[i], stubs[i + 1], household=0,
                             household_size=0)
 
-#
-# class MobilityNetworkGenerator(NetworkGenerator, MobilityNetwork):
-#
-#     NETWORK_DATA
-#     N: Final[str] = 'MobiNet.n'
-#     BASELINE
-#     MULTIPLIER
-#     TRIP_COUNT_CHANGE
-#
-#
-#     def __init__(self, params=None, limit=None):
-#         super(MobilityNetworkGenerator, self).__init__(params, limit)
-#
-#     def topology(self) -> str:
-#         pass
-#
-#     def _generate(self, params: Dict[str, Any]) -> Graph:
-#         pass
 
+class MobilityNetworkGenerator(NetworkGenerator):
+    """
+    Wrapper around MobilityNetwork to generate a mobility network using
+    the epydemic NetworkGenerator.
+
+    :param params: (optional) experiment parameters
+    :param limit: (optional) maximum number of instances to generate
+    """
+
+    NETWORK_DATA: Final[str] = 'MN.network_data'
+    N: Final[str] = 'MN.n'
+    BASELINE: Final[str] = 'MN.baseline'
+    MULTIPLIER: Final[str] = 'MN.multiplier'
+    SEED: Final[str] = 'MN.seed'
+
+    def __init__(self, params=None, limit=None):
+        super(MobilityNetworkGenerator, self).__init__(params, limit)
+
+    def topology(self) -> str:
+        return 'MN'
+
+    def _generate(self, params: Dict[str, Any]) -> Graph:
+
+        network_data = params[self.NETWORK_DATA]
+        n = params[self.N]
+        baseline = params[self.BASELINE]
+        multiplier = params[self.MULTIPLIER]
+
+        # seed is optional
+        seed = params.get(self.SEED, None)
+
+        network = MobilityNetwork(network_data, n, baseline, multiplier, seed)
+        network.create()
+
+        return network.g
