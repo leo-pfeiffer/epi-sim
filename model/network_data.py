@@ -26,6 +26,7 @@ class NetworkData:
     ordered_cbgs: List[str] = field(init=False)  # CBGs in order
     adjacency_list: ADJACENCY_LIST = field(init=False)  # Adjacency list of CBGs
     cum_prob: CUM_PROB = field(init=False)  # Cumulative transition prob.
+    trip_count_change: TRIP_COUNT_CHANGE = field(init=False)  # Trip ct change
 
     def __post_init__(self):
         self.ordered_cbgs = sorted(self.demographics.keys())
@@ -73,16 +74,14 @@ class NetworkData:
         for key in self.adjacency_list:
             self.cum_prob[key] = np.array(self.adjacency_list[key]).cumsum()
 
-    @staticmethod
-    def calc_trip_count_change(pre_data: NetworkData,
-                               post_data: NetworkData) -> TRIP_COUNT_CHANGE:
+    def calc_trip_count_change(self, pre_data: NetworkData):
         """
-        Calculate the change in trip counts from one NetworkData to another. The
-        use case for this is to determine the change in mobility e.g. pre
+        Calculate the change in trip counts compared to another NetworkData
+        instance. The trip count change is saved in the `trip_count_change`
+        attribute of the current instance (not of the `pre_data`).
+        The use case for this is to determine the change in mobility e.g. pre
         lockdown vs post lockdown.
-        :param pre_data: Base NetworkData (before lockdown).
-        :param post_data: Comparison NetworkData (after lockdown).
-        :return: Dictionary containing trip count change for each CBG.
+        :param pre_data: Base NetworkData to compare to (e.g. before lockdown).
         """
 
         # change in number of trips: post / pre
@@ -91,12 +90,12 @@ class NetworkData:
         for cbg in pre_data.ordered_cbgs:
 
             # regular case: CBG present pre and post
-            if cbg in pre_data.trip_counts and cbg in post_data.trip_counts:
-                change = post_data.trip_counts[cbg] / pre_data.trip_counts[cbg]
+            if cbg in pre_data.trip_counts and cbg in self.trip_counts:
+                change = self.trip_counts[cbg] / pre_data.trip_counts[cbg]
 
             # special case: CBG not present post -> decrease by 100%
             elif cbg in pre_data.trip_counts and \
-                    cbg not in post_data.trip_counts:
+                    cbg not in self.trip_counts:
                 change = 0
 
             # special case: CBG not present pre -> increase by 100%
@@ -105,5 +104,4 @@ class NetworkData:
 
             trip_count_change[cbg] = change
 
-        return trip_count_change
-
+        self.trip_count_change = trip_count_change

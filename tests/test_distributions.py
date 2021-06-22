@@ -14,7 +14,8 @@ PRE.create_cum_prob()
 POST.create_adjacency_list()
 POST.create_cum_prob()
 
-_TRIP_COUNT_CHANGE = NetworkData.calc_trip_count_change(PRE, POST)
+POST.calc_trip_count_change(PRE)
+_TRIP_COUNT_CHANGE = POST.trip_count_change
 
 
 def test_household_size_dist():

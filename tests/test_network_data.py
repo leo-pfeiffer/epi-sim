@@ -40,7 +40,8 @@ def test_calc_trip_count_change():
     pre = create_network_data()
     post = create_network_data(True)
 
-    trip_count_change = NetworkData.calc_trip_count_change(pre, post)
+    post.calc_trip_count_change(pre)
+    trip_count_change = post.trip_count_change
 
     for k, v in trip_count_change.items():
         assert pytest.approx(v, 0.1) == 0.5

@@ -1,7 +1,6 @@
 import pytest
 from tests.factory import *
 from model.mobility_network import MobilityNetwork
-from model.network_data import NetworkData
 
 BASELINE = 3
 N = 1000
@@ -15,11 +14,11 @@ PRE.create_cum_prob()
 POST.create_adjacency_list()
 POST.create_cum_prob()
 
-TRIP_COUNT_CHANGE = NetworkData.calc_trip_count_change(PRE, POST)
+POST.calc_trip_count_change(PRE)
 
 
 def test_create_network_instance():
-    network = MobilityNetwork(PRE, N, BASELINE, False, TRIP_COUNT_CHANGE, SEED)
+    network = MobilityNetwork(PRE, N, BASELINE, False, SEED)
     assert isinstance(network, MobilityNetwork)
 
 
@@ -30,7 +29,7 @@ def test_raises_value_error():
 
 def test_create_households():
     # setup
-    network = MobilityNetwork(PRE, N, BASELINE, False, TRIP_COUNT_CHANGE, SEED)
+    network = MobilityNetwork(PRE, N, BASELINE, False, SEED)
 
     # test
     households = network._create_households()
@@ -56,7 +55,7 @@ def test_create_households():
 
 def test_create_stubs():
     # setup
-    network = MobilityNetwork(PRE, N, BASELINE, False, TRIP_COUNT_CHANGE, SEED)
+    network = MobilityNetwork(PRE, N, BASELINE, False, SEED)
     households = network._create_households()
 
     # test
@@ -69,7 +68,7 @@ def test_create_stubs():
 
 
 def test_create_stub_pairs():
-    network = MobilityNetwork(PRE, N, BASELINE, False, TRIP_COUNT_CHANGE, SEED)
+    network = MobilityNetwork(PRE, N, BASELINE, False, SEED)
     households = network._create_households()
     stubs, cbg_degree_map = network._create_stubs(households)
 
@@ -82,7 +81,7 @@ def test_create_stub_pairs():
 
 def test_break_up_pairs():
     # setup
-    network = MobilityNetwork(PRE, N, BASELINE, False, TRIP_COUNT_CHANGE, SEED)
+    network = MobilityNetwork(PRE, N, BASELINE, False, SEED)
     households = network._create_households()
     stubs, cbg_degree_map = network._create_stubs(households)
     stubs = network._create_stub_pairs(stubs, cbg_degree_map)
@@ -98,7 +97,7 @@ def test_break_up_pairs():
 
 def test_connect_stubs():
     # setup
-    network = MobilityNetwork(PRE, N, BASELINE, False, TRIP_COUNT_CHANGE, SEED)
+    network = MobilityNetwork(PRE, N, BASELINE, False, SEED)
     households = network._create_households()
     stubs, cbg_degree_map = network._create_stubs(households)
     stubs = network._create_stub_pairs(stubs, cbg_degree_map)

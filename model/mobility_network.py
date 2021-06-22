@@ -1,6 +1,8 @@
 import numpy as np
 import networkx as nx
-from typing import Dict, Union, List, Tuple
+from typing import Dict, Union, List, Tuple, Any, Final
+from epydemic import NetworkGenerator
+from networkx import Graph
 
 from model.network_data import NetworkData
 from model.distributions import household_size_dist, node_degree_dist, draw_cbg
@@ -23,8 +25,6 @@ class MobilityNetwork:
     :param multiplier: (optional) True the trip_count_change multiplier should
         be applied to the exponent of the exponential distribution for the
         node degrees.
-    :param trip_count_change: (optional) Change of trip counts between a pair
-        of networks. Required if multiplier=True.
     :param seed: (optional) Random seed for reproducibility.
     """
 
@@ -32,18 +32,21 @@ class MobilityNetwork:
                  N: int = 10000,
                  baseline: int = 3,
                  multiplier: bool = False,
-                 trip_count_change: Union[TRIP_COUNT_CHANGE, None] = None,
                  seed: Union[RANDOM_SEED, None] = None):
 
         self.network_data: NetworkData = network_data
         self.N: int = N
         self.baseline: float = baseline
         self.multiplier: bool = multiplier
-        self.trip_count_change = trip_count_change
 
-        if self.multiplier and not self.trip_count_change:
-            raise ValueError('When multiplier=True, the trip_count_change '
-                             'argument cannot be None.')
+        if self.multiplier:
+            try:
+                assert hasattr(self.network_data, 'trip_count_change')
+            except AssertionError as ae:
+                raise ValueError('When multiplier=True, the trip_count_change '
+                                 'attribute of the network_data object must '
+                                 'be set. Hint: Run the calc_trip_count_change '
+                                 'method on the network_data instance first.')
 
         self._rng = np.random.default_rng(seed=seed)
         self._g: nx.Graph = nx.Graph()
@@ -141,7 +144,8 @@ class MobilityNetwork:
                 # draw random degree
 
                 if self.multiplier:
-                    exponent = self.baseline * self.trip_count_change[cbg]
+                    exponent = self.baseline * \
+                               self.network_data.trip_count_change[cbg]
                 else:
                     exponent = self.baseline
 
@@ -232,3 +236,23 @@ class MobilityNetwork:
             # label inter-household edges as household 0 of size 0
             self.g.add_edge(stubs[i], stubs[i + 1], household=0,
                             household_size=0)
+
+#
+# class MobilityNetworkGenerator(NetworkGenerator, MobilityNetwork):
+#
+#     NETWORK_DATA
+#     N: Final[str] = 'MobiNet.n'
+#     BASELINE
+#     MULTIPLIER
+#     TRIP_COUNT_CHANGE
+#
+#
+#     def __init__(self, params=None, limit=None):
+#         super(MobilityNetworkGenerator, self).__init__(params, limit)
+#
+#     def topology(self) -> str:
+#         pass
+#
+#     def _generate(self, params: Dict[str, Any]) -> Graph:
+#         pass
+
