@@ -3,6 +3,8 @@ from typing import Any, Dict, Final
 from epydemic import CompartmentedModel, Monitor
 from epydemic.types import Node, Edge
 
+from model.compartmental_model.mixins import QuarantineMixin
+
 
 class SEIVR(CompartmentedModel):
 
@@ -105,6 +107,19 @@ class SEIVR(CompartmentedModel):
 
     def vaccinate(self, t, n: Node):
         self.changeCompartment(n, self.VACCINATED)
+
+
+class SEIVRWithQuarantine(SEIVR, QuarantineMixin):
+
+    P_QUARANTINE: Final[str] = 'epydemic.SEIVRWithQuarantine.p_quarantine'  #: Parameter for probability of removal (recovery).
+
+    def __init__(self):
+        super(SEIVRWithQuarantine, self).__init__()
+
+    def infect(self, t: float, e: Edge):
+        super(SEIVRWithQuarantine).infect(t, e)
+        n, _ = e
+        self.quarantine(n)
 
 
 class MonitoredSEIVR(SEIVR, Monitor):
