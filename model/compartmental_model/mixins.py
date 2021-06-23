@@ -1,22 +1,39 @@
 import numpy as np
+from epydemic import Node
 
 
 class QuarantineMixin:
+    """
+    Mixin class for compartmental models to implement a quarantine. To use this
+    mixin, add it as a Parent in the compartmental model class. The mixin
+    requires you define at least a `SUSCEPTIBLE`  compartment and an additional
+    class model parameter `p_quarantine` that defines the probability of a
+    infected-adjacent node to be put in quarantine.
+    """
 
-    def quarantine(self, n):
+    def quarantine(self, n: Node):
+        """
+        Perform a quarantine event on node `n` by removing a fraction
+        `p_quarantine` from its susceptible adjacent neighbors.
+        This method is taken directly from
+            Dobson (2020) - Epidemic Modelling. p. 139
+        :param n: Node
+        """
         g = self.network()
 
         rng = np.random.default_rng()
 
-        ms = list(g.neighbors(n))
+        neighbors = list(g.neighbors(n))
 
-        for m in ms:
+        for neighbor in neighbors:
 
-            if rng.random() > self.p_rewire:
+            # Keep going with probability `p_quarantine`
+            if rng.random() > self.p_quarantine:
                 continue
 
-            if self.getCompartment(m) == self.SUSCEPTIBLE:
-                self.removeEdge(n, m)
+            # Only remove susceptible neighbors
+            if self.getCompartment(neighbor) == self.SUSCEPTIBLE:
+                self.removeEdge(n, neighbor)
 
-                m_prime = self.locus(self.SUSCEPTIBLE).draw()
-                self.addEdge(m, m_prime)
+                neighbor_prime = self.locus(self.SUSCEPTIBLE).draw()
+                self.addEdge(neighbor, neighbor_prime)
