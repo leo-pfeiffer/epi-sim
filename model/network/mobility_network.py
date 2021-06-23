@@ -2,6 +2,7 @@ import numpy as np
 import networkx as nx
 from typing import Dict, Union, List, Tuple, Any, Final
 from epydemic import NetworkGenerator
+from networkx import Graph, read_graphml
 
 from model.network.network_data import NetworkData
 from model.distributions import household_size_dist, node_degree_dist, draw_cbg
@@ -237,34 +238,74 @@ class MobilityNetwork:
                             household_size=0)
 
 
-class MobilityNetworkGenerator(NetworkGenerator):
+class MNGenerator(NetworkGenerator):
     """
-    Wrapper around MobilityNetwork to generate a mobility network using
-    the epydemic NetworkGenerator.
+    Abstract NetworkGenerator for MobilityNetworks. Defines the `topology`
+    method for all subclasses.
+    Sub-classes must still overwrite the `_generate` method.
 
     :param params: (optional) experiment parameters
     :param limit: (optional) maximum number of instances to generate
     """
 
-    NETWORK_DATA: Final[str] = 'MN.network_data'
+    def __init__(self, params=None, limit=None):
+        super(MNGenerator, self).__init__(params, limit)
+
+    def topology(self) -> str:
+        """
+        Return a flag to identify the topology.
+        :return: topology flag
+        """
+        return 'MN'
+
+    def _generate(self, params: Dict[str, Any]) -> Graph:
+        raise NotImplementedError('MNGenerator._generate needs to be '
+                                  'overridden by sub-classes')
+
+
+class MNGeneratorFromFile(MNGenerator):
+    """
+    NetworkGenerator to generate MobilityNetworks from GraphML file.
+
+    :param params: (optional) experiment parameters
+    :param limit: (optional) maximum number of instances to generate
+    """
+
+    PATH: Final[str] = 'MN.path'
+
+    def __init__(self, params=None, limit=None):
+        super(MNGeneratorFromFile, self).__init__(params, limit)
+
+    def _generate(self, params: Dict[str, Any]) -> Graph:
+        """
+        Generate the graph of a mobility network from a GraphML file
+        :param params: experiment parameters
+        :return: Graph
+        """
+        g = read_graphml(params[self.PATH])
+        return g
+
+
+class MNGeneratorFromNetworkData(MNGenerator):
+    """
+    NetworkGenerator to generate MobilityNetworks from a NetworkData object.
+
+    :param params: (optional) experiment parameters
+    :param limit: (optional) maximum number of instances to generate
+    """
+
     N: Final[str] = 'MN.n'
+    NETWORK_DATA: Final[str] = 'MN.network_data'
     BASELINE: Final[str] = 'MN.baseline'
     MULTIPLIER: Final[str] = 'MN.multiplier'
     SEED: Final[str] = 'MN.seed'
 
     def __init__(self, params=None, limit=None):
-        super(MobilityNetworkGenerator, self).__init__(params, limit)
-
-    def topology(self) -> str:
-        """
-        Return a flag to identify the topology
-        :return: topology flag
-        """
-        return 'MN'
+        super(MNGeneratorFromNetworkData, self).__init__(params, limit)
 
     def _generate(self, params: Dict[str, Any]) -> nx.Graph:
         """
-        Generate the graph of a mobility network.
+        Generate the graph of a mobility network from a NetworkData object.
         :param params: experiment parameters
         :return: Graph
         """

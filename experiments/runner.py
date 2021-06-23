@@ -53,7 +53,7 @@ class ExperimentRunner:
         :return: List of time steps, List of time series lists
         """
 
-        times = self.result[Monitor.OBSERVATIONS]
+        times: List[float] = self.result[Monitor.OBSERVATIONS]
         series = dict()
 
         for c in compartments:
