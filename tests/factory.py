@@ -1,3 +1,4 @@
+from model.network.mobility_network import MobilityNetwork
 from model.network.network_data import NetworkData
 
 
@@ -50,3 +51,17 @@ def create_network_data(post: bool = False):
     comb_counts, trip_counts = create_counts(post)
     network_data = NetworkData(demographics, comb_counts, trip_counts)
     return network_data
+
+
+def create_network_graph():
+    BASELINE = 3
+    N = 1000
+    SEED = 1
+    PRE = create_network_data()
+
+    PRE.create_adjacency_list()
+    PRE.create_cum_prob()
+
+    network = MobilityNetwork(PRE, N, BASELINE, False, SEED)
+    network.create()
+    return network.g

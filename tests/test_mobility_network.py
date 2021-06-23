@@ -2,7 +2,7 @@ from networkx import Graph
 import pytest
 from tests.factory import *
 from model.network.mobility_network import MobilityNetwork, \
-    MobilityNetworkGenerator
+    MNGeneratorFromFile, MNGeneratorFromNetworkData
 
 BASELINE = 3
 N = 1000
@@ -22,6 +22,13 @@ POST.calc_trip_count_change(PRE)
 def test_create_network_instance():
     network = MobilityNetwork(PRE, N, BASELINE, False, SEED)
     assert isinstance(network, MobilityNetwork)
+
+
+def test_network_create():
+    network = MobilityNetwork(PRE, N, BASELINE, False, SEED)
+    network.create()
+    g = network.g
+    assert isinstance(g, Graph)
 
 
 def test_raises_value_error():
@@ -112,15 +119,25 @@ def test_connect_stubs():
         assert (stubs[i], stubs[i+1]) in network.g.edges
 
 
-def test_mobility_network_generator():
+def test_mobility_network_generator_from_network_data():
     params = {
-        MobilityNetworkGenerator.NETWORK_DATA: PRE,
-        MobilityNetworkGenerator.N: N,
-        MobilityNetworkGenerator.BASELINE: BASELINE,
-        MobilityNetworkGenerator.MULTIPLIER: False,
-        MobilityNetworkGenerator.SEED: SEED
+        MNGeneratorFromNetworkData.NETWORK_DATA: PRE,
+        MNGeneratorFromNetworkData.N: N,
+        MNGeneratorFromNetworkData.BASELINE: BASELINE,
+        MNGeneratorFromNetworkData.MULTIPLIER: False,
+        MNGeneratorFromNetworkData.SEED: SEED
     }
 
-    mng = MobilityNetworkGenerator(params=params)
+    mng = MNGeneratorFromNetworkData(params=params)
+    g = mng.generate()
+    assert isinstance(g, Graph)
+
+
+def test_mobility_network_generator_from_graph(network_graph_file):
+    params = {
+        MNGeneratorFromFile.PATH: str(network_graph_file),
+    }
+
+    mng = MNGeneratorFromFile(params=params)
     g = mng.generate()
     assert isinstance(g, Graph)
