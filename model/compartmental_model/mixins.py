@@ -4,11 +4,14 @@ from epydemic import Node
 
 class QuarantineMixin:
     """
-    Mixin class for compartmental models to implement a quarantine. To use this
-    mixin, add it as a Parent in the compartmental model class. The mixin
-    requires you define at least a `SUSCEPTIBLE`  compartment and an additional
-    class model parameter `p_quarantine` that defines the probability of a
-    infected-adjacent node to be put in quarantine.
+    Mixin class for compartmental models to implement a quarantine.
+    To use the mixin:
+    - add it as a Parent using multiple inheritance
+    - define aat least a `SUSCEPTIBLE`  compartment
+    - define the class model parameter p_quarantine` (the probability of an
+        infected-adjacent node to be put in quarantine)
+    - Call the `quarantine` method of the mixin when required (e.g. from the
+        `infect` event)
     """
 
     def quarantine(self, n: Node):
