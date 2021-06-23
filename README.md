@@ -1,3 +1,5 @@
+[![Build status](https://github.com/leo-pfeiffer/msc-thesis/actions/workflows/python-app.yml/badge.svg)](https://github.com/leo-pfeiffer/msc-thesis/actions/workflows/python-app.yml)
+
 # msc-thesis
 Repository for my MSc Thesis `A compartmented network model for COVID-19'
 
