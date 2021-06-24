@@ -20,10 +20,10 @@ class DistancedNetwork:
     """
 
     def __init__(self, N: int,
-                cluster_size_dist: Callable[[], int],
-                contact_dist: Callable[[int], int],
-                cluster_contact_dist: Callable[[], int],
-                seed: Optional[RANDOM_SEED]):
+                 cluster_size_dist: Callable[[], int],
+                 contact_dist: Callable[[int], int],
+                 cluster_contact_dist: Callable[[], int],
+                 seed: Optional[RANDOM_SEED]):
         self.N = N
         self.cluster_size_dist = cluster_size_dist
         self.contact_dist = contact_dist
@@ -122,7 +122,6 @@ class DistancedNetwork:
 
 
 class DNGenerator(NetworkGenerator):
-
     N: Final[str] = 'DN.n'
     CLUSTER_SIZE_DIST: Final[str] = 'DN.cluster_size_dist'
     CONTACT_DIST: Final[str] = 'DN.contact_dist'
