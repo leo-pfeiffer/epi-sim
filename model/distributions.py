@@ -62,6 +62,5 @@ def intra_household_contacts(size: int, std: float = 1,
     :param seed: random seed
     :return: number of intra household contact
     """
-    # todo unit tests
     rng = np.random.default_rng(seed=seed)
-    return max(int(rng.normal(min(size / 2, 1)), 1), 1)
+    return max(int(rng.normal(min(size / 2, 1), std)), 1)

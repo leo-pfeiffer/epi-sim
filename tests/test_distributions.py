@@ -1,5 +1,6 @@
 import pytest
-from model.distributions import household_size_dist, node_degree_dist, draw_cbg
+from model.distributions import household_size_dist, node_degree_dist, \
+    draw_cbg, intra_household_contacts
 from tests.factory import *
 import numpy as np
 
@@ -33,6 +34,23 @@ def test_household_size_dist():
     # margin of error is needed since it's a truncated normal dist...
     assert abs(np.mean(nums) - mu_should) < 0.5
     assert abs(np.std(nums) - sigma_should) < 0.25
+
+
+def test_intra_household_contacts():
+    size = 10
+    std = 2
+    mu_should = min(size / 2, 1)
+
+    nums = []
+    for _ in range(10000):
+        r = intra_household_contacts(size=size, std=std, seed=SEED)
+        assert r >= 1
+        assert r % 1 == 0
+        nums.append(r)
+
+    # margin of error is needed since it's a truncated normal dist...
+    assert abs(np.mean(nums) - mu_should) < size/10
+    assert abs(np.std(nums) - std) < std / 2
 
 
 def test_node_degree_dist():
