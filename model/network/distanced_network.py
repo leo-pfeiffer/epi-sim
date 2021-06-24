@@ -11,7 +11,7 @@ HOUSEHOLDS = List[nx.Graph]
 STUBS = List[int]
 
 
-# todo comments, docstrings, ...
+# todo comments, docstrings, unit tests
 
 class DistancedNetwork:
     """
@@ -20,9 +20,9 @@ class DistancedNetwork:
     """
 
     def __init__(self, N: int,
-                 cluster_size_dist: Callable[[], int],
-                 contact_dist: Callable[[int], int],
-                 cluster_contact_dist: Callable[[], int],
+                 cluster_size_dist: Callable[[RANDOM_SEED], int],
+                 contact_dist: Callable[[int, RANDOM_SEED], int],
+                 cluster_contact_dist: Callable[[RANDOM_SEED], int],
                  seed: Optional[RANDOM_SEED]):
         self.N = N
         self.cluster_size_dist = cluster_size_dist
@@ -48,7 +48,7 @@ class DistancedNetwork:
         n = 0
 
         while n < self.N:
-            size = self.cluster_size_dist()
+            size = self.cluster_size_dist(seed=self._rng)
             house = nx.complete_graph(size)
             nx.relabel_nodes(house, lambda l: n + l, copy=False)
 
@@ -69,7 +69,7 @@ class DistancedNetwork:
         contacts = []
         for house in households:
             size = house.order()
-            degree = self.contact_dist(size)
+            degree = self.contact_dist(size, self._rng)
             contacts.append(degree)
 
         stubs = []
@@ -81,7 +81,7 @@ class DistancedNetwork:
             nodes = list(house.nodes())[:contacts[i]]
 
             for node in nodes:
-                num_copies = self.cluster_contact_dist()
+                num_copies = self.cluster_contact_dist(self._rng)
                 stubs.extend([node] * num_copies)
 
         if len(stubs) % 2 > 0:
