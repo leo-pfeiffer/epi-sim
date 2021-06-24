@@ -32,3 +32,20 @@ class MonitoredSEIR(SEIR, Monitor):
 
         self.trackNodesInCompartment(SEIR.SUSCEPTIBLE)
         self.trackNodesInCompartment(SEIR.REMOVED)
+
+
+class MonitoredSEIRWithQuarantine(SEIRWithQuarantine, Monitor):
+
+    def __init__(self):
+        super(MonitoredSEIRWithQuarantine, self).__init__()
+
+    def build(self, params):
+        """
+        Build observation process and define compartments to track.
+        :param params: experimental parameters.
+        """
+
+        super(MonitoredSEIRWithQuarantine, self).build(params)
+
+        self.trackNodesInCompartment(SEIRWithQuarantine.SUSCEPTIBLE)
+        self.trackNodesInCompartment(SEIRWithQuarantine.REMOVED)

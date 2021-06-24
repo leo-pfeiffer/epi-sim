@@ -131,3 +131,14 @@ class MonitoredSEIVR(SEIVR, Monitor):
         super().build(params)
 
         self.trackNodesInCompartment(SEIVR.REMOVED)
+
+
+class MonitoredSEIVRWithQuarantine(SEIVRWithQuarantine, Monitor):
+
+    def __init__(self):
+        super(MonitoredSEIVRWithQuarantine, self).__init__()
+
+    def build(self, params: Dict[str, Any]):
+        super().build(params)
+
+        self.trackNodesInCompartment(SEIVRWithQuarantine.REMOVED)
