@@ -228,7 +228,7 @@ class MobilityNetwork:
     def _connect_stubs(self, stubs: STUBS) -> None:
         """
         Part of the creation process to connect the stubs.
-        :param stubs:
+        :param stubs: List of stubs.
         """
 
         # connect pairs of stubs
