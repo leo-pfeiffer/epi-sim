@@ -1,7 +1,8 @@
-from typing import Callable, Optional, List
+from typing import Callable, Optional, List, Any, Dict, Final
 
 import networkx as nx
 import numpy as np
+from epydemic import NetworkGenerator
 
 from model.types import RANDOM_SEED
 
@@ -18,9 +19,11 @@ class DistancedNetwork:
         Dobson 2020 - Epidemic Modelling, pp. 157
     """
 
-    def __int__(self, N: int,
-                cluster_size_dist: Callable, contact_dist: Callable,
-                cluster_contact_dist: Callable, seed: Optional[RANDOM_SEED]):
+    def __init__(self, N: int,
+                cluster_size_dist: Callable[[], int],
+                contact_dist: Callable[[int], int],
+                cluster_contact_dist: Callable[[], int],
+                seed: Optional[RANDOM_SEED]):
         self.N = N
         self.cluster_size_dist = cluster_size_dist
         self.contact_dist = contact_dist
@@ -116,3 +119,37 @@ class DistancedNetwork:
             # label inter-household edges as household 0 of size 0
             self.g.add_edge(stubs[i], stubs[i + 1], household=0,
                             household_size=0)
+
+
+class DNGenerator(NetworkGenerator):
+
+    N: Final[str] = 'DN.n'
+    CLUSTER_SIZE_DIST: Final[str] = 'DN.cluster_size_dist'
+    CONTACT_DIST: Final[str] = 'DN.contact_dist'
+    CLUSTER_CONTACT_DIST: Final[str] = 'DN.cluster_contact_dist'
+    SEED: Final[str] = 'DN.seed'
+
+    def __init__(self, params=None, limit=None):
+        super(DNGenerator, self).__init__(params, limit)
+
+    def topology(self) -> str:
+        """
+        Return a flag to identify the topology.
+        :return: topology flag
+        """
+        return 'DN'
+
+    def _generate(self, params: Dict[str, Any]) -> nx.Graph:
+        N = params[self.N]
+        cluster_size_dist = params[self.CLUSTER_SIZE_DIST]
+        contact_dist = params[self.CONTACT_DIST]
+        cluster_contact_dist = params[self.CLUSTER_CONTACT_DIST]
+
+        seed = params.get(self.SEED)
+
+        network = DistancedNetwork(N, cluster_size_dist, contact_dist,
+                                   cluster_contact_dist, seed)
+
+        network.create()
+
+        return network.g
