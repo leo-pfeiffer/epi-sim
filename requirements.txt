@@ -16,5 +16,6 @@ jupyter==1.0.0
 # web app
 dash~=1.20.0
 plotly~=4.14.3
+dash-bootstrap-components~=0.12.2
 uwsgi~=2.0.19.1
 
