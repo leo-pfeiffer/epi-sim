@@ -4,27 +4,35 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
+import dash_cytoscape as cyto
 import plotly.express as px
 import pandas as pd
+from app.utils import graph_elements, cyto_stylesheet
 
-external_stylesheets = [dbc.themes.SOLAR]
+external_stylesheets = [
+    dbc.themes.SOLAR,
+    'https://pro.fontawesome.com/releases/v5.10.0/css/all.css'
+]
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 # assume you have a "long-form" data frame
 # see https://plotly.com/python/px-arguments/ for more options
 df = pd.DataFrame({
-    "Fruit": ["Apples", "Oranges", "Bananas", "Apples", "Oranges", "Bananas"],
-    "Amount": [4, 1, 2, 2, 4, 5],
-    "City": ["SF", "SF", "SF", "Montreal", "Montreal", "Montreal"]
+    "time": [1, 2, 3, 4, 5] * 3,
+    "value": [5, 4, 3, 2, 1] + [1, 3, 5, 4, 3] + [1, 2, 3, 4, 5],
+    "compartment": ["S"] * 5 + ["I"] * 5 + ["R"] * 5
 })
 
+elements_ls = graph_elements(30)
+
 # the style arguments for the sidebar. We use position:fixed and a fixed width
+SIDEBAR_WIDTH = 25
 SIDEBAR_STYLE = {
     "position": "fixed",
     "top": 0,
     "left": 0,
     "bottom": 0,
-    "width": "24rem",
+    "width": f"{SIDEBAR_WIDTH}%",
     "padding": "2rem 1rem",
     "background-color": "#f8f9fa",
 }
@@ -32,12 +40,14 @@ SIDEBAR_STYLE = {
 # the styles for the main content position it to the right of the sidebar and
 # add some padding.
 CONTENT_STYLE = {
-    "margin-left": "26rem",
-    "margin-right": "2rem",
-    "padding": "2rem 1rem",
+    "margin-left": f"{SIDEBAR_WIDTH}%",
+    "width": f"{100 - SIDEBAR_WIDTH}%",
+    "margin-right": "1rem",
+    "padding": "1rem 1rem",
 }
 
-fig = px.bar(df, x="Fruit", y="Amount", color="City", barmode="group")
+fig = px.line(df, x="time", y="value", color="compartment",
+              line_group="compartment", hover_name="compartment")
 
 controls = dbc.Card(
     [
@@ -77,7 +87,7 @@ controls = dbc.Card(
 
 sidebar = html.Div(
     [
-        html.H2("EpiSim", className="display-4"),
+        html.H2("EpiSim", className="display-4", id="app-name"),
         html.Hr(),
         html.P(
             "Epidemic simulations", className="lead"
@@ -91,35 +101,73 @@ sidebar = html.Div(
             vertical=True,
             pills=True,
         ),
-        controls
+        controls,
+        html.Hr(),
+        html.A(
+            html.I(className="fab fa-github"),
+            href="https://github.com/leo-pfeiffer/msc-thesis",
+            style={"font-size": "2rem", "color": "#839496"}
+        )
     ],
     style=SIDEBAR_STYLE,
+    id="sidebar"
 )
+
+table_header = [
+    html.Thead(html.Tr([html.Th("First Name"), html.Th("Last Name")]))
+]
+
+row1 = html.Tr([html.Td("Arthur"), html.Td("Dent")])
+row2 = html.Tr([html.Td("Ford"), html.Td("Prefect")])
+row3 = html.Tr([html.Td("Zaphod"), html.Td("Beeblebrox")])
+row4 = html.Tr([html.Td("Trillian"), html.Td("Astra")])
+
+table_body = [html.Tbody([row1, row2, row3, row4])]
+table = dbc.Table(table_header + table_body, bordered=True)
 
 content = dbc.Container(
     [
         dbc.Row(
             [
-                dbc.Col(dcc.Graph(id="cluster-graph1", figure=fig), md=4),
-                dbc.Col(dcc.Graph(id="cluster-graph2", figure=fig), md=4),
+                dbc.Col(dcc.Graph(id="cluster-graph1", figure=fig), md=12),
             ],
             align="center",
             style={"margin-bottom": "2rem"}
         ),
         dbc.Row(
             [
-                dbc.Col(dcc.Graph(id="cluster-graph3", figure=fig), md=4),
-                dbc.Col(dcc.Graph(id="cluster-graph4", figure=fig), md=4),
+                dbc.Col(dbc.Card([table], body=True), md=12),
             ],
             align="center",
-            style={"margin-bottom": "2rem"}
+            style={"margin-bottom": "1rem"}
         ),
+        dbc.Row(
+            [
+                html.Div([
+                    cyto.Cytoscape(
+                        id='cytoscape',
+                        elements=elements_ls,
+                        layout={'name': 'preset'},
+                        style={
+                            'width': f"{100-SIDEBAR_WIDTH-3}%",
+                            # 'height': '100%',
+                            'height': '600px',
+                            'position': 'absolute',
+                            "border": "solid white",
+                            "margin-left": "1rem",
+                        },
+                        stylesheet=cyto_stylesheet
+                    )
+                ],
+                )
+            ],
+            align="center",
+            style={"margin-right": "1rem"}
+        )
     ],
-    fluid=True,
+    fluid=False,
     style=CONTENT_STYLE,
     id="page-content"
 )
 
 app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
-
-

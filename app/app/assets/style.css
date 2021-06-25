@@ -1,0 +1,5 @@
+@media only screen and (max-width: 1000px) {
+    #app-name {
+        font-size: 2rem;
+    }
+}
