@@ -125,6 +125,19 @@ row4 = html.Tr([html.Td("Trillian"), html.Td("Astra")])
 table_body = [html.Tbody([row1, row2, row3, row4])]
 table = dbc.Table(table_header + table_body, bordered=True)
 
+cyto_graph = cyto.Cytoscape(
+    id='cytoscape',
+    elements=elements_ls,
+    layout={'name': 'preset'},
+    style={
+        'height': '600px',
+        "border": "solid white",
+        "border-radius": "3px",
+    },
+    stylesheet=cyto_stylesheet
+)
+
+
 content = dbc.Container(
     [
         dbc.Row(
@@ -139,30 +152,14 @@ content = dbc.Container(
                 dbc.Col(dbc.Card([table], body=True), md=12),
             ],
             align="center",
-            style={"margin-bottom": "1rem"}
+            style={"margin-bottom": "2rem"}
         ),
         dbc.Row(
             [
-                html.Div([
-                    cyto.Cytoscape(
-                        id='cytoscape',
-                        elements=elements_ls,
-                        layout={'name': 'preset'},
-                        style={
-                            'width': f"{100-SIDEBAR_WIDTH-3}%",
-                            # 'height': '100%',
-                            'height': '600px',
-                            'position': 'absolute',
-                            "border": "solid white",
-                            "margin-left": "1rem",
-                        },
-                        stylesheet=cyto_stylesheet
-                    )
-                ],
-                )
+                dbc.Col(cyto_graph, md=12)
             ],
             align="center",
-            style={"margin-right": "1rem"}
+            style={"margin-bottom": "1rem"}
         )
     ],
     fluid=False,
