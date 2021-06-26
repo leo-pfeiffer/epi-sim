@@ -56,7 +56,7 @@ cyto_graph = cyto.Cytoscape(
     layout={'name': 'preset'},
     style={
         'height': '600px',
-        "border": "solid white",
+        "border": "solid #839396",
         "border-radius": "3px",
     },
     stylesheet=cyto_stylesheet

@@ -18,9 +18,10 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 # assume you have a "long-form" data frame
 # see https://plotly.com/python/px-arguments/ for more options
 df = pd.DataFrame({
-    "time": [1, 2, 3, 4, 5] * 3,
-    "value": [5, 4, 3, 2, 1] + [1, 3, 5, 4, 3] + [1, 2, 3, 4, 5],
-    "compartment": ["S"] * 5 + ["I"] * 5 + ["R"] * 5
+    "time": ([1, 2, 3, 4, 5] * 3) * 3,
+    "value": ([5, 4, 3, 2, 1] + [1, 3, 5, 4, 3] + [1, 2, 3, 4, 5]) * 3,
+    "compartment": (["S"] * 5 + ["I"] * 5 + ["R"] * 5) * 3,
+    "network": ["MN"] * 15 + ["PLC"] * 15 + ["PD"] * 15
 })
 
 
@@ -45,8 +46,25 @@ CONTENT_STYLE = {
     "padding": "1rem 1rem",
 }
 
-fig = px.line(df, x="time", y="value", color="compartment",
-              line_group="compartment", hover_name="compartment")
+fig = px.line(df, x="time", y="value", color="compartment", facet_col="network",
+              line_group="compartment", hover_name="compartment",
+              template="plotly_white")
+
+fig.update_traces(mode="lines", hovertemplate=None)
+
+fig.update_layout(
+    margin=dict(l=20, r=20, t=35, b=5),
+    paper_bgcolor="#22444a",
+    font_color="#839396",
+    legend=dict(
+        orientation="h",
+        yanchor="bottom",
+        y=-0.25,
+        xanchor="center",
+        x=0.5
+    ),
+    hovermode="x unified"
+)
 
 controls = dbc.Card(
     [
