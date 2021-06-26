@@ -45,3 +45,8 @@ destroy:
 build:
 	docker compose up --build -d
 	make ps
+
+.PHONY: restart
+restart:
+	docker compose restart
+	make ps

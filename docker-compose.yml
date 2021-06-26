@@ -18,4 +18,5 @@ services:
     container_name: nginx
     restart: always
     ports:
-      - "80:80"
+      - "4401:80"
+      # - "80:80"  # production

@@ -4,10 +4,10 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
-import dash_cytoscape as cyto
+
 import plotly.express as px
 import pandas as pd
-from app.utils import graph_elements, cyto_stylesheet
+from app.cytoscape_graph import cyto_graph  # noqa
 
 external_stylesheets = [
     dbc.themes.SOLAR,
@@ -23,7 +23,6 @@ df = pd.DataFrame({
     "compartment": ["S"] * 5 + ["I"] * 5 + ["R"] * 5
 })
 
-elements_ls = graph_elements(30)
 
 # the style arguments for the sidebar. We use position:fixed and a fixed width
 SIDEBAR_WIDTH = 25
@@ -124,19 +123,6 @@ row4 = html.Tr([html.Td("Trillian"), html.Td("Astra")])
 
 table_body = [html.Tbody([row1, row2, row3, row4])]
 table = dbc.Table(table_header + table_body, bordered=True)
-
-cyto_graph = cyto.Cytoscape(
-    id='cytoscape',
-    elements=elements_ls,
-    layout={'name': 'preset'},
-    style={
-        'height': '600px',
-        "border": "solid white",
-        "border-radius": "3px",
-    },
-    stylesheet=cyto_stylesheet
-)
-
 
 content = dbc.Container(
     [

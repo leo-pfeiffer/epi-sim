@@ -1,4 +1,5 @@
 import networkx as nx
+import dash_cytoscape as cyto
 
 
 def graph_elements(n=20):
@@ -46,3 +47,17 @@ cyto_stylesheet = [
         }
     }
 ]
+
+elements_ls = graph_elements(30)
+
+cyto_graph = cyto.Cytoscape(
+    id='cytoscape',
+    elements=elements_ls,
+    layout={'name': 'preset'},
+    style={
+        'height': '600px',
+        "border": "solid white",
+        "border-radius": "3px",
+    },
+    stylesheet=cyto_stylesheet
+)
