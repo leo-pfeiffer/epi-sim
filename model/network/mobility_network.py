@@ -330,4 +330,6 @@ class MNGeneratorFromNetworkData(MNGenerator):
         mobility_network = MobilityNetwork(network_data, degree_dist, n,
                                            multiplier, seed=seed)
 
+        mobility_network.create()
+
         return mobility_network.g
