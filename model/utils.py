@@ -1,12 +1,12 @@
 # Model utils
-from typing import Callable, Union
+from typing import Callable, Union, Optional
 import numpy as np
 
 from model.types import RANDOM_SEED
 
 
 def discrete_rejection_sample(p: Callable[[int], Union[float, int]], a: int,
-                              b: int, seed: Union[RANDOM_SEED, None]) -> int:
+                              b: int, seed: Optional[RANDOM_SEED]) -> int:
     """
     Perform rejection sampling for a using the provided discrete probability
     distribution function `p`.

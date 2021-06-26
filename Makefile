@@ -6,10 +6,6 @@ generate-data-paths:
 # unit tests
 .PHONY: test
 test:
-	pytest -p no:cacheprovider
-
-.PHONY: test-cache
-test-cache:
 	pytest
 
 # run without docker

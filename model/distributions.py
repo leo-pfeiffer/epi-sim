@@ -1,11 +1,35 @@
 import numpy as np
-from typing import Union, Optional
+from typing import Union, Optional, Callable
 
 from model.utils import binary_search_lowest_idx
 from model.network.network_data import NetworkData
 from model.types import RANDOM_SEED
+from mpmath import polylog, mpf
+
 
 # todo make names a bit more generic
+def power_law_cutoff_dist(tau: float, kappa: int) -> Callable[[int], mpf]:
+    """
+    Probability distribution function of the power law with cutoff distribution. The distribution
+    is discrete and only defined for whole numbers greater or equal one.
+    :param tau: exponent of the power law distribution.
+    :param kappa: cutoff value.
+    :return: Value from the probability distribution function.
+    """
+
+    # calculate normalisation constant
+    C = 1 / polylog(tau, np.exp(-1. / kappa))
+
+    # define the probability distribution function
+    def p(k):
+        # convert to float since np.power requires float
+        k = float(k) if not isinstance(k, float) else k
+        assert not k % 1
+        assert k > 0
+        return C * np.power(k, -tau) * np.exp(-k / kappa)
+
+    # return the callable
+    return p
 
 
 def household_size_dist(mu: float, std: Union[float, None] = None,

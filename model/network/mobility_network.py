@@ -1,14 +1,16 @@
 import numpy as np
 import networkx as nx
-from typing import Dict, Union, List, Tuple, Any, Final
+from typing import Dict, Union, List, Tuple, Any, Final, Callable
 from epydemic import NetworkGenerator
 from networkx import Graph, read_graphml
 
 from model.network.network_data import NetworkData
-from model.distributions import household_size_dist, node_degree_dist, draw_cbg
+from model.distributions import household_size_dist, draw_cbg, power_law_cutoff_dist
 from model.types import RANDOM_SEED
 
 # special types for convenience...
+from model.utils import discrete_rejection_sample
+
 HOUSEHOLDS = List[nx.Graph]
 STUBS = List[int]
 CBG_DEGREE_MAP = Dict[str, List[int]]
@@ -29,14 +31,16 @@ class MobilityNetwork:
     """
 
     def __init__(self, network_data: NetworkData,
+                 degree_dist: Callable,
                  N: int = 10000,
-                 baseline: int = 3,
                  multiplier: bool = False,
+                 max_deg: int = 100,
                  seed: Union[RANDOM_SEED, None] = None):
 
         self.network_data: NetworkData = network_data
+        self.degree_dist: Callable[[int], float] = degree_dist
         self.N: int = N
-        self.baseline: float = baseline
+        self.max_deg: int = max_deg
         self.multiplier: bool = multiplier
 
         if self.multiplier:
@@ -143,13 +147,13 @@ class MobilityNetwork:
             for node in nodes:
                 # draw random degree
 
-                if self.multiplier:
-                    exponent = self.baseline * \
-                               self.network_data.trip_count_change[cbg]
-                else:
-                    exponent = self.baseline
+                degree = discrete_rejection_sample(p=self.degree_dist,
+                                                   a=1, b=self.max_deg,
+                                                   seed=self._rng)
 
-                degree = node_degree_dist(exponent, seed=self._rng)
+                if self.multiplier:
+                    m = self.network_data.trip_count_change[cbg]
+                    degree = max(int(m * degree), 1)
 
                 # append `degree` number of copies of the current node
                 new_stubs = [node] * degree
@@ -296,7 +300,8 @@ class MNGeneratorFromNetworkData(MNGenerator):
 
     N: Final[str] = 'MN.n'
     NETWORK_DATA: Final[str] = 'MN.network_data'
-    BASELINE: Final[str] = 'MN.baseline'
+    EXPONENT: Final[str] = 'MN.exponent'
+    CUTOFF: Final[str] = 'MN.cutoff'
     MULTIPLIER: Final[str] = 'MN.multiplier'
     SEED: Final[str] = 'MN.seed'
 
@@ -312,13 +317,17 @@ class MNGeneratorFromNetworkData(MNGenerator):
 
         network_data = params[self.NETWORK_DATA]
         n = params[self.N]
-        baseline = params[self.BASELINE]
         multiplier = params[self.MULTIPLIER]
 
-        # seed is optional
+        exponent = params[self.EXPONENT]
+        cutoff = params[self.CUTOFF]
+        degree_dist = power_law_cutoff_dist(exponent, cutoff)
+
+        # optional args
         seed = params.get(self.SEED, None)
 
-        network = MobilityNetwork(network_data, n, baseline, multiplier, seed)
+        network = MobilityNetwork(network_data, degree_dist, n,
+                                  multiplier, seed=seed)
         network.create()
 
         return network.g

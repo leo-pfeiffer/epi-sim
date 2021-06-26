@@ -102,9 +102,6 @@ class PowerLawCutoffNetwork(NetworkGenerator):
         # calculate normalisation constant
         C = 1 / polylog(tau, np.exp(-1. / kappa))
 
-        # todo potentially allow k to be an array:
-        #   Would only have to change assertions.
-        #   Might be helpful if I find a way to speed up the random generator.
         # define the probability distribution function
         def p(k):
             assert not k % 1
