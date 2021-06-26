@@ -28,8 +28,15 @@ def test_create_network_instance():
     assert isinstance(network, MobilityNetwork)
 
 
-def test_network_create():
+def test_network_create_pre():
     network = MobilityNetwork(PRE, DEGREE_DIST, N, False, seed=SEED)
+    network.create()
+    g = network.g
+    assert isinstance(g, Graph)
+
+
+def test_network_create_post():
+    network = MobilityNetwork(POST, DEGREE_DIST, N, True, seed=SEED)
     network.create()
     g = network.g
     assert isinstance(g, Graph)
