@@ -1,6 +1,6 @@
 import pytest
 from model.distributions import household_size_dist, node_degree_dist, \
-    draw_cbg, intra_household_contacts
+    draw_cbg, intra_household_contacts, power_law_cutoff_dist
 from tests.factory import *
 import numpy as np
 
@@ -18,9 +18,10 @@ POST.create_cum_prob()
 POST.calc_trip_count_change(PRE)
 _TRIP_COUNT_CHANGE = POST.trip_count_change
 
+PLC = power_law_cutoff_dist(tau=0.2, kappa=10)
+
 
 def test_household_size_dist():
-
     mu_should = PRE.demographics['cbg1']['household_size']
     sigma_should = mu_should / 2
 
@@ -49,12 +50,11 @@ def test_intra_household_contacts():
         nums.append(r)
 
     # margin of error is needed since it's a truncated normal dist...
-    assert abs(np.mean(nums) - mu_should) < size/10
+    assert abs(np.mean(nums) - mu_should) < size / 10
     assert abs(np.std(nums) - std) < std / 2
 
 
 def test_node_degree_dist():
-
     # No multiplier
     nums = []
     for _ in range(10000):
@@ -81,7 +81,6 @@ def test_node_degree_dist():
 
 
 def test_draw_cbg():
-
     n = 10000
 
     results = []
@@ -104,3 +103,35 @@ def test_draw_cbg():
         prop_should = PRE.adjacency_list['cbg1'][cbg_idx]
 
         assert pytest.approx(prop_is, 0.1) == prop_should
+
+
+def test_plc_distribution_smaller_one():
+    """
+    Test the PLC distribution returns only probabilities between 0 and 1.
+    """
+    for x in range(1, 11):
+        assert 0 < PLC(x) < 1
+
+
+def test_plc_distribution_sum_to_one():
+    """
+    Test the PLC distribution returns values that sum to 1.
+    """
+    values = []
+    for x in range(1, 100):
+        values.append(PLC(x))
+    assert pytest.approx(sum(values), abs=1e-3) == 1
+
+
+def test_plc_distribution_assertions():
+    """
+    Test the PLC distribution raises Errors when passing invalid values.
+    """
+    # must be whole number
+    with pytest.raises(AssertionError):
+        PLC(1.5)  # noqa
+
+    # must be greater than one
+    with pytest.raises(AssertionError):
+        PLC(0)  # noqa
+
