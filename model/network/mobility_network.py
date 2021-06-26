@@ -307,6 +307,11 @@ class MNGeneratorFromNetworkData(MNGenerator):
 
     def __init__(self, params=None, limit=None):
         super(MNGeneratorFromNetworkData, self).__init__(params, limit)
+        self._mobility_network = None
+
+    @property
+    def mobility_network(self):
+        return self._mobility_network
 
     def _generate(self, params: Dict[str, Any]) -> nx.Graph:
         """
@@ -327,8 +332,8 @@ class MNGeneratorFromNetworkData(MNGenerator):
         # optional args
         seed = params.get(self.SEED, None)
 
-        network = MobilityNetwork(network_data, degree_dist, n,
-                                  multiplier, seed=seed)
-        network.create()
+        self._mobility_network = MobilityNetwork(network_data, degree_dist, n,
+                                                 multiplier, seed=seed)
+        self._mobility_network.create()
 
-        return network.g
+        return self._mobility_network.g
