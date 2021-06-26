@@ -141,12 +141,10 @@ class MobilityNetwork:
 
             nodes = list(households[i].nodes)
 
-            # if len(nodes) > 0:
             cbg = self.g.nodes[nodes[0]]['cbg']
 
             for node in nodes:
                 # draw random degree
-
                 degree = discrete_rejection_sample(p=self.degree_dist,
                                                    a=1, b=self.max_deg,
                                                    seed=self._rng)
