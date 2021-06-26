@@ -5,7 +5,7 @@ from epydemic import NetworkGenerator
 from networkx import Graph, read_graphml
 
 from model.network.network_data import NetworkData
-from model.distributions import household_size_dist, draw_cbg, power_law_cutoff_dist
+from model.distributions import household_size_dist, draw_cbg, PowerLawCutoffDist
 from model.types import RANDOM_SEED
 
 # special types for convenience...
@@ -321,7 +321,8 @@ class MNGeneratorFromNetworkData(MNGenerator):
 
         exponent = params[self.EXPONENT]
         cutoff = params[self.CUTOFF]
-        degree_dist = power_law_cutoff_dist(exponent, cutoff)
+
+        degree_dist = PowerLawCutoffDist(exponent, cutoff).p
 
         # optional args
         seed = params.get(self.SEED, None)

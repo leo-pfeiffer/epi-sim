@@ -1,7 +1,7 @@
 from networkx import Graph
 import pytest
 from tests.factory import *
-from model.distributions import power_law_cutoff_dist
+from model.distributions import PowerLawCutoffDist
 from model.network.mobility_network import MobilityNetwork, \
     MNGeneratorFromFile, MNGeneratorFromNetworkData
 
@@ -20,7 +20,7 @@ POST.create_cum_prob()
 
 POST.calc_trip_count_change(PRE)
 
-DEGREE_DIST = power_law_cutoff_dist(EXPONENT, CUTOFF)
+DEGREE_DIST = PowerLawCutoffDist(EXPONENT, CUTOFF).p
 
 
 def test_create_network_instance():

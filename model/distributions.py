@@ -7,31 +7,77 @@ from model.types import RANDOM_SEED
 from mpmath import polylog, mpf
 
 
+class PowerLawCutoffDist:
+    """
+    Represent a power law cutoff distribution with a probability distribution
+    function, mean, variance, and parameters tau and kappa.
+    """
+
+    def __init__(self, tau: float, kappa: int):
+        """
+        Create a PowerLawCutoffDist instance with parameters tau and kappa.
+        :param tau: Exponent.
+        :param kappa: Cutoff.
+        """
+        self._tau = tau
+        self._kappa = kappa
+
+    @property
+    def tau(self):
+        """
+        Exponent value.
+        :return: tau.
+        """
+        return self._tau
+
+    @property
+    def kappa(self):
+        """
+        Cutoff value.
+        :return: kappa.
+        """
+        return self._kappa
+
+    @property
+    def p(self) -> Callable[[int], mpf]:
+        """
+        Probability distribution function of the power law with cutoff distribution. The distribution
+        is discrete and only defined for whole numbers greater or equal one.
+        :return: Probability distribution function.
+        """
+
+        # calculate normalisation constant
+        C = 1 / polylog(self._tau, np.exp(-1. / self._kappa))
+
+        # define the probability distribution function
+        def p(k):
+            # convert to float since np.power requires float
+            k = float(k) if not isinstance(k, float) else k
+            assert not k % 1
+            assert k > 0
+            return C * np.power(k, -self._tau) * np.exp(-k / self._kappa)
+
+        # return the callable
+        return p
+
+    @property
+    def mean(self) -> mpf:
+        """
+        Mean of the distribution.
+        :return: mean.
+        """
+        return polylog(self._tau-1, np.exp(-1 / self._kappa))
+
+    @property
+    def var(self) -> mpf:
+        """
+        Variance of the distribution.
+        :return: variance.
+        """
+        return polylog(self._tau-2, np.exp(-1 / self._kappa))
+
+
 # todo make names a bit more generic
-def power_law_cutoff_dist(tau: float, kappa: int) -> Callable[[int], mpf]:
-    """
-    Probability distribution function of the power law with cutoff distribution. The distribution
-    is discrete and only defined for whole numbers greater or equal one.
-    :param tau: exponent of the power law distribution.
-    :param kappa: cutoff value.
-    :return: Value from the probability distribution function.
-    """
-
-    # calculate normalisation constant
-    C = 1 / polylog(tau, np.exp(-1. / kappa))
-
-    # define the probability distribution function
-    def p(k):
-        # convert to float since np.power requires float
-        k = float(k) if not isinstance(k, float) else k
-        assert not k % 1
-        assert k > 0
-        return C * np.power(k, -tau) * np.exp(-k / kappa)
-
-    # return the callable
-    return p
-
-
 def household_size_dist(mu: float, std: Union[float, None] = None,
                         seed: Optional[RANDOM_SEED] = None) -> int:
     """

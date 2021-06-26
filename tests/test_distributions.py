@@ -1,8 +1,9 @@
 import pytest
 from model.distributions import household_size_dist, node_degree_dist, \
-    draw_cbg, intra_household_contacts, power_law_cutoff_dist
+    draw_cbg, intra_household_contacts, PowerLawCutoffDist
 from tests.factory import *
 import numpy as np
+from mpmath import polylog
 
 BASELINE = 3
 SEED = np.random.default_rng(1)
@@ -18,7 +19,10 @@ POST.create_cum_prob()
 POST.calc_trip_count_change(PRE)
 _TRIP_COUNT_CHANGE = POST.trip_count_change
 
-PLC = power_law_cutoff_dist(tau=0.2, kappa=10)
+TAU = 0.2
+KAPPA = 10
+PLC_DIST = PowerLawCutoffDist(tau=TAU, kappa=KAPPA)
+PLC = PLC_DIST.p
 
 
 def test_household_size_dist():
@@ -135,3 +139,16 @@ def test_plc_distribution_assertions():
     with pytest.raises(AssertionError):
         PLC(0)  # noqa
 
+
+def test_plc_mean():
+    """
+    Test PLC distribution returns correct mean.
+    """
+    assert PLC_DIST.mean == polylog(TAU-1, np.exp(-1/KAPPA))
+
+
+def test_plc_variance():
+    """
+    Test PLC distribution returns correct variance.
+    """
+    assert PLC_DIST.var == polylog(TAU-2, np.exp(-1/KAPPA))
