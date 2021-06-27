@@ -12,7 +12,7 @@ class ExperimentRunner:
     result.
     """
 
-    def __init__(self, dynamics: Dynamics, N: int):
+    def __init__(self, dynamics: Dynamics):
         """
         Constructor.
         :param dynamics: Dynamics of the experiment.
@@ -20,7 +20,7 @@ class ExperimentRunner:
             have to awkwardly try to access the network.
         """
         self._dynamics = dynamics
-        self._N = N
+        self._N: int = 0
         self._result: Union[ResultsDict, None] = None
 
     @property
@@ -30,6 +30,10 @@ class ExperimentRunner:
     @property
     def result(self):
         return self._result
+
+    @property
+    def n(self):
+        return self._N
 
     def run(self, params: Dict[str, Any], T: int = 1000, fatal: bool = True):
         """
@@ -55,6 +59,9 @@ class ExperimentRunner:
 
         times: List[float] = self.result[Monitor.OBSERVATIONS]
         series = dict()
+
+        for c in compartments:
+            self._N += self.result[c]
 
         for c in compartments:
             series_abs = self.result[Monitor.timeSeriesForLocus(c)]

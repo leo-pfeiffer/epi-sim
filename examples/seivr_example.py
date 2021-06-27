@@ -33,6 +33,6 @@ compartments = {
     SEIVR.REMOVED: 'removed'
 }
 
-er = ExperimentRunner(e, N)
+er = ExperimentRunner(e)
 er.run(params, T=1000)
 er.plot('My title', compartments)
