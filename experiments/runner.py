@@ -3,6 +3,7 @@ from epyc import ResultsDict, Experiment
 from epydemic import Dynamics, Monitor
 
 from matplotlib import pyplot as plt
+import pandas as pd
 
 
 class ExperimentRunner:
@@ -77,7 +78,7 @@ class ExperimentRunner:
         `len(colors)` times, the colours are not unique.
         :return: Generator object
         """
-        colors = ['r', 'y', 'g', 'c', 'b', 'm', 'peru', 'pink', 'gray']
+        colors = ['r', 'c', 'g', 'm', 'b', 'y', 'peru', 'pink', 'gray']
         i = 0
         while True:
             i %= len(colors)
@@ -108,3 +109,22 @@ class ExperimentRunner:
 
         plt.legend(loc='upper right')
         plt.show()
+
+    def to_df(self, compartments, network, model):
+
+        times, series = self.get_time_series(compartments.keys())
+
+        columns = ['network', 'model', 'N', 'T', 'timestep']
+        df = pd.DataFrame(columns=columns)
+
+        for k, v in compartments.items():
+            df[v] = series[k]
+
+        df['timestep'] = times
+        df['network'] = network
+        df['model'] = model
+        df['N'] = self._N
+        df['T'] = self._dynamics.process().maximumTime()
+
+        return df
+
