@@ -250,6 +250,9 @@ class MNGenerator(NetworkGenerator):
     :param limit: (optional) maximum number of instances to generate
     """
 
+    EXPONENT: Final[str] = 'MN.exponent'
+    CUTOFF: Final[str] = 'MN.cutoff'
+
     def __init__(self, params=None, limit=None):
         super(MNGenerator, self).__init__(params, limit)
 
@@ -298,8 +301,6 @@ class MNGeneratorFromNetworkData(MNGenerator):
 
     N: Final[str] = 'MN.n'
     NETWORK_DATA: Final[str] = 'MN.network_data'
-    EXPONENT: Final[str] = 'MN.exponent'
-    CUTOFF: Final[str] = 'MN.cutoff'
     MULTIPLIER: Final[str] = 'MN.multiplier'
     SEED: Final[str] = 'MN.seed'
 
