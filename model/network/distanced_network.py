@@ -37,7 +37,7 @@ class DistancedNetwork:
         return self._g
 
     def create(self):
-        households = self._households()
+        households = self._create_households()
         stubs = self._create_stubs(households)
         stubs = self._break_up_pairs(stubs)
         self._connect_stubs(stubs)
@@ -69,7 +69,7 @@ class DistancedNetwork:
         contacts = []
         for house in households:
             size = house.order()
-            degree = self.contact_dist(size, self._rng)
+            degree = self.contact_dist(size, seed=self._rng)
             contacts.append(degree)
 
         stubs = []
@@ -81,7 +81,7 @@ class DistancedNetwork:
             nodes = list(house.nodes())[:contacts[i]]
 
             for node in nodes:
-                num_copies = self.cluster_contact_dist(self._rng)
+                num_copies = self.cluster_contact_dist(seed=self._rng)
                 stubs.extend([node] * num_copies)
 
         if len(stubs) % 2 > 0:
