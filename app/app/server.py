@@ -1,13 +1,11 @@
-# Example from https://dash.plotly.com/layout
-
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
 
 import plotly.express as px
-import pandas as pd
 from app.cytoscape_graph import cyto_graph  # noqa
+from app.data_import import seir_df, seivr_df  # noqa
 
 external_stylesheets = [
     dbc.themes.SOLAR,
@@ -15,14 +13,14 @@ external_stylesheets = [
 ]
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
-# assume you have a "long-form" data frame
-# see https://plotly.com/python/px-arguments/ for more options
-df = pd.DataFrame({
-    "time": ([1, 2, 3, 4, 5] * 3) * 3,
-    "value": ([5, 4, 3, 2, 1] + [1, 3, 5, 4, 3] + [1, 2, 3, 4, 5]) * 3,
-    "compartment": (["S"] * 5 + ["I"] * 5 + ["R"] * 5) * 3,
-    "network": ["MN"] * 15 + ["PLC"] * 15 + ["PD"] * 15
-})
+df = seir_df.loc[seir_df.model == 'SEIR']
+
+# df = pd.DataFrame({
+#     "time": ([1, 2, 3, 4, 5] * 3) * 3,
+#     "value": ([5, 4, 3, 2, 1] + [1, 3, 5, 4, 3] + [1, 2, 3, 4, 5]) * 3,
+#     "compartment": (["S"] * 5 + ["I"] * 5 + ["R"] * 5) * 3,
+#     "network": ["MN"] * 15 + ["PLC"] * 15 + ["PD"] * 15
+# })
 
 
 # the style arguments for the sidebar. We use position:fixed and a fixed width

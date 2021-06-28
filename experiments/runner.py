@@ -114,13 +114,21 @@ class ExperimentRunner:
 
         times, series = self.get_time_series(compartments.keys())
 
-        columns = ['network', 'model', 'N', 'T', 'timestep']
-        df = pd.DataFrame(columns=columns)
+        values = []
+        compartment_vals = []
+        time_vals = []
 
         for k, v in compartments.items():
-            df[v] = series[k]
+            values += series[k]
+            compartment_vals += [v for _ in series[k]]
+            time_vals += times
 
-        df['timestep'] = times
+        df = pd.DataFrame({
+            'value': values,
+            'compartment': compartment_vals,
+            'time': time_vals
+        })
+
         df['network'] = network
         df['model'] = model
         df['N'] = self._N
