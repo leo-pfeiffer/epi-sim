@@ -57,5 +57,4 @@ class MonitoredSEIRWithQuarantine(SEIRWithQuarantine, Monitor):
 
         super(MonitoredSEIRWithQuarantine, self).build(params)
 
-        self.trackNodesInCompartment(SEIRWithQuarantine.SUSCEPTIBLE)
         self.trackNodesInCompartment(SEIRWithQuarantine.REMOVED)

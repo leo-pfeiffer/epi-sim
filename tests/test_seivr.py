@@ -1,5 +1,6 @@
-from model.compartmental_model.seivr import SEIVRWithQuarantine, SEIVR
-from epydemic import ERNetwork, StochasticDynamics, NetworkExperiment
+from model.compartmental_model.seivr import SEIVRWithQuarantine, SEIVR, \
+    MonitoredSEIVR, MonitoredSEIVRWithQuarantine
+from epydemic import ERNetwork, StochasticDynamics, NetworkExperiment, Monitor
 
 PARAMS = dict()
 PARAMS[ERNetwork.N] = N = 1000
@@ -13,6 +14,7 @@ PARAMS[SEIVRWithQuarantine.P_VACCINATED_INITIAL] = 0.0
 PARAMS[SEIVRWithQuarantine.P_VACCINATED] = 0.005
 PARAMS[SEIVRWithQuarantine.VACCINE_RRR] = 0.75
 PARAMS[SEIVRWithQuarantine.P_QUARANTINE] = 0.2
+PARAMS[Monitor.DELTA] = 10
 
 
 def test_seivr():
@@ -27,7 +29,11 @@ def test_seivr():
     assert rc[NetworkExperiment.RESULTS][SEIVR.VACCINATED] > 0
     assert rc[NetworkExperiment.RESULTS][SEIVR.REMOVED] >= 0
 
-    assert sum(rc[NetworkExperiment.RESULTS].values()) == N
+    N_is = 0
+    for c in e._process.compartments():
+        N_is += rc[NetworkExperiment.RESULTS][c]
+
+    assert N_is == N
 
 
 def test_seivr_with_quarantine():
@@ -42,5 +48,47 @@ def test_seivr_with_quarantine():
     assert rc[NetworkExperiment.RESULTS][SEIVRWithQuarantine.VACCINATED] > 0
     assert rc[NetworkExperiment.RESULTS][SEIVRWithQuarantine.REMOVED] >= 0
 
-    assert sum(rc[NetworkExperiment.RESULTS].values()) == N
+    N_is = 0
+    for c in e._process.compartments():
+        N_is += rc[NetworkExperiment.RESULTS][c]
+
+    assert N_is == N
+
+
+def test_monitored_seivr():
+    e = StochasticDynamics(MonitoredSEIVR(), g=ERNetwork())
+    e.set(params=PARAMS)
+    rc = e.run(fatal=True)
+    assert rc[NetworkExperiment.METADATA][NetworkExperiment.STATUS]
+
+    assert rc[NetworkExperiment.RESULTS][SEIVRWithQuarantine.SUSCEPTIBLE] >= 0
+    assert rc[NetworkExperiment.RESULTS][SEIVRWithQuarantine.INFECTED] == 0
+    assert rc[NetworkExperiment.RESULTS][SEIVRWithQuarantine.EXPOSED] == 0
+    assert rc[NetworkExperiment.RESULTS][SEIVRWithQuarantine.VACCINATED] > 0
+    assert rc[NetworkExperiment.RESULTS][SEIVRWithQuarantine.REMOVED] >= 0
+
+    N_is = 0
+    for c in e._process.compartments():
+        N_is += rc[NetworkExperiment.RESULTS][c]
+
+    assert N_is == N
+
+
+def test_monitored_seivr_with_quarantine():
+    e = StochasticDynamics(MonitoredSEIVRWithQuarantine(), g=ERNetwork())
+    e.set(params=PARAMS)
+    rc = e.run(fatal=True)
+    assert rc[NetworkExperiment.METADATA][NetworkExperiment.STATUS]
+
+    assert rc[NetworkExperiment.RESULTS][SEIVRWithQuarantine.SUSCEPTIBLE] >= 0
+    assert rc[NetworkExperiment.RESULTS][SEIVRWithQuarantine.INFECTED] == 0
+    assert rc[NetworkExperiment.RESULTS][SEIVRWithQuarantine.EXPOSED] == 0
+    assert rc[NetworkExperiment.RESULTS][SEIVRWithQuarantine.VACCINATED] > 0
+    assert rc[NetworkExperiment.RESULTS][SEIVRWithQuarantine.REMOVED] >= 0
+
+    N_is = 0
+    for c in e._process.compartments():
+        N_is += rc[NetworkExperiment.RESULTS][c]
+
+    assert N_is == N
 
