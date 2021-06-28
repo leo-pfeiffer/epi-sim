@@ -115,9 +115,17 @@ class SEIVRWithQuarantine(SEIVR, QuarantineMixin):
 
     def __init__(self):
         super(SEIVRWithQuarantine, self).__init__()
+        self._p_quarantine: float = 0.
+
+    def build(self, params: Dict[str, Any]):
+        super(SEIVRWithQuarantine, self).build(params)
+
+        # todo: This is how it was done in the book... is this approach
+        #  deprecated in newer versions of epydemic?
+        self._p_quarantine = params[self.P_QUARANTINE]
 
     def infect(self, t: float, e: Edge):
-        super(SEIVRWithQuarantine).infect(t, e)
+        super(SEIVRWithQuarantine, self).infect(t, e)
         n, _ = e
         self.quarantine(n)
 
