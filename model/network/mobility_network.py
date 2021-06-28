@@ -299,6 +299,7 @@ class MNGeneratorFromNetworkData(MNGenerator):
     :param limit: (optional) maximum number of instances to generate
     """
 
+    N: Final[str] = 'MN.n'
     NETWORK_DATA: Final[str] = 'MN.network_data'
     MULTIPLIER: Final[str] = 'MN.multiplier'
     SEED: Final[str] = 'MN.seed'
