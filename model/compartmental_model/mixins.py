@@ -8,8 +8,9 @@ class QuarantineMixin:
     To use the mixin:
     - add it as a Parent using multiple inheritance
     - define aat least a `SUSCEPTIBLE`  compartment
-    - define the class model parameter p_quarantine` (the probability of an
-        infected-adjacent node to be put in quarantine)
+    - define the class model parameter `_p_quarantine` (the probability of an
+        infected-adjacent node to be put in quarantine) by overwriting the
+        build method. Also, track nodes in the SUSCEPTIBLE compartment.
     - Call the `quarantine` method of the mixin when required (e.g. from the
         `infect` event)
     """
@@ -31,7 +32,7 @@ class QuarantineMixin:
         for neighbor in neighbors:
 
             # Keep going with probability `p_quarantine`
-            if rng.random() > self.p_quarantine:
+            if rng.random() > self._p_quarantine:
                 continue
 
             # Only remove susceptible neighbors

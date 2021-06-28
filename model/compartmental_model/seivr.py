@@ -74,8 +74,8 @@ class SEIVR(CompartmentedModel):
         # infection events
         self.addEventPerElement(self.SE, p_infect_a, self.infect_asymptomatic)
         self.addEventPerElement(self.SI, p_infect_s, self.infect_symptomatic)
-        self.addEventPerElement(self.EV, vac_rrr * p_infect_a, self.infect_vac_asymptomatic)
-        self.addEventPerElement(self.IV, vac_rrr * p_infect_s, self.infect_vac_symptomatic)
+        self.addEventPerElement(self.EV, (1-vac_rrr) * p_infect_a, self.infect_vac_asymptomatic)
+        self.addEventPerElement(self.IV, (1-vac_rrr) * p_infect_s, self.infect_vac_symptomatic)
 
         # other events ...
         self.addEventPerElement(self.EXPOSED, p_symptoms, self.symptoms)

@@ -1,4 +1,4 @@
-from typing import Final
+from typing import Final, Dict, Any
 
 from epydemic import SEIR, Monitor, Edge
 from model.compartmental_model.mixins import QuarantineMixin
@@ -10,9 +10,19 @@ class SEIRWithQuarantine(SEIR, QuarantineMixin):
 
     def __init__(self):
         super(SEIRWithQuarantine, self).__init__()
+        self._p_quarantine: float = 0.
 
-    def infect(self, t : float, e : Edge):
-        super(SEIRWithQuarantine).infect(t, e)
+    def build(self, params: Dict[str, Any]):
+        super(SEIRWithQuarantine, self).build(params)
+
+        self.trackNodesInCompartment(self.SUSCEPTIBLE)
+
+        # todo: This is how it was done in the book... is this approach
+        #  deprecated in newer versions of epydemic?
+        self._p_quarantine = params[self.P_QUARANTINE]
+
+    def infect(self, t: float, e: Edge):
+        super(SEIRWithQuarantine, self).infect(t, e)
         n, _ = e
         self.quarantine(n)
 
