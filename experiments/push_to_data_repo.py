@@ -6,14 +6,21 @@ import os
 from dotenv import load_dotenv
 from configuration import ROOT_DIR
 
+# load dotenv file and load variables
 load_dotenv(dotenv_path=os.path.join(ROOT_DIR, '.env'))
 
 TOKEN = os.getenv("DATA_REPO_TOKEN")
-REPO_URL = 'https://api.github.com/repos/leo-pfeiffer/msc-thesis-data/contents'
+REPO_URL = os.getenv("DATA_REPO_URL")
+
+# set auth header
 AUTH = {"Authorization": f"token {TOKEN}"}
 
 
 def update_or_create(file_name):
+    """
+    Update or create the file in the data repo on github.
+    :param file_name: Name of the file
+    """
     path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'results')
 
     with open(os.path.join(path, file_name), 'r') as f:
@@ -25,6 +32,11 @@ def update_or_create(file_name):
 
 
 def get_sha(file_name):
+    """
+    Get the Blob Sha of the file on Github if it exists.
+    :param file_name: Name of the file
+    :return: SHA or None
+    """
     url = f'{REPO_URL}/{file_name}'
     headers = AUTH
     res = requests.get(url, headers=headers)
@@ -41,6 +53,12 @@ def get_sha(file_name):
 
 
 def put_file(file_name, content, sha=None):
+    """
+    Perform HTTP Put to create or update the file.
+    :param file_name: File name
+    :param content: Base 64 encoded string.
+    :param sha: Blob SHA of the file (required if update)
+    """
     url = f'{REPO_URL}/{file_name}'
     headers = AUTH | {'Accept': 'application/vnd.github.v3+json'}
 
@@ -55,7 +73,6 @@ def put_file(file_name, content, sha=None):
     res = requests.put(url, data=json.dumps(data), headers=headers)
 
     if not res.ok:
-        print(res)
         raise requests.exceptions.HTTPError()
 
 
