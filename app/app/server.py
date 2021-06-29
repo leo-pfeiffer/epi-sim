@@ -51,11 +51,11 @@ controls = dbc.Card(
                 dbc.Label("Networks"),
                 dcc.Checklist(
                     id="check-networks",
+                    labelClassName="checklist-option",
                     options=[
                         {"label": net, "value": net} for net in networks
                     ],
                     value=networks[0],
-                    labelStyle={'display': 'block'}
                 ),
             ]
         ),
@@ -64,11 +64,11 @@ controls = dbc.Card(
                 dbc.Label("Models"),
                 dcc.Checklist(
                     id="check-models",
+                    labelClassName="checklist-option",
                     options=[
                         {"label": mod, "value": mod} for mod in models
                     ],
                     value=models[0],
-                    labelStyle={'display': 'block'}
                 ),
             ]
         ),
@@ -138,21 +138,18 @@ content = dbc.Container(
                 dbc.Col(controls, md=12),
             ],
             align="center",
-            style={"margin-bottom": "2rem"}
         ),
         dbc.Row(
             [
                 dbc.Col(dcc.Graph(id="cluster-graph1", figure=fig), md=12),
             ],
             align="center",
-            style={"margin-bottom": "2rem"}
         ),
         dbc.Row(
             [
                 dbc.Col(dbc.Card([table], body=True), md=12),
             ],
             align="center",
-            style={"margin-bottom": "2rem"}
         ),
         dbc.Row(
             [
@@ -165,5 +162,4 @@ content = dbc.Container(
     id="page-content"
 )
 
-# app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 app.layout = html.Div([dcc.Location(id="url"), brand_wide, brand_narrow, content])

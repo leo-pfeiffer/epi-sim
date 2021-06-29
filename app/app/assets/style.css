@@ -1,6 +1,6 @@
 #page-content {
     width: 100%;
-    padding-bottom: 0.5rem;
+    padding-bottom: 1rem;
 }
 
 #brand-wide {
@@ -41,4 +41,13 @@
     #page-content {
         padding-top: 0.5rem;
     }
+}
+
+.checklist-option {
+    margin-right: 1rem;
+    display: inline-block;
+}
+
+.row {
+    margin-bottom: 0.5rem;
 }
