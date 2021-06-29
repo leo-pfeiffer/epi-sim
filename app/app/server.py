@@ -19,35 +19,10 @@ df = seivr_df.loc[seivr_df.model == 'SEIVR']
 networks = df.network.unique().tolist()
 models = df.model.unique().tolist()
 
-# the style arguments for the sidebar. We use position:fixed and a fixed width
-SIDEBAR_STYLE_WIDE = {
-    "position": "absolute",
-    "top": 0,
-    "left": 0,
-    "bottom": 0,
-    "width": "250px",
-    "padding": "2rem 1rem",
-}
-
-SIDEBAR_STYLE_NARROW = {
-    "width": "100%",
-    "font-size": "1.5rem",
-    "padding-bottom": "0.5rem",
-    "padding-top": "0.5rem",
-}
-
 GITHUB = html.A(
     html.I(className="fab fa-github"),
     href="https://github.com/leo-pfeiffer/msc-thesis"
 )
-
-
-# the styles for the main content position it to the right of the sidebar and
-# add some padding.
-CONTENT_STYLE = {
-    "width": "100%",
-    "padding-bottom": "0.5rem"
-}
 
 fig = px.line(df, x="time", y="value", color="compartment", facet_col="network",
               line_group="compartment", hover_name="compartment",
@@ -125,7 +100,6 @@ brand_wide = html.Div(
         )
     ],
     id="brand-wide",
-    style=SIDEBAR_STYLE_WIDE
 )
 
 
@@ -142,8 +116,7 @@ brand_narrow = dbc.Container(
             pills=True,
         ),
     ],
-    id="brand-narrow",
-    style=SIDEBAR_STYLE_NARROW
+    id="brand-narrow"
 )
 
 table_header = [
@@ -189,7 +162,6 @@ content = dbc.Container(
         )
     ],
     fluid=False,
-    style=CONTENT_STYLE,
     id="page-content"
 )
 
