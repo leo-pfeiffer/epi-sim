@@ -6,6 +6,7 @@ import dash_bootstrap_components as dbc
 import plotly.express as px
 from app.cytoscape_graph import cyto_graph  # noqa
 from app.data_import import seir_df, seivr_df  # noqa
+from app.sidebar import brand_narrow, brand_wide  # noqa
 
 external_stylesheets = [
     dbc.themes.SOLAR,
@@ -18,11 +19,6 @@ df = seivr_df.loc[seivr_df.model == 'SEIVR']
 
 networks = df.network.unique().tolist()
 models = df.model.unique().tolist()
-
-GITHUB = html.A(
-    html.I(className="fab fa-github"),
-    href="https://github.com/leo-pfeiffer/msc-thesis"
-)
 
 fig = px.line(df, x="time", y="value", color="compartment", facet_col="network",
               line_group="compartment", hover_name="compartment",
@@ -82,42 +78,6 @@ controls = dbc.Card(
     body=True,
 )
 
-brand_wide = html.Div(
-    [
-        html.H2("EpiSim", className="display-4", id="app-name-wide"),
-        html.Hr(),
-        html.P(
-            "Epidemic simulations", className="lead"
-        ),
-        dbc.Nav(
-            [
-                dbc.NavLink("Page 1", href="/page-1", active="exact"),
-                dbc.NavLink("Page 2", href="/page-2", active="exact"),
-                dbc.NavLink(GITHUB),
-            ],
-            vertical=True,
-            pills=True,
-        )
-    ],
-    id="brand-wide",
-)
-
-
-brand_narrow = dbc.Container(
-    [
-        dbc.Nav(
-            [
-                dbc.NavLink("EpiSim", href="/", active="exact"),
-                dbc.NavLink("Page 1", href="/page-1", active="exact"),
-                dbc.NavLink("Page 2", href="/page-2", active="exact"),
-                dbc.NavLink(GITHUB),
-            ],
-            vertical=False,
-            pills=True,
-        ),
-    ],
-    id="brand-narrow"
-)
 
 table_header = [
     html.Thead(html.Tr([html.Th("First Name"), html.Th("Last Name")]))
