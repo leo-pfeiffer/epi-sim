@@ -16,6 +16,9 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 # df = seir_df.loc[seir_df.model == 'SEIR']
 df = seivr_df.loc[seivr_df.model == 'SEIVR']
 
+networks = df.network.unique().tolist()
+models = df.model.unique().tolist()
+
 # df = pd.DataFrame({
 #     "time": ([1, 2, 3, 4, 5] * 3) * 3,
 #     "value": ([5, 4, 3, 2, 1] + [1, 3, 5, 4, 3] + [1, 2, 3, 4, 5]) * 3,
@@ -69,25 +72,27 @@ controls = dbc.Card(
     [
         dbc.FormGroup(
             [
-                dbc.Label("X variable"),
-                dcc.Dropdown(
-                    id="x-variable",
+                dbc.Label("Networks"),
+                dcc.Checklist(
+                    id="check-networks",
                     options=[
-                        {"label": col, "value": col} for col in df.columns
+                        {"label": net, "value": net} for net in networks
                     ],
-                    value="sepal length (cm)",
+                    value=networks[0],
+                    labelStyle={'display': 'block'}
                 ),
             ]
         ),
         dbc.FormGroup(
             [
-                dbc.Label("Y variable"),
-                dcc.Dropdown(
-                    id="y-variable",
+                dbc.Label("Models"),
+                dcc.Checklist(
+                    id="check-models",
                     options=[
-                        {"label": col, "value": col} for col in df.columns
+                        {"label": mod, "value": mod} for mod in models
                     ],
-                    value="sepal width (cm)",
+                    value=models[0],
+                    labelStyle={'display': 'block'}
                 ),
             ]
         ),
@@ -117,6 +122,7 @@ sidebar = html.Div(
             vertical=True,
             pills=True,
         ),
+        html.Hr(),
         controls,
         html.Hr(),
         html.A(
@@ -136,7 +142,7 @@ table_header = [
 row1 = html.Tr([html.Td("Arthur"), html.Td("Dent")])
 row2 = html.Tr([html.Td("Ford"), html.Td("Prefect")])
 row3 = html.Tr([html.Td("Zaphod"), html.Td("Beeblebrox")])
-row4 = html.Tr([html.Td("Trillian"), html.Td("Astra")])
+row4 = html.Tr([html.Td("Trillian"), html.Td("AstraZeneca")])
 
 table_body = [html.Tbody([row1, row2, row3, row4])]
 table = dbc.Table(table_header + table_body, bordered=True)
