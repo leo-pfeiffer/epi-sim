@@ -19,33 +19,34 @@ df = seivr_df.loc[seivr_df.model == 'SEIVR']
 networks = df.network.unique().tolist()
 models = df.model.unique().tolist()
 
-# df = pd.DataFrame({
-#     "time": ([1, 2, 3, 4, 5] * 3) * 3,
-#     "value": ([5, 4, 3, 2, 1] + [1, 3, 5, 4, 3] + [1, 2, 3, 4, 5]) * 3,
-#     "compartment": (["S"] * 5 + ["I"] * 5 + ["R"] * 5) * 3,
-#     "network": ["MN"] * 15 + ["PLC"] * 15 + ["PD"] * 15
-# })
-
-
 # the style arguments for the sidebar. We use position:fixed and a fixed width
-SIDEBAR_WIDTH = 25
-SIDEBAR_STYLE = {
-    "position": "fixed",
+SIDEBAR_STYLE_WIDE = {
+    "position": "absolute",
     "top": 0,
     "left": 0,
     "bottom": 0,
-    "width": f"{SIDEBAR_WIDTH}%",
+    "width": "250px",
     "padding": "2rem 1rem",
-    "background-color": "#f8f9fa",
 }
+
+SIDEBAR_STYLE_NARROW = {
+    "width": "100%",
+    "font-size": "1.5rem",
+    "padding-bottom": "0.5rem",
+    "padding-top": "0.5rem",
+}
+
+GITHUB = html.A(
+    html.I(className="fab fa-github"),
+    href="https://github.com/leo-pfeiffer/msc-thesis"
+)
+
 
 # the styles for the main content position it to the right of the sidebar and
 # add some padding.
 CONTENT_STYLE = {
-    "margin-left": f"{SIDEBAR_WIDTH}%",
-    "width": f"{100 - SIDEBAR_WIDTH}%",
-    "margin-right": "1rem",
-    "padding": "1rem 1rem",
+    "width": "100%",
+    "padding-bottom": "0.5rem"
 }
 
 fig = px.line(df, x="time", y="value", color="compartment", facet_col="network",
@@ -106,33 +107,43 @@ controls = dbc.Card(
     body=True,
 )
 
-sidebar = html.Div(
+brand_wide = html.Div(
     [
-        html.H2("EpiSim", className="display-4", id="app-name"),
+        html.H2("EpiSim", className="display-4", id="app-name-wide"),
         html.Hr(),
         html.P(
             "Epidemic simulations", className="lead"
         ),
         dbc.Nav(
             [
-                dbc.NavLink("Home", href="/", active="exact"),
                 dbc.NavLink("Page 1", href="/page-1", active="exact"),
                 dbc.NavLink("Page 2", href="/page-2", active="exact"),
+                dbc.NavLink(GITHUB),
             ],
             vertical=True,
             pills=True,
-        ),
-        html.Hr(),
-        controls,
-        html.Hr(),
-        html.A(
-            html.I(className="fab fa-github"),
-            href="https://github.com/leo-pfeiffer/msc-thesis",
-            style={"font-size": "2rem", "color": "#839496"}
         )
     ],
-    style=SIDEBAR_STYLE,
-    id="sidebar"
+    id="brand-wide",
+    style=SIDEBAR_STYLE_WIDE
+)
+
+
+brand_narrow = dbc.Container(
+    [
+        dbc.Nav(
+            [
+                dbc.NavLink("EpiSim", href="/", active="exact"),
+                dbc.NavLink("Page 1", href="/page-1", active="exact"),
+                dbc.NavLink("Page 2", href="/page-2", active="exact"),
+                dbc.NavLink(GITHUB),
+            ],
+            vertical=False,
+            pills=True,
+        ),
+    ],
+    id="brand-narrow",
+    style=SIDEBAR_STYLE_NARROW
 )
 
 table_header = [
@@ -149,6 +160,13 @@ table = dbc.Table(table_header + table_body, bordered=True)
 
 content = dbc.Container(
     [
+        dbc.Row(
+            [
+                dbc.Col(controls, md=12),
+            ],
+            align="center",
+            style={"margin-bottom": "2rem"}
+        ),
         dbc.Row(
             [
                 dbc.Col(dcc.Graph(id="cluster-graph1", figure=fig), md=12),
@@ -168,7 +186,6 @@ content = dbc.Container(
                 dbc.Col(cyto_graph, md=12)
             ],
             align="center",
-            style={"margin-bottom": "1rem"}
         )
     ],
     fluid=False,
@@ -176,4 +193,5 @@ content = dbc.Container(
     id="page-content"
 )
 
-app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
+# app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
+app.layout = html.Div([dcc.Location(id="url"), brand_wide, brand_narrow, content])

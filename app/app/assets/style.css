@@ -1,5 +1,23 @@
-@media only screen and (max-width: 1000px) {
-    #app-name {
-        font-size: 2rem;
+@media only screen and (max-width: 1600px) {
+    #brand-narrow {
+        display: block
+    }
+    #brand-wide {
+        display: none
+    }
+    #page-content {
+        padding-top: 0
+    }
+}
+
+@media only screen and (min-width: 1600px) {
+    #brand-narrow {
+        display: none
+    }
+    #brand-wide {
+        display: block
+    }
+    #page-content {
+        padding-top: 0.5rem
     }
 }
