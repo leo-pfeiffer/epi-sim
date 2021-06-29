@@ -13,7 +13,8 @@ external_stylesheets = [
 ]
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
-df = seir_df.loc[seir_df.model == 'SEIR']
+# df = seir_df.loc[seir_df.model == 'SEIR']
+df = seivr_df.loc[seivr_df.model == 'SEIVR']
 
 # df = pd.DataFrame({
 #     "time": ([1, 2, 3, 4, 5] * 3) * 3,

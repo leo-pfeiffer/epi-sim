@@ -23,8 +23,8 @@ def update_or_create(file_name):
     """
     path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'results')
 
-    with open(os.path.join(path, file_name), 'r') as f:
-        data = f.read().encode()
+    with open(os.path.join(path, file_name), 'rb') as f:
+        data = f.read()
         content = base64.b64encode(data).decode()
 
     sha = get_sha(file_name=file_name)
