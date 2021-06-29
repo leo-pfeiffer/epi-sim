@@ -2,6 +2,7 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
+from dash.dependencies import Input, Output, State
 
 import plotly.express as px
 from app.cytoscape_graph import cyto_graph  # noqa
@@ -13,6 +14,7 @@ external_stylesheets = [
     'https://pro.fontawesome.com/releases/v5.10.0/css/all.css'
 ]
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+app.title = 'EpiSim'
 
 # df = seir_df.loc[seir_df.model == 'SEIR']
 df = seivr_df.loc[seivr_df.model == 'SEIVR']
@@ -78,6 +80,13 @@ controls = dbc.Card(
     body=True,
 )
 
+graph_selector = dbc.Card(
+    [
+        dbc.ButtonGroup(
+            [dbc.Button(net) for net in networks]
+        )
+    ]
+)
 
 table_header = [
     html.Thead(html.Tr([html.Th("First Name"), html.Th("Last Name")]))
@@ -91,35 +100,53 @@ row4 = html.Tr([html.Td("Trillian"), html.Td("AstraZeneca")])
 table_body = [html.Tbody([row1, row2, row3, row4])]
 table = dbc.Table(table_header + table_body, bordered=True)
 
+controls_row = dbc.Row([dbc.Col(controls, md=12)], align='center')
+
+graph_row = dbc.Row(
+    [dbc.Col(
+        dbc.Card([
+            dbc.CardHeader(graph_selector),
+            dbc.CardBody(cyto_graph)
+        ], body=True), md=12)
+    ],
+    align="center"
+)
+
+fig_row = dbc.Row(
+    [dbc.Col(
+        dbc.Card([
+            dbc.CardBody(dcc.Graph(id="cluster-graph1", figure=fig)),
+            dbc.CardFooter([
+                dbc.Button('Show details', id='show-details', n_clicks=0),
+                dbc.Collapse([
+                    html.Hr(), dbc.Card([table], body=True)
+                ], id='details', is_open=False)
+            ]),
+        ]), md=12),
+    ],
+    align="center",
+)
+
 content = dbc.Container(
     [
-        dbc.Row(
-            [
-                dbc.Col(controls, md=12),
-            ],
-            align="center",
-        ),
-        dbc.Row(
-            [
-                dbc.Col(dcc.Graph(id="cluster-graph1", figure=fig), md=12),
-            ],
-            align="center",
-        ),
-        dbc.Row(
-            [
-                dbc.Col(dbc.Card([table], body=True), md=12),
-            ],
-            align="center",
-        ),
-        dbc.Row(
-            [
-                dbc.Col(cyto_graph, md=12)
-            ],
-            align="center",
-        )
+        controls_row,
+        fig_row,
+        graph_row
     ],
     fluid=False,
     id="page-content"
 )
 
 app.layout = html.Div([dcc.Location(id="url"), brand_wide, brand_narrow, content])
+
+
+# CALLBACKS ====
+@app.callback(
+    Output("details", "is_open"),
+    [Input("show-details", "n_clicks")],
+    [State("details", "is_open")],
+)
+def toggle_collapse(n, is_open):
+    if n:
+        return not is_open
+    return is_open

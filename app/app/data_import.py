@@ -7,3 +7,4 @@ SEIVR_FILE = f"{REPO_URL}/sim_seivr.csv"
 # seir_df = pd.read_csv(SEIR_FILE, index_col=0)
 seir_df = pd.DataFrame()
 seivr_df = pd.read_csv(SEIVR_FILE, index_col=0)
+# seivr_df = pd.DataFrame()
