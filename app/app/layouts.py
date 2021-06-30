@@ -10,7 +10,8 @@ fig_layout = dict(
         x=0.5
     ),
     hovermode="x unified",
-    transition_duration=500
+    # todo for some reason, setting transition_duration prevents loading of fig
+    # transition_duration=500
 )
 
 fig_traces = dict(

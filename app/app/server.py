@@ -62,8 +62,7 @@ for k, v in data.items():
         dbc.Row(
             [dbc.Col(
                 dbc.Card([
-                    # todo figure=px.line is only for debugging purposes since figure=None prevents updating in callback...
-                    dbc.CardBody(dcc.Graph(id=dict(index=k, type="graph"), style=dict(border=f"solid red 5px"), figure=px.line()),
+                    dbc.CardBody(dcc.Graph(id=dict(index=k, type="graph")),
                                  id=f'graph-card-{k}'),
                     dbc.CardFooter([
                         dbc.Button('Show details', id=f'show-details-{k}', n_clicks=0),
@@ -151,18 +150,15 @@ def testing(values, figure):
     print(ctx.triggered)
 
     if ctx.triggered[0]['prop_id'] == '.':
-        return figure
+        return {}
 
-    # todo have to find another solution for this
-    #  figure isn't updated and can't be reinitialised
     if len(values) == 0:
-        return None
+        return {}
 
     model = json.loads(ctx.triggered[0]['prop_id'].split('.')[0])['index']
     selected_networks = ctx.triggered[0]['value']
 
-    filtered_df = data[model]['df'][data[model]['df'].network.apply(
-        lambda x: x in selected_networks)]
+    filtered_df = data[model]['df'][data[model]['df'].network.isin(selected_networks)]
 
     fig = create_figure(filtered_df)
 
