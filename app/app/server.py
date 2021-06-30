@@ -1,4 +1,5 @@
 import dash
+import dash_table
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
@@ -10,7 +11,9 @@ import json
 from app.cytoscape_graph import cyto_graph  # noqa
 from app.data_import import data  # noqa
 from app.static_elements import brand_narrow, brand_wide, footer  # noqa
-from app.layouts import fig_layout, fig_traces, px_line_props  # noqa
+from app.layouts import fig_layout, fig_traces, px_line_props, table_layout  # noqa
+
+import pandas as pd
 
 external_stylesheets = [
     dbc.themes.SOLAR,
@@ -19,16 +22,10 @@ external_stylesheets = [
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 app.title = 'EpiSim'
 
-table_header = [
-    html.Thead(html.Tr([html.Th("First Name"), html.Th("Last Name")]))
-]
-
-row1 = html.Tr([html.Td("Arthur"), html.Td("Dent")])
-row2 = html.Tr([html.Td("Ford"), html.Td("Prefect")])
-
-table_body = [html.Tbody([row1, row2])]
-table = dbc.Table(table_header + table_body, bordered=True)
-
+table_df = pd.DataFrame(dict(
+    key=['key1', 'key2', 'key3'],
+    value=[1, 2, 3]
+))
 
 ctrls = []
 figs = []
@@ -67,7 +64,14 @@ for k, v in data.items():
                     dbc.CardFooter([
                         dbc.Button('Show details', id=f'show-details-{k}', n_clicks=0),
                         dbc.Collapse([
-                            html.Hr(), dbc.Card([table], body=True)
+                            html.Hr(), dbc.Card([
+                                dash_table.DataTable(
+                                    id=dict(index=k, type="table"),
+                                    columns=[{"name": i, "id": i} for i in table_df.columns],
+                                    data=table_df.to_dict('records'),
+                                    **table_layout
+                                )
+                            ], body=True)
                         ], id=f'details-{k}', is_open=False)
                     ]),
                 ]), md=12),
@@ -142,6 +146,8 @@ def toggle_model_button(*args):
 
 @app.callback(
     Output({'type': 'graph', 'index': MATCH}, 'figure'),
+    Output({'type': 'table', 'index': MATCH}, 'data'),
+    Output({'type': 'table', 'index': MATCH}, 'columns'),
     Input({'type': 'network-checklist', 'index': MATCH}, 'value'),
     State({'type': 'graph', 'index': MATCH}, 'figure'),
 )
@@ -149,13 +155,11 @@ def testing(values, figure):
 
     ctx = dash.callback_context
 
-    print(ctx.triggered)
-
     if ctx.triggered[0]['prop_id'] == '.':
-        return {}
+        return {}, [], []
 
     if len(values) == 0:
-        return {}
+        return {}, [], []
 
     model = json.loads(ctx.triggered[0]['prop_id'].split('.')[0])['index']
     selected_networks = ctx.triggered[0]['value']
@@ -164,7 +168,11 @@ def testing(values, figure):
 
     fig = create_figure(filtered_df)
 
-    return fig
+    head = filtered_df.head()
+    columns = [{"name": i, "id": i} for i in head.columns]
+    head_data = head.to_dict('records')
+
+    return fig, head_data, columns
 
 
 def create_figure(filtered_df):

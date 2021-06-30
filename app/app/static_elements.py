@@ -16,8 +16,8 @@ brand_wide = html.Div(
         ),
         dbc.Nav(
             [
-                dbc.NavLink("Page 1", href="/page-1", active="exact"),
-                dbc.NavLink("Page 2", href="/page-2", active="exact"),
+                dbc.NavLink("Models", href="/model", active="exact"),
+                dbc.NavLink("Data", href="/data", active="exact"),
                 dbc.NavLink(GITHUB),
             ],
             vertical=True,
