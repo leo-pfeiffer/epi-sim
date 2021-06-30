@@ -37,6 +37,8 @@ table_layout = dict(
         'backgroundColor': '#38535a',
         'color': 'white',
     },
-    css=[dict(selector='tr:first-child', rule='display: none')],
+    style_header={
+        'fontWeight': 'bold'
+    },
     style_as_list_view=True
 )

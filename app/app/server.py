@@ -151,28 +151,23 @@ def toggle_model_button(*args):
     Input({'type': 'network-checklist', 'index': MATCH}, 'value'),
     State({'type': 'graph', 'index': MATCH}, 'figure'),
 )
-def testing(values, figure):
+def testing(networks, figure):
 
     ctx = dash.callback_context
 
     if ctx.triggered[0]['prop_id'] == '.':
         return {}, [], []
 
-    if len(values) == 0:
+    if len(networks) == 0:
         return {}, [], []
 
     model = json.loads(ctx.triggered[0]['prop_id'].split('.')[0])['index']
-    selected_networks = ctx.triggered[0]['value']
-
-    filtered_df = data[model]['df'][data[model]['df'].network.isin(selected_networks)]
+    filtered_df = data[model]['df'][data[model]['df'].network.isin(networks)]
 
     fig = create_figure(filtered_df)
+    dat, cols = create_detail_table(filtered_df)
 
-    head = filtered_df.head()
-    columns = [{"name": i, "id": i} for i in head.columns]
-    head_data = head.to_dict('records')
-
-    return fig, head_data, columns
+    return fig, dat, cols
 
 
 def create_figure(filtered_df):
@@ -181,3 +176,47 @@ def create_figure(filtered_df):
     fig.update_layout(**fig_layout)
     return fig
 
+
+def create_detail_table(filtered_df):
+
+    out = {}
+    for net in filtered_df.network.unique().tolist():
+
+        out[net] = dict()
+
+        sub_df = filtered_df[filtered_df.network == net]
+        last_time = sub_df[sub_df.time == max(sub_df.time)]
+
+        out[net]['total infected'] = calc_perc_infected(last_time)
+        out[net]['susceptible remaining'] = calc_susceptible_remaining(last_time)
+        out[net]['peak time'] = calc_peak_time(sub_df)
+        out[net]['effective end'] = calc_effective_end(sub_df)
+
+    # todo back and forth between dict and df is inefficient
+    #  also, naming the index column `.` is pretty stupid
+    df_out = pd.DataFrame(out).reset_index().rename(columns={'index': '.'})
+
+    columns = [{"name": i, "id": i} for i in df_out.columns]
+    records = df_out.to_dict('records')
+
+    return records, columns
+
+
+def calc_perc_infected(df):
+    r = df[df.compartment == 'removed'].iloc[0]['value']
+    e = df[df.compartment == 'exposed'].iloc[0]['value']
+    return r + e
+
+
+def calc_susceptible_remaining(df):
+    return df[df.compartment == 'susceptible'].iloc[0]['value']
+
+
+def calc_peak_time(df):
+    # todo
+    return 100
+
+
+def calc_effective_end(df):
+    # todo (when is infected sub 1%? again)
+    return 200
