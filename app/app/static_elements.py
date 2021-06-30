@@ -42,3 +42,30 @@ brand_narrow = dbc.Container(
     ],
     id="brand-narrow"
 )
+
+footer = dbc.Container(
+    [
+        html.Footer(
+            [
+                html.Div([
+                    html.Hr(),
+                    html.Div([
+                        "Created as part of my MSc dissertation ",
+                        html.Strong("A Compartmental Network Model for COVID-19"),
+                        "."
+                    ]),
+                    html.Div([
+                        html.A("Leopold Pfeiffer", href="https://leopold.page"), " | ",
+                        html.A("University of St Andrews", href="https://www.st-andrews.ac.uk"), " | ",
+                        html.A("School of Computer Science", href="https://www.st-andrews.ac.uk/computer-science/")
+                    ]),
+                    html.Hr(),
+                    html.A([
+                        "View on Github  ", GITHUB
+                    ], href=GITHUB.href, style={'color': 'white'})],
+                    className='footer-content'
+                ),
+            ]
+        )
+    ]
+)

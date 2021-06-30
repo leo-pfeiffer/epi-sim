@@ -9,7 +9,7 @@ import json
 
 from app.cytoscape_graph import cyto_graph  # noqa
 from app.data_import import data  # noqa
-from app.sidebar import brand_narrow, brand_wide  # noqa
+from app.static_elements import brand_narrow, brand_wide, footer  # noqa
 from app.layouts import fig_layout, fig_traces, px_line_props  # noqa
 
 external_stylesheets = [
@@ -100,7 +100,9 @@ content = dbc.Container(
     id="page-content"
 )
 
-app.layout = html.Div([dcc.Location(id="url"), brand_wide, brand_narrow, content])
+app.layout = html.Div([
+    dcc.Location(id="url"), brand_wide, brand_narrow, content, footer
+])
 
 
 # CALLBACKS ====
