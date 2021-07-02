@@ -24,11 +24,6 @@ external_stylesheets = [
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 app.title = 'EpiSim'
 
-table_df = pd.DataFrame(dict(
-    key=['key1', 'key2', 'key3'],
-    value=[1, 2, 3]
-))
-
 ctrls = []
 figs = []
 for k, v in data.items():
@@ -69,8 +64,8 @@ for k, v in data.items():
                             html.Hr(), dbc.Card([
                                 dash_table.DataTable(
                                     id=dict(index=k, type="table"),
-                                    columns=[{"name": i, "id": i} for i in table_df.columns],
-                                    data=table_df.to_dict('records'),
+                                    columns=[],
+                                    data=[],
                                     **table_layout
                                 )
                             ], body=True)
