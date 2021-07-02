@@ -189,6 +189,7 @@ def create_detail_table(filtered_df):
         out[net]['total infected'] = calc_perc_infected(last_time)
         out[net]['susceptible remaining'] = calc_susceptible_remaining(last_time)
         out[net]['peak time'] = calc_peak_time(sub_df)
+        out[net]['peak infected'] = calc_peak_infected(sub_df)
         out[net]['effective end'] = calc_effective_end(sub_df)
 
     # todo back and forth between dict and df is inefficient
@@ -212,6 +213,10 @@ def calc_susceptible_remaining(df):
 
 def calc_peak_time(df):
     return df.loc[df[df.compartment == 'infected'].value.idxmax(), 'time']
+
+
+def calc_peak_infected(df):
+    return df[df.compartment == 'infected'].value.max()
 
 
 def calc_effective_end(df):
