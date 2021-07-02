@@ -74,7 +74,7 @@ or (similarly)
 docker compose up --build -d
 ```
 
-Go to http://localhost/4401.
+Go to http://localhost:4401.
 
 ### Run web app without build
 Alternatively, you can also run the web app using the builtin server, which is not suitable for 
