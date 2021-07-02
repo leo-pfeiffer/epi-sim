@@ -8,7 +8,6 @@ requirements:
 	pip install --upgrade pip
 	pip install -r requirements.txt -r app/requirements.txt
 
-
 # unit tests
 .PHONY: test
 test:
@@ -20,15 +19,20 @@ run:
 	python app/run.py
 
 # docker-compose
+.PHONY: build
+build:
+	docker-compose up --build -d
+	docker-compose ps
+
 .PHONY: up
 up:
 	docker-compose up -d
-	make ps
+	docker-compose ps
 
 .PHONY: down
 down:
 	docker-compose down
-	make ps
+	docker-compose ps
 
 .PHONY: bash
 bash:
@@ -38,14 +42,9 @@ bash:
 destroy:
 	docker-compose down --volumes
 	docker rmi $(docker images -a -q)
-	make ps
-
-.PHONY: build
-build:
-	docker-compose up --build -d
-	make ps
+	docker-compose ps
 
 .PHONY: restart
 restart:
 	docker-compose restart
-	make ps
+	docker-compose ps
