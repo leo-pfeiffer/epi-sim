@@ -1,3 +1,5 @@
+from typing import Union
+
 import dash
 import dash_table
 import dash_core_components as dcc
@@ -152,7 +154,6 @@ def toggle_model_button(*args):
     State({'type': 'graph', 'index': MATCH}, 'figure'),
 )
 def testing(networks, figure):
-
     ctx = dash.callback_context
 
     if ctx.triggered[0]['prop_id'] == '.':
@@ -178,10 +179,8 @@ def create_figure(filtered_df):
 
 
 def create_detail_table(filtered_df):
-
     out = {}
     for net in filtered_df.network.unique().tolist():
-
         out[net] = dict()
 
         sub_df = filtered_df[filtered_df.network == net]
@@ -193,8 +192,7 @@ def create_detail_table(filtered_df):
         out[net]['effective end'] = calc_effective_end(sub_df)
 
     # todo back and forth between dict and df is inefficient
-    #  also, naming the index column `.` is pretty stupid
-    df_out = pd.DataFrame(out).reset_index().rename(columns={'index': '.'})
+    df_out = pd.DataFrame(out).reset_index().rename(columns={'index': ''})
 
     columns = [{"name": i, "id": i} for i in df_out.columns]
     records = df_out.to_dict('records')
@@ -213,10 +211,35 @@ def calc_susceptible_remaining(df):
 
 
 def calc_peak_time(df):
-    # todo
-    return 100
+    return df.loc[df[df.compartment == 'infected'].value.idxmax(), 'time']
 
 
 def calc_effective_end(df):
-    # todo (when is infected sub 1%? again)
-    return 200
+    # first time, infected is sub 1% again
+    # todo what threshold makes sense here?
+    infected = df[df.compartment == 'infected']
+
+    idx = find_sub_threshold_after_peak(infected.value.tolist(), 0.01)
+
+    if idx is None:
+        return None
+
+    return infected.time.values[idx]
+
+
+def find_sub_threshold_after_peak(l: list, v: float) -> Union[int, None]:
+    """
+    Find the index of the value in a list that is below a threshold  for the
+    first time after a value above the peak. If the condition is not met for
+    any values, return 0 if the first value of the list is below the threshold
+    or None if the first value is above the threshold.
+    :param l: List of values
+    :param v: Threshold value
+    :return: Index or None
+    """
+    for i in range(1, len(l)):
+        if l[i - 1] > v >= l[i]:
+            return i
+
+    return 0 if l[0] <= v else None
+
