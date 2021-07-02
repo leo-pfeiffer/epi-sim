@@ -9,7 +9,7 @@ services:
     container_name: app
     restart: always
     environment:
-      - APP_NAME=EpidemicModels
+      - APP_NAME=EpiSim
     expose:
       - 8080
 
