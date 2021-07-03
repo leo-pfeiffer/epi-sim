@@ -88,6 +88,7 @@ graph_selector = dbc.Card(
 
 controls_row = dbc.Row([dbc.Col(controls, md=12), html.P(id='output-value')], align='center')
 
+# todo display graph metrics
 graph_row = dbc.Row(
     [dbc.Col(dbc.Card(
         [dbc.CardHeader(graph_selector), dbc.CardBody(cyto_graph)], body=True), md=12)
