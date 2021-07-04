@@ -144,11 +144,20 @@ def test_plc_mean():
     """
     Test PLC distribution returns correct mean.
     """
-    assert PLC_DIST.mean == polylog(TAU-1, np.exp(-1/KAPPA))
+    n = polylog(TAU-1, np.exp(-1 / KAPPA))
+    m = polylog(TAU, np.exp(-1 / KAPPA))
+
+    assert PLC_DIST.mean == n / m
 
 
 def test_plc_variance():
     """
     Test PLC distribution returns correct variance.
     """
-    assert PLC_DIST.var == polylog(TAU-2, np.exp(-1/KAPPA))
+    x = np.exp(-1 / KAPPA)
+    n = polylog(TAU-1, x)
+    m = polylog(TAU, x)
+
+    g = (polylog(TAU-2, x) - polylog(TAU-1, x)) / polylog(TAU, x)
+
+    assert PLC_DIST.var == g + (n/m) - (n/m) * (n/m)
