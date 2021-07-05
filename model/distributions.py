@@ -105,7 +105,7 @@ def household_size_dist(mu: float, std: Union[float, None] = None,
 def node_degree_dist(exponent: float,
                      seed: Optional[RANDOM_SEED] = None) -> int:
     """
-    Return node degree from a discrete exponential distribution.
+    Return node degree from an exponential distribution.
     :param exponent: Exponent of the exponential distribution.
     :param seed: (optional) Random seed.
     :returns: Number of connections to outside the household.
@@ -142,4 +142,4 @@ def intra_household_contacts(size: int, std: float = 1,
     :return: number of intra household contact
     """
     rng = np.random.default_rng(seed=seed)
-    return max(int(rng.normal(min(size / 2, 1), std)), 1)
+    return max(int(rng.normal(min(size / 2, 2), std)), 1)

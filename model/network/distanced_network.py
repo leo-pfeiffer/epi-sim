@@ -69,8 +69,8 @@ class DistancedNetwork:
         contacts = []
         for house in households:
             size = house.order()
-            degree = self.contact_dist(size, seed=self._rng)
-            contacts.append(degree)
+            n_contacts = self.contact_dist(size, seed=self._rng)
+            contacts.append(n_contacts)
 
         stubs = []
 
