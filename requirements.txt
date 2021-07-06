@@ -5,7 +5,7 @@ python-dotenv~=0.18.0
 requests~=2.25.1
 
 # modelling
-epydemic==1.7.1
+epydemic==1.7.2
 epyc==1.4.1
 networkx~=2.5.1
 matplotlib~=3.4.2
