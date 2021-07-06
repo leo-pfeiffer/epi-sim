@@ -44,7 +44,7 @@ def test_household_size_dist():
 def test_intra_household_contacts():
     size = 10
     std = 2
-    mu_should = min(size / 2, 1)
+    mu_should = min(size / 2, 2)
 
     nums = []
     for _ in range(10000):
