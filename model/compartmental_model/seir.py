@@ -6,7 +6,7 @@ from model.compartmental_model.mixins import QuarantineMixin
 
 class SEIRWithQuarantine(SEIR, QuarantineMixin):
 
-    P_QUARANTINE: Final[str] = 'epydemic.SEIRWithQuarantine.p_quarantine'  #: Parameter for probability of removal (recovery).
+    P_QUARANTINE: Final[str] = 'epydemic.SEIRWithQuarantine.p_quarantine'  #: Parameter for probability of quarantine
 
     def __init__(self):
         super(SEIRWithQuarantine, self).__init__()
@@ -17,8 +17,7 @@ class SEIRWithQuarantine(SEIR, QuarantineMixin):
 
         self.trackNodesInCompartment(self.SUSCEPTIBLE)
 
-        # todo: This is how it was done in the book... is this approach
-        #  deprecated in newer versions of epydemic?
+        # define _p_quarantine for QuarantineMixin
         self._p_quarantine = params[self.P_QUARANTINE]
 
     def infect(self, t: float, e: Edge):

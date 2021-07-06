@@ -111,7 +111,7 @@ class SEIVR(CompartmentedModel):
 
 class SEIVRWithQuarantine(SEIVR, QuarantineMixin):
 
-    P_QUARANTINE: Final[str] = 'epydemic.SEIVRWithQuarantine.p_quarantine'  #: Parameter for probability of removal (recovery).
+    P_QUARANTINE: Final[str] = 'epydemic.SEIVRWithQuarantine.p_quarantine'  #: Parameter for probability of quarantine
 
     def __init__(self):
         super(SEIVRWithQuarantine, self).__init__()
@@ -120,8 +120,7 @@ class SEIVRWithQuarantine(SEIVR, QuarantineMixin):
     def build(self, params: Dict[str, Any]):
         super(SEIVRWithQuarantine, self).build(params)
 
-        # todo: This is how it was done in the book... is this approach
-        #  deprecated in newer versions of epydemic?
+        # define _p_quarantine for QuarantineMixin
         self._p_quarantine = params[self.P_QUARANTINE]
 
     def infect(self, t: float, e: Edge):
