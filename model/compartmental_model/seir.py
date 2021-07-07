@@ -1,6 +1,6 @@
 from typing import Final, Dict, Any
 
-from epydemic import SEIR, Monitor, Edge
+from epydemic import SEIR, Monitor, Node
 from model.compartmental_model.mixins import QuarantineMixin
 
 
@@ -20,9 +20,8 @@ class SEIRWithQuarantine(SEIR, QuarantineMixin):
         # define _p_quarantine for QuarantineMixin
         self._p_quarantine = params[self.P_QUARANTINE]
 
-    def infect(self, t: float, e: Edge):
-        super(SEIRWithQuarantine, self).infect(t, e)
-        n, _ = e
+    def symptoms(self, t, n: Node):
+        super(SEIRWithQuarantine, self).symptoms(t, n)
         self.quarantine(n)
 
 

@@ -123,9 +123,8 @@ class SEIVRWithQuarantine(SEIVR, QuarantineMixin):
         # define _p_quarantine for QuarantineMixin
         self._p_quarantine = params[self.P_QUARANTINE]
 
-    def infect(self, t: float, e: Edge):
-        super(SEIVRWithQuarantine, self).infect(t, e)
-        n, _ = e
+    def symptoms(self, t, n: Node):
+        super(SEIVRWithQuarantine, self).symptoms(t, n)
         self.quarantine(n)
 
 
