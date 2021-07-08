@@ -1,6 +1,6 @@
 import numpy as np
 import networkx as nx
-from typing import Dict, Union, List, Tuple, Any, Final, Callable
+from typing import Any, Final, Callable, Optional
 from epydemic import NetworkGenerator
 from networkx import Graph, read_graphml
 
@@ -11,23 +11,14 @@ from model.types import RANDOM_SEED
 # special types for convenience...
 from model.utils import discrete_rejection_sample
 
-HOUSEHOLDS = List[nx.Graph]
-STUBS = List[int]
-CBG_DEGREE_MAP = Dict[str, List[int]]
+HOUSEHOLDS = list[nx.Graph]
+STUBS = list[int]
+CBG_DEGREE_MAP = dict[str, list[int]]
 
 
 class MobilityNetwork:
     """
     Mobility Network created from mobility data.
-    :param network_data: NetworkData containing mobility data from which to
-        create the network.
-    :param N: Number of nodes (approximate) in the network.
-    :param baseline: Baseline value for the exponent of the exponential
-        distribution used for the node degrees.
-    :param multiplier: (optional) True the trip_count_change multiplier should
-        be applied to the exponent of the exponential distribution for the
-        node degrees.
-    :param seed: (optional) Random seed for reproducibility.
     """
 
     def __init__(self, network_data: NetworkData,
@@ -35,7 +26,18 @@ class MobilityNetwork:
                  N: int = 10000,
                  multiplier: bool = False,
                  max_deg: int = 100,
-                 seed: Union[RANDOM_SEED, None] = None):
+                 seed: Optional[RANDOM_SEED] = None):
+        """
+        :param network_data: NetworkData containing mobility data from which to
+            create the network.
+        :param degree_dist: Probability function of degree distribution.
+        :param N: Number of nodes (approximate) in the network.
+        :param multiplier: True the trip_count_change multiplier should
+            be applied to the exponent of the exponential distribution for the
+            node degrees.
+        :param max_deg: Maximum allowed node degree.
+        :param seed: (optional) Random seed for reproducibility.
+        """
 
         self.network_data: NetworkData = network_data
         self.degree_dist: Callable[[int], float] = degree_dist
@@ -124,7 +126,7 @@ class MobilityNetwork:
         return households
 
     def _create_stubs(self, households: HOUSEHOLDS) -> \
-            Tuple[STUBS, CBG_DEGREE_MAP]:
+            tuple[STUBS, CBG_DEGREE_MAP]:
         """
         Part of the creation process to create (still) unconnected nodes as
         extra-household connections.
@@ -263,7 +265,7 @@ class MNGenerator(NetworkGenerator):
         """
         return 'MN'
 
-    def _generate(self, params: Dict[str, Any]) -> Graph:
+    def _generate(self, params: dict[str, Any]) -> Graph:
         raise NotImplementedError('MNGenerator._generate needs to be '
                                   'overridden by sub-classes')
 
@@ -281,7 +283,7 @@ class MNGeneratorFromFile(MNGenerator):
     def __init__(self, params=None, limit=None):
         super(MNGeneratorFromFile, self).__init__(params, limit)
 
-    def _generate(self, params: Dict[str, Any]) -> Graph:
+    def _generate(self, params: dict[str, Any]) -> Graph:
         """
         Generate the graph of a mobility network from a GraphML file
         :param params: experiment parameters
@@ -307,7 +309,7 @@ class MNGeneratorFromNetworkData(MNGenerator):
     def __init__(self, params=None, limit=None):
         super(MNGeneratorFromNetworkData, self).__init__(params, limit)
 
-    def _generate(self, params: Dict[str, Any]) -> nx.Graph:
+    def _generate(self, params: dict[str, Any]) -> nx.Graph:
         """
         Generate the graph of a mobility network from a NetworkData object.
         :param params: experiment parameters
