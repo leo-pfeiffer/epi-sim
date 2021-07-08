@@ -1,6 +1,35 @@
 # Functions to calculate some metrics for a network
+from typing import Final, Union
 
 import networkx as nx
+from epydemic import NetworkExperiment, NetworkGenerator
+from networkx import Graph
+
+
+class MetricExperiment(NetworkExperiment):
+
+    GENERATOR: Final[str] = 'metric.generator'
+
+    def __init__(self, g: Union[Graph, NetworkGenerator] = None):
+        super(MetricExperiment, self).__init__(g)
+
+    def do(self, params):
+
+        # todo uncomment shortest_paths
+
+        densities = calc_density(self.network())
+        # shortest_paths = calc_shortest_paths(self.network())
+        cluster_coeffs = calc_cluster_coeff(self.network())
+        degrees = calc_degrees(self.network())
+
+        result = dict(
+            densities=densities,
+            # shortest_paths=shortest_paths,
+            cluster_coeffs=cluster_coeffs,
+            degrees=degrees,
+        )
+
+        return result
 
 
 def calc_density(graph: nx.Graph) -> float:

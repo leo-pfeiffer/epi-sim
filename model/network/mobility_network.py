@@ -1,6 +1,6 @@
 import numpy as np
 import networkx as nx
-from typing import Any, Final, Callable
+from typing import Any, Final, Callable, Optional
 from epydemic import NetworkGenerator
 from networkx import Graph, read_graphml
 
@@ -252,8 +252,10 @@ class MNGenerator(NetworkGenerator):
     EXPONENT: Final[str] = 'MN.exponent'
     CUTOFF: Final[str] = 'MN.cutoff'
 
-    def __init__(self, params=None, limit=None):
+    def __init__(self, params=None, limit=None,
+                 network_data: Optional[NetworkData] = None):
         super(MNGenerator, self).__init__(params, limit)
+        self._network_data = network_data
 
     def topology(self) -> str:
         """
@@ -278,7 +280,7 @@ class MNGeneratorFromFile(MNGenerator):
     PATH: Final[str] = 'MN.path'
 
     def __init__(self, params=None, limit=None):
-        super(MNGeneratorFromFile, self).__init__(params, limit)
+        super(MNGeneratorFromFile, self).__init__(params, limit, None)
 
     def _generate(self, params: dict[str, Any]) -> Graph:
         """
@@ -302,8 +304,9 @@ class MNGeneratorFromNetworkData(MNGenerator):
     NETWORK_DATA: Final[str] = 'MN.network_data'
     MULTIPLIER: Final[str] = 'MN.multiplier'
 
-    def __init__(self, params=None, limit=None):
-        super(MNGeneratorFromNetworkData, self).__init__(params, limit)
+    def __init__(self, params=None, limit=None,
+                 network_data: Optional[NetworkData] = None):
+        super(MNGeneratorFromNetworkData, self).__init__(params, limit, network_data)
 
     def _generate(self, params: dict[str, Any]) -> nx.Graph:
         """
@@ -312,7 +315,12 @@ class MNGeneratorFromNetworkData(MNGenerator):
         :return: Graph
         """
 
-        network_data = params[self.NETWORK_DATA]
+        if self._network_data is None and self.NETWORK_DATA not in params:
+            raise Exception('NetworkData not provided.')
+
+        if self.NETWORK_DATA in params:
+            self._network_data = params[self.NETWORK_DATA]
+
         n = params[self.N]
         multiplier = params[self.MULTIPLIER]
 
@@ -321,7 +329,7 @@ class MNGeneratorFromNetworkData(MNGenerator):
 
         degree_dist = PowerLawCutoffDist(exponent, cutoff).p
 
-        mobility_network = MobilityNetwork(network_data=network_data,
+        mobility_network = MobilityNetwork(network_data=self._network_data,
                                            degree_dist=degree_dist,
                                            N=n,
                                            multiplier=multiplier)
