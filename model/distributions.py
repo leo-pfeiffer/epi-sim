@@ -1,5 +1,5 @@
 import numpy as np
-from typing import Union, Optional, Callable
+from typing import Optional, Callable
 
 from model.utils import binary_search_lowest_idx
 from model.network.network_data import NetworkData
@@ -86,29 +86,29 @@ class PowerLawCutoffDist:
         return g + self.mean - self.mean * self.mean
 
 
-# todo make names a bit more generic
-def household_size_dist(mu: float, std: Union[float, None] = None,
-                        seed: Optional[RANDOM_SEED] = None) -> int:
+def discrete_trunc_normal(mu: float, std: Optional[float] = None,
+                          seed: Optional[RANDOM_SEED] = None) -> int:
     """
-    Return a random household size from (discrete) normal distribution.
+    Draw an integer from a discrete normal distribution truncated in the
+    range [1; infinity).
     :param mu: Mean of the distribution.
-    :param std: (optional) Standard deviation of the distribution. If not
-        specified, std = mu / 2
+    :param std: Standard deviation of the distribution; defaults to mu / 2.
     :param seed: (optional) Random seed.
-    :returns: Household size.
+    :returns: Random integer.
     """
     rng = np.random.default_rng(seed=seed)
     std = mu / 2 if std is None else std
     return max(int(rng.normal(mu, std)), 1)
 
 
-def node_degree_dist(exponent: float,
-                     seed: Optional[RANDOM_SEED] = None) -> int:
+def discrete_trunc_exponential(exponent: float,
+                               seed: Optional[RANDOM_SEED] = None) -> int:
     """
-    Return node degree from an exponential distribution.
+    Draw an integer from a discrete exponential distribution truncated in the
+    range [1, infinity).
     :param exponent: Exponent of the exponential distribution.
     :param seed: (optional) Random seed.
-    :returns: Number of connections to outside the household.
+    :returns: Random integer.
     """
     rng = np.random.default_rng(seed=seed)
     return max(int(rng.exponential(exponent)), 1)
@@ -132,8 +132,8 @@ def draw_cbg(network_data: NetworkData, cbg: str,
     return network_data.ordered_cbgs[idx]
 
 
-def intra_household_contacts(size: int, std: float = 1,
-                             seed: Optional[RANDOM_SEED] = None) -> int:
+def num_contact_dist(size: int, std: float = 1,
+                     seed: Optional[RANDOM_SEED] = None) -> int:
     """
     Draw random number of contacts within a household.
     :param size: households size
@@ -141,5 +141,5 @@ def intra_household_contacts(size: int, std: float = 1,
     :param seed: random seed
     :return: number of intra household contact
     """
-    rng = np.random.default_rng(seed=seed)
-    return max(int(rng.normal(min(size / 2, 2), std)), 1)
+    mu = min(size / 2, 2)
+    return discrete_trunc_normal(mu, std, seed=seed)

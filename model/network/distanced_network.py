@@ -1,14 +1,12 @@
-from typing import Callable, Optional, List, Any, Dict, Final
+from typing import Callable, Any, Final
 
 import networkx as nx
 import numpy as np
 from epydemic import NetworkGenerator
 
-from model.types import RANDOM_SEED
-
 # special types for convenience...
-HOUSEHOLDS = List[nx.Graph]
-STUBS = List[int]
+HOUSEHOLDS = list[nx.Graph]
+STUBS = list[int]
 
 
 # todo comments, docstrings, unit tests
@@ -19,17 +17,23 @@ class DistancedNetwork:
         Dobson 2020 - Epidemic Modelling, pp. 157
     """
 
-    def __init__(self, N: int,
-                 cluster_size_dist: Callable[[RANDOM_SEED], int],
-                 contact_dist: Callable[[int, RANDOM_SEED], int],
-                 cluster_contact_dist: Callable[[RANDOM_SEED], int],
-                 seed: Optional[RANDOM_SEED]):
-        self.N = N
-        self.cluster_size_dist = cluster_size_dist
-        self.contact_dist = contact_dist
-        self.cluster_contact_dist = cluster_contact_dist
+    def __init__(self, N: int, household_size_dist: Callable,
+                 num_contact_dist: Callable, num_outside_edge_dist: Callable):
+        """
 
-        self._rng = np.random.default_rng(seed=seed)
+        :param N: Order of the network.
+        :param household_size_dist: Distribution func. of household sizes.
+        :param num_contact_dist: Distribution func. of number of household members
+            with outside edges.
+        :param num_outside_edge_dist: Distribution func. of number of outside
+            edges for single member with outside edges
+        """
+        self.N = N
+        self.household_size_dist = household_size_dist
+        self.num_contact_dist = num_contact_dist
+        self.num_outside_edge_dist = num_outside_edge_dist
+
+        self._rng = np.random.default_rng()
         self._g: nx.Graph = nx.Graph()
 
     @property
@@ -48,7 +52,7 @@ class DistancedNetwork:
         n = 0
 
         while n < self.N:
-            size = self.cluster_size_dist(seed=self._rng)
+            size = self.household_size_dist()
             house = nx.complete_graph(size)
             nx.relabel_nodes(house, lambda l: n + l, copy=False)
 
@@ -69,7 +73,7 @@ class DistancedNetwork:
         contacts = []
         for house in households:
             size = house.order()
-            n_contacts = self.contact_dist(size, seed=self._rng)
+            n_contacts = self.num_contact_dist(size)
             contacts.append(n_contacts)
 
         stubs = []
@@ -81,7 +85,7 @@ class DistancedNetwork:
             nodes = list(house.nodes())[:contacts[i]]
 
             for node in nodes:
-                num_copies = self.cluster_contact_dist(seed=self._rng)
+                num_copies = self.num_outside_edge_dist()
                 stubs.extend([node] * num_copies)
 
         if len(stubs) % 2 > 0:
@@ -123,10 +127,9 @@ class DistancedNetwork:
 
 class DNGenerator(NetworkGenerator):
     N: Final[str] = 'DN.n'
-    CLUSTER_SIZE_DIST: Final[str] = 'DN.cluster_size_dist'
-    CONTACT_DIST: Final[str] = 'DN.contact_dist'
-    CLUSTER_CONTACT_DIST: Final[str] = 'DN.cluster_contact_dist'
-    SEED: Final[str] = 'DN.seed'
+    HOUSEHOLD_SIZE_DIST: Final[str] = 'DN.household_size_dist'
+    NUM_CONTACT_DIST: Final[str] = 'DN.num_contact_dist'
+    NUM_OUTSIDE_EDGE_DIST: Final[str] = 'DN.num_outside_edge_dist'
 
     def __init__(self, params=None, limit=None):
         super(DNGenerator, self).__init__(params, limit)
@@ -138,16 +141,14 @@ class DNGenerator(NetworkGenerator):
         """
         return 'DN'
 
-    def _generate(self, params: Dict[str, Any]) -> nx.Graph:
+    def _generate(self, params: dict[str, Any]) -> nx.Graph:
         N = params[self.N]
-        cluster_size_dist = params[self.CLUSTER_SIZE_DIST]
-        contact_dist = params[self.CONTACT_DIST]
-        cluster_contact_dist = params[self.CLUSTER_CONTACT_DIST]
+        household_size_dist = params[self.HOUSEHOLD_SIZE_DIST]
+        num_contact_dist = params[self.NUM_CONTACT_DIST]
+        num_outside_edge_dist = params[self.NUM_OUTSIDE_EDGE_DIST]
 
-        seed = params.get(self.SEED)
-
-        network = DistancedNetwork(N, cluster_size_dist, contact_dist,
-                                   cluster_contact_dist, seed)
+        network = DistancedNetwork(N, household_size_dist, num_contact_dist,
+                                   num_outside_edge_dist)
 
         network.create()
 

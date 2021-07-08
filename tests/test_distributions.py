@@ -1,6 +1,6 @@
 import pytest
-from model.distributions import household_size_dist, node_degree_dist, \
-    draw_cbg, intra_household_contacts, PowerLawCutoffDist
+from model.distributions import discrete_trunc_normal, \
+    discrete_trunc_exponential, draw_cbg, num_contact_dist, PowerLawCutoffDist
 from tests.factory import *
 import numpy as np
 from mpmath import polylog
@@ -25,13 +25,13 @@ PLC_DIST = PowerLawCutoffDist(tau=TAU, kappa=KAPPA)
 PLC = PLC_DIST.p
 
 
-def test_household_size_dist():
+def test_discrete_trunc_normal():
     mu_should = PRE.demographics['cbg1']['household_size']
     sigma_should = mu_should / 2
 
     nums = []
     for _ in range(10000):
-        r = household_size_dist(mu=mu_should, seed=SEED)
+        r = discrete_trunc_normal(mu=mu_should, seed=SEED)
         assert r >= 1
         assert r % 1 == 0
         nums.append(r)
@@ -41,14 +41,14 @@ def test_household_size_dist():
     assert abs(np.std(nums) - sigma_should) < 0.25
 
 
-def test_intra_household_contacts():
+def test_num_contact_dist():
     size = 10
     std = 2
     mu_should = min(size / 2, 2)
 
     nums = []
     for _ in range(10000):
-        r = intra_household_contacts(size=size, std=std, seed=SEED)
+        r = num_contact_dist(size=size, std=std, seed=SEED)
         assert r >= 1
         assert r % 1 == 0
         nums.append(r)
@@ -58,11 +58,11 @@ def test_intra_household_contacts():
     assert abs(np.std(nums) - std) < std / 2
 
 
-def test_node_degree_dist():
+def test_discrete_trunc_exponential():
     # No multiplier
     nums = []
     for _ in range(10000):
-        r = node_degree_dist(BASELINE, SEED)
+        r = discrete_trunc_exponential(BASELINE, SEED)
         assert r >= 1
         assert r % 1 == 0
         nums.append(r)
@@ -74,7 +74,7 @@ def test_node_degree_dist():
     nums = []
     for _ in range(10000):
         exponent = BASELINE * _TRIP_COUNT_CHANGE['cbg1']
-        r = node_degree_dist(exponent, SEED)
+        r = discrete_trunc_exponential(exponent, SEED)
         assert r >= 1
         assert r % 1 == 0
         nums.append(r)

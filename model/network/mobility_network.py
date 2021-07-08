@@ -5,7 +5,8 @@ from epydemic import NetworkGenerator
 from networkx import Graph, read_graphml
 
 from model.network.network_data import NetworkData
-from model.distributions import household_size_dist, draw_cbg, PowerLawCutoffDist
+from model.distributions import discrete_trunc_normal, draw_cbg, \
+    PowerLawCutoffDist
 from model.types import RANDOM_SEED
 
 # special types for convenience...
@@ -102,7 +103,7 @@ class MobilityNetwork:
             while n < N_cbg:
                 # create household network
                 mu = self.network_data.demographics[cbg]['household_size']
-                size = household_size_dist(mu=mu, seed=self._rng)
+                size = discrete_trunc_normal(mu=mu, seed=self._rng)
                 house_net = nx.complete_graph(size)
 
                 # add unique labels
