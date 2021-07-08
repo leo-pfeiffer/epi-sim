@@ -1,3 +1,5 @@
+# Functions to calculate some metrics for a network
+
 import networkx as nx
 
 
