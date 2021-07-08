@@ -8,7 +8,6 @@ from model.network.mobility_network import MobilityNetwork, \
 EXPONENT = 2
 CUTOFF = 10
 N = 1000
-SEED = 1
 PRE = create_network_data()
 POST = create_network_data(True)
 
@@ -24,19 +23,19 @@ DEGREE_DIST = PowerLawCutoffDist(EXPONENT, CUTOFF).p
 
 
 def test_create_network_instance():
-    network = MobilityNetwork(PRE, DEGREE_DIST, N, False, seed=SEED)
+    network = MobilityNetwork(PRE, DEGREE_DIST, N, False)
     assert isinstance(network, MobilityNetwork)
 
 
 def test_network_create_pre():
-    network = MobilityNetwork(PRE, DEGREE_DIST, N, False, seed=SEED)
+    network = MobilityNetwork(PRE, DEGREE_DIST, N, False)
     network.create()
     g = network.g
     assert isinstance(g, Graph)
 
 
 def test_network_create_post():
-    network = MobilityNetwork(POST, DEGREE_DIST, N, True, seed=SEED)
+    network = MobilityNetwork(POST, DEGREE_DIST, N, True)
     network.create()
     g = network.g
     assert isinstance(g, Graph)
@@ -44,12 +43,12 @@ def test_network_create_post():
 
 def test_raises_value_error():
     with pytest.raises(ValueError):
-        _ = MobilityNetwork(PRE, DEGREE_DIST, N, True, seed=SEED)
+        _ = MobilityNetwork(PRE, DEGREE_DIST, N, True)
 
 
 def test_create_households():
     # setup
-    network = MobilityNetwork(PRE, DEGREE_DIST, N, False, seed=SEED)
+    network = MobilityNetwork(PRE, DEGREE_DIST, N, False)
 
     # test
     households = network._create_households()
@@ -67,15 +66,16 @@ def test_create_households():
         if abs(size_is - size_should) > size_should / 2:
             num_exceeds_std += 1
 
-    # normal distribution should exceed std in only 32% of cases
-    assert num_exceeds_std < 0.32 * len(households)
+    # normal distribution should exceed std in only 32% of cases, ... but
+    #  with some levy it is allowed in 40% of cases
+    assert num_exceeds_std < 0.4 * len(households)
 
     # todo test node proportion equals population proportion
 
 
 def test_create_stubs():
     # setup
-    network = MobilityNetwork(PRE, DEGREE_DIST, N, False, seed=SEED)
+    network = MobilityNetwork(PRE, DEGREE_DIST, N, False)
     households = network._create_households()
 
     # test
@@ -87,7 +87,7 @@ def test_create_stubs():
 
 
 def test_create_stub_pairs():
-    network = MobilityNetwork(PRE, DEGREE_DIST, N, False, seed=SEED)
+    network = MobilityNetwork(PRE, DEGREE_DIST, N, False)
     households = network._create_households()
     stubs, cbg_degree_map = network._create_stubs(households)
 
@@ -100,7 +100,7 @@ def test_create_stub_pairs():
 
 def test_break_up_pairs():
     # setup
-    network = MobilityNetwork(PRE, DEGREE_DIST, N, False, seed=SEED)
+    network = MobilityNetwork(PRE, DEGREE_DIST, N, False)
     households = network._create_households()
     stubs, cbg_degree_map = network._create_stubs(households)
     stubs = network._create_stub_pairs(stubs, cbg_degree_map)
@@ -116,7 +116,7 @@ def test_break_up_pairs():
 
 def test_connect_stubs():
     # setup
-    network = MobilityNetwork(PRE, DEGREE_DIST, N, False, seed=SEED)
+    network = MobilityNetwork(PRE, DEGREE_DIST, N, False)
     households = network._create_households()
     stubs, cbg_degree_map = network._create_stubs(households)
     stubs = network._create_stub_pairs(stubs, cbg_degree_map)
@@ -136,7 +136,6 @@ def test_mobility_network_generator_from_network_data():
         MNGeneratorFromNetworkData.EXPONENT: EXPONENT,
         MNGeneratorFromNetworkData.CUTOFF: CUTOFF,
         MNGeneratorFromNetworkData.MULTIPLIER: False,
-        MNGeneratorFromNetworkData.SEED: SEED
     }
 
     mng = MNGeneratorFromNetworkData(params=params)

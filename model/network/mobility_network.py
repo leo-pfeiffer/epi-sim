@@ -1,13 +1,12 @@
 import numpy as np
 import networkx as nx
-from typing import Any, Final, Callable, Optional
+from typing import Any, Final, Callable
 from epydemic import NetworkGenerator
 from networkx import Graph, read_graphml
 
 from model.network.network_data import NetworkData
 from model.distributions import discrete_trunc_normal, draw_cbg, \
     PowerLawCutoffDist
-from model.types import RANDOM_SEED
 
 # special types for convenience...
 from model.utils import discrete_rejection_sample
@@ -26,8 +25,7 @@ class MobilityNetwork:
                  degree_dist: Callable,
                  N: int = 10000,
                  multiplier: bool = False,
-                 max_deg: int = 100,
-                 seed: Optional[RANDOM_SEED] = None):
+                 max_deg: int = 100):
         """
         :param network_data: NetworkData containing mobility data from which to
             create the network.
@@ -37,7 +35,6 @@ class MobilityNetwork:
             be applied to the exponent of the exponential distribution for the
             node degrees.
         :param max_deg: Maximum allowed node degree.
-        :param seed: (optional) Random seed for reproducibility.
         """
 
         self.network_data: NetworkData = network_data
@@ -55,7 +52,7 @@ class MobilityNetwork:
                                  'be set. Hint: Run the calc_trip_count_change '
                                  'method on the network_data instance first.')
 
-        self._rng = np.random.default_rng(seed=seed)
+        self._rng = np.random.default_rng()
         self._g: nx.Graph = nx.Graph()
 
     @property
@@ -103,7 +100,7 @@ class MobilityNetwork:
             while n < N_cbg:
                 # create household network
                 mu = self.network_data.demographics[cbg]['household_size']
-                size = discrete_trunc_normal(mu=mu, seed=self._rng)
+                size = discrete_trunc_normal(mu=mu)
                 house_net = nx.complete_graph(size)
 
                 # add unique labels
@@ -149,8 +146,7 @@ class MobilityNetwork:
             for node in nodes:
                 # draw random degree
                 degree = discrete_rejection_sample(p=self.degree_dist,
-                                                   a=1, b=self.max_deg,
-                                                   seed=self._rng)
+                                                   a=1, b=self.max_deg)
 
                 if self.multiplier:
                     m = self.network_data.trip_count_change[cbg]
@@ -190,7 +186,7 @@ class MobilityNetwork:
 
                 # draw a CBG from the CBG connection distribution
                 cbg = self.g.nodes[stubs[i]]['cbg']
-                target_cbg = draw_cbg(self.network_data, cbg, seed=self._rng)
+                target_cbg = draw_cbg(self.network_data, cbg)
 
                 # make sure the drawn CBG has any available stubs at all
                 if len(cbg_degree_map[target_cbg]) == 0:
@@ -305,7 +301,6 @@ class MNGeneratorFromNetworkData(MNGenerator):
     N: Final[str] = 'MN.n'
     NETWORK_DATA: Final[str] = 'MN.network_data'
     MULTIPLIER: Final[str] = 'MN.multiplier'
-    SEED: Final[str] = 'MN.seed'
 
     def __init__(self, params=None, limit=None):
         super(MNGeneratorFromNetworkData, self).__init__(params, limit)
@@ -326,14 +321,10 @@ class MNGeneratorFromNetworkData(MNGenerator):
 
         degree_dist = PowerLawCutoffDist(exponent, cutoff).p
 
-        # optional args
-        seed = params.get(self.SEED, None)
-
         mobility_network = MobilityNetwork(network_data=network_data,
                                            degree_dist=degree_dist,
                                            N=n,
-                                           multiplier=multiplier,
-                                           seed=seed)
+                                           multiplier=multiplier)
 
         mobility_network.create()
 
