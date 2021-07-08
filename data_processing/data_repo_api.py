@@ -21,7 +21,7 @@ def update_or_create(file_name):
     Update or create the file in the data repo on github.
     :param file_name: Name of the file
     """
-    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'results')
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../experiments/results')
 
     with open(os.path.join(path, file_name), 'rb') as f:
         data = f.read()
