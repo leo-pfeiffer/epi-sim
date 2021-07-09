@@ -4,7 +4,7 @@ import argparse
 import base64
 import os
 from dotenv import load_dotenv
-from configuration import ROOT_DIR, DATA_REPO_URL_API
+from configuration import ROOT_DIR, DATA_REPO_URL_API, DATA_REPO_URL_TREE
 
 # load dotenv file and load variables
 load_dotenv(dotenv_path=os.path.join(ROOT_DIR, '.env'))
@@ -34,12 +34,8 @@ def update_or_create(file_name, file_path=None):
     put_file(file_name, content, sha)
 
 
-def get_sha(file_name):
-    """
-    Get the Blob Sha of the file on Github if it exists.
-    :param file_name: Name of the file
-    :return: SHA or None
-    """
+def get_sha1(file_name):
+
     url = f'{DATA_REPO_URL_API}/{file_name}'
     headers = AUTH
     res = requests.get(url, headers=headers)
@@ -48,11 +44,33 @@ def get_sha(file_name):
         return None
 
     if res.status_code != 200:
-        print(res)
+        print(res, res.text)
         raise requests.exceptions.HTTPError()
 
     jsn = res.json()
     return jsn['sha']
+
+
+def get_sha(file_name):
+    """
+    Get the Blob Sha of the file on Github if it exists.
+    :param file_name: Name of the file
+    :return: SHA or None
+    """
+    res = requests.get(DATA_REPO_URL_TREE, headers=AUTH)
+
+    if res.status_code != 200:
+        print(res, res.text)
+        raise requests.exceptions.HTTPError()
+
+    jsn = res.json()
+    e = [x for x in jsn['tree'] if x['path'] == file_name]
+
+    if len(e) == 0:
+        return None
+
+    else:
+        return e[0]['sha']
 
 
 def put_file(file_name, content, sha=None):
