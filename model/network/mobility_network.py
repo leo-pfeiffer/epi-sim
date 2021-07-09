@@ -244,18 +244,23 @@ class MNGenerator(NetworkGenerator):
     Abstract NetworkGenerator for MobilityNetworks. Defines the `topology`
     method for all subclasses.
     Sub-classes must still overwrite the `_generate` method.
-
-    :param params: (optional) experiment parameters
-    :param limit: (optional) maximum number of instances to generate
     """
 
     EXPONENT: Final[str] = 'MN.exponent'
     CUTOFF: Final[str] = 'MN.cutoff'
 
-    def __init__(self, params=None, limit=None,
-                 network_data: Optional[NetworkData] = None):
+    def __init__(self, params=None, limit=None, **kwargs):
+        """
+        Create an MNGenerator.
+        :param params: (optional) experiment parameters
+        :param limit: (optional) maximum number of instances to generate
+        :param kwargs: (optional) key word arguments. Can include `network_data`
+            which otherwise has to be included in the `params` when generating
+            the network.
+        """
         super(MNGenerator, self).__init__(params, limit)
-        self._network_data = network_data
+
+        self._network_data = kwargs.get('network_data')
 
     def topology(self) -> str:
         """
@@ -272,15 +277,17 @@ class MNGenerator(NetworkGenerator):
 class MNGeneratorFromFile(MNGenerator):
     """
     NetworkGenerator to generate MobilityNetworks from GraphML file.
-
-    :param params: (optional) experiment parameters
-    :param limit: (optional) maximum number of instances to generate
     """
 
     PATH: Final[str] = 'MN.path'
 
     def __init__(self, params=None, limit=None):
-        super(MNGeneratorFromFile, self).__init__(params, limit, None)
+        """
+        Create an MNGeneratorFromFile
+        :param params: (optional) experiment parameters
+        :param limit: (optional) maximum number of instances to generate
+        """
+        super(MNGeneratorFromFile, self).__init__(params, limit)
 
     def _generate(self, params: dict[str, Any]) -> Graph:
         """
@@ -295,9 +302,6 @@ class MNGeneratorFromFile(MNGenerator):
 class MNGeneratorFromNetworkData(MNGenerator):
     """
     NetworkGenerator to generate MobilityNetworks from a NetworkData object.
-
-    :param params: (optional) experiment parameters
-    :param limit: (optional) maximum number of instances to generate
     """
 
     N: Final[str] = 'MN.n'
@@ -306,7 +310,16 @@ class MNGeneratorFromNetworkData(MNGenerator):
 
     def __init__(self, params=None, limit=None,
                  network_data: Optional[NetworkData] = None):
-        super(MNGeneratorFromNetworkData, self).__init__(params, limit, network_data)
+        """
+        Create an MNGeneratorFromNetworkData.
+        :param params: (optional) experiment parameters
+        :param limit: (optional) maximum number of instances to generate
+        :param network_data: (optional) network data of the network. If not
+            specified here, it must be provided in the `params` when generating
+            the network,
+        """
+        super(MNGeneratorFromNetworkData, self).__init__(
+            params, limit, network_data=network_data)
 
     def _generate(self, params: dict[str, Any]) -> nx.Graph:
         """
@@ -315,11 +328,8 @@ class MNGeneratorFromNetworkData(MNGenerator):
         :return: Graph
         """
 
-        if self._network_data is None and self.NETWORK_DATA not in params:
-            raise Exception('NetworkData not provided.')
-
-        if self.NETWORK_DATA in params:
-            self._network_data = params[self.NETWORK_DATA]
+        self._network_data = params.get(self.NETWORK_DATA) or self._network_data
+        assert self._network_data is not None
 
         n = params[self.N]
         multiplier = params[self.MULTIPLIER]

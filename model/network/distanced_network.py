@@ -20,7 +20,7 @@ class DistancedNetwork:
     def __init__(self, N: int, household_size_dist: Callable,
                  num_contact_dist: Callable, num_outside_edge_dist: Callable):
         """
-
+        Create a DistancedNetwork.
         :param N: Order of the network.
         :param household_size_dist: Distribution func. of household sizes.
         :param num_contact_dist: Distribution func. of number of household members
@@ -126,13 +126,31 @@ class DistancedNetwork:
 
 
 class DNGenerator(NetworkGenerator):
+    """
+    NetworkGenerator for a distanced network.
+    """
     N: Final[str] = 'DN.n'
     HOUSEHOLD_SIZE_DIST: Final[str] = 'DN.household_size_dist'
     NUM_CONTACT_DIST: Final[str] = 'DN.num_contact_dist'
     NUM_OUTSIDE_EDGE_DIST: Final[str] = 'DN.num_outside_edge_dist'
 
-    def __init__(self, params=None, limit=None):
+    def __init__(self, params=None, limit=None, **kwargs):
+        """
+        Create a DNGenerator
+        :param params: (optional) experiment parameters
+        :param limit: (optional) maximum number of instances to generate
+        :param kwargs: (optional) key word arguments. Can include:
+            - `household_size_dist`
+            - `num_contact_dist`
+            - `num_outside_edge_dist`
+            which otherwise have to be included in the `params` when generating
+            the network. =
+        """
         super(DNGenerator, self).__init__(params, limit)
+
+        self._household_size_dist = kwargs.get('household_size_dist')
+        self._num_contact_dist = kwargs.get('num_contact_dist')
+        self._num_outside_edge_dist = kwargs.get('num_outside_edge_dist')
 
     def topology(self) -> str:
         """
@@ -142,13 +160,29 @@ class DNGenerator(NetworkGenerator):
         return 'DN'
 
     def _generate(self, params: dict[str, Any]) -> nx.Graph:
-        N = params[self.N]
-        household_size_dist = params[self.HOUSEHOLD_SIZE_DIST]
-        num_contact_dist = params[self.NUM_CONTACT_DIST]
-        num_outside_edge_dist = params[self.NUM_OUTSIDE_EDGE_DIST]
 
-        network = DistancedNetwork(N, household_size_dist, num_contact_dist,
-                                   num_outside_edge_dist)
+        # Set the distribution functions (could also have been set at
+        #  initialisation).
+        self._household_size_dist = params.get(self.HOUSEHOLD_SIZE_DIST) \
+                                    or self._household_size_dist
+        assert self._household_size_dist is not None
+
+        self._num_contact_dist = params.get(self.NUM_CONTACT_DIST) \
+                                 or self._num_contact_dist
+        assert self._num_contact_dist is not None
+
+        self._num_outside_edge_dist = params.get(self.NUM_OUTSIDE_EDGE_DIST) \
+                                      or self._num_outside_edge_dist
+        assert self._num_outside_edge_dist is not None
+
+        N = params[self.N]
+
+        network = DistancedNetwork(
+            N,
+            self._household_size_dist,
+            self._num_contact_dist,
+            self._num_outside_edge_dist
+        )
 
         network.create()
 
