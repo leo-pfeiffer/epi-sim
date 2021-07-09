@@ -4,13 +4,12 @@ import argparse
 import base64
 import os
 from dotenv import load_dotenv
-from configuration import ROOT_DIR
+from configuration import ROOT_DIR, DATA_REPO_URL_API
 
 # load dotenv file and load variables
 load_dotenv(dotenv_path=os.path.join(ROOT_DIR, '.env'))
 
 TOKEN = os.getenv("DATA_REPO_TOKEN")
-REPO_URL = os.getenv("DATA_REPO_URL")
 
 # set auth header
 AUTH = {"Authorization": f"token {TOKEN}"}
@@ -41,7 +40,7 @@ def get_sha(file_name):
     :param file_name: Name of the file
     :return: SHA or None
     """
-    url = f'{REPO_URL}/{file_name}'
+    url = f'{DATA_REPO_URL_API}/{file_name}'
     headers = AUTH
     res = requests.get(url, headers=headers)
 
@@ -63,7 +62,7 @@ def put_file(file_name, content, sha=None):
     :param content: Base 64 encoded string.
     :param sha: Blob SHA of the file (required if update)
     """
-    url = f'{REPO_URL}/{file_name}'
+    url = f'{DATA_REPO_URL_API}/{file_name}'
     headers = AUTH | {'Accept': 'application/vnd.github.v3+json'}
 
     data = {
