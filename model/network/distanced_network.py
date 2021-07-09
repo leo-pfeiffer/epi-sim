@@ -23,8 +23,8 @@ class DistancedNetwork:
         Create a DistancedNetwork.
         :param N: Order of the network.
         :param household_size_dist: Distribution func. of household sizes.
-        :param num_contact_dist: Distribution func. of number of household members
-            with outside edges.
+        :param num_contact_dist: Distribution func. of number of household
+            members with outside edges.
         :param num_outside_edge_dist: Distribution func. of number of outside
             edges for single member with outside edges
         """
