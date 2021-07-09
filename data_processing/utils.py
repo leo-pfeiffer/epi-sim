@@ -13,6 +13,8 @@ def load_network_data_from_files(names: dict[str, str],
     :return: dictionary with network data
     """
 
+    # todo get from Github data repo
+
     # default file names
     if names is None:
         names = dict(
