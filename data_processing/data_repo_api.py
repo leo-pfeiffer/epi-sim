@@ -16,14 +16,18 @@ REPO_URL = os.getenv("DATA_REPO_URL")
 AUTH = {"Authorization": f"token {TOKEN}"}
 
 
-def update_or_create(file_name):
+def update_or_create(file_name, file_path=None):
     """
     Update or create the file in the data repo on github.
     :param file_name: Name of the file
+    :param file_path: (optional) Path to the file
     """
-    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../experiments/results')
+    if file_path is None:
+        file_path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), '../experiments/results'
+        )
 
-    with open(os.path.join(path, file_name), 'rb') as f:
+    with open(os.path.join(file_path, file_name), 'rb') as f:
         data = f.read()
         content = base64.b64encode(data).decode()
 
