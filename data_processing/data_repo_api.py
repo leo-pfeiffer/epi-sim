@@ -1,100 +1,101 @@
+import pickle
+import urllib
+
 import requests
 import json
 import argparse
 import base64
 import os
 from dotenv import load_dotenv
-from configuration import ROOT_DIR, DATA_REPO_URL_API, DATA_REPO_URL_TREE
+from configuration import ROOT_DIR, DATA_REPO_URL_API, DATA_REPO_URL_TREE, DATA_REPO_URL_RAW
 
 # load dotenv file and load variables
 load_dotenv(dotenv_path=os.path.join(ROOT_DIR, '.env'))
 
-TOKEN = os.getenv("DATA_REPO_TOKEN")
 
-# set auth header
-AUTH = {"Authorization": f"token {TOKEN}"}
+class DataRepoAPI:
 
+    TOKEN = os.getenv("DATA_REPO_TOKEN")
+    AUTH = {"Authorization": f"token {TOKEN}"}
 
-def update_or_create(file_name, file_path=None):
-    """
-    Update or create the file in the data repo on github.
-    :param file_name: Name of the file
-    :param file_path: (optional) Path to the file
-    """
-    if file_path is None:
-        file_path = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), '../experiments/results'
-        )
+    @classmethod
+    def update_or_create(cls, file_name, file_path=None):
+        """
+        Update or create the file in the data repo on github.
+        :param file_name: Name of the file
+        :param file_path: (optional) Path to the file
+        """
+        if file_path is None:
+            file_path = os.path.join(
+                os.path.dirname(os.path.abspath(__file__)), '../experiments/results'
+            )
 
-    with open(os.path.join(file_path, file_name), 'rb') as f:
-        data = f.read()
-        content = base64.b64encode(data).decode()
+        with open(os.path.join(file_path, file_name), 'rb') as f:
+            data = f.read()
+            content = base64.b64encode(data).decode()
 
-    sha = get_sha(file_name=file_name)
-    put_file(file_name, content, sha)
+        sha = cls.get_sha(file_name=file_name)
+        cls.put_file(file_name, content, sha)
 
+    @classmethod
+    def get_sha(cls, file_name):
+        """
+        Get the Blob Sha of the file on Github if it exists.
+        :param file_name: Name of the file
+        :return: SHA or None
+        """
+        res = requests.get(DATA_REPO_URL_TREE, headers=cls.AUTH)
 
-def get_sha1(file_name):
+        if res.status_code != 200:
+            print(res, res.text)
+            raise requests.exceptions.HTTPError()
 
-    url = f'{DATA_REPO_URL_API}/{file_name}'
-    headers = AUTH
-    res = requests.get(url, headers=headers)
+        jsn = res.json()
+        e = [x for x in jsn['tree'] if x['path'] == file_name]
 
-    if res.status_code == 404:
-        return None
+        if len(e) == 0:
+            return None
 
-    if res.status_code != 200:
-        print(res, res.text)
-        raise requests.exceptions.HTTPError()
+        else:
+            return e[0]['sha']
 
-    jsn = res.json()
-    return jsn['sha']
+    @classmethod
+    def put_file(cls, file_name, content, sha=None):
+        """
+        Perform HTTP Put to create or update the file.
+        :param file_name: File name
+        :param content: Base 64 encoded string.
+        :param sha: Blob SHA of the file (required if update)
+        """
+        url = f'{DATA_REPO_URL_API}/{file_name}'
+        headers = cls.AUTH | {'Accept': 'application/vnd.github.v3+json'}
 
+        data = {
+            "message": "file upload",
+            "content": content,
+        }
 
-def get_sha(file_name):
-    """
-    Get the Blob Sha of the file on Github if it exists.
-    :param file_name: Name of the file
-    :return: SHA or None
-    """
-    res = requests.get(DATA_REPO_URL_TREE, headers=AUTH)
+        if sha:
+            data |= {"sha": sha}
 
-    if res.status_code != 200:
-        print(res, res.text)
-        raise requests.exceptions.HTTPError()
+        res = requests.put(url, data=json.dumps(data), headers=headers)
 
-    jsn = res.json()
-    e = [x for x in jsn['tree'] if x['path'] == file_name]
+        if not res.ok:
+            raise requests.exceptions.HTTPError()
 
-    if len(e) == 0:
-        return None
+    @classmethod
+    def get_pickle_file(cls, file_name):
+        with urllib.request.urlopen(f"{DATA_REPO_URL_RAW}/{file_name}") as url:
+            data = pickle.load(url)
 
-    else:
-        return e[0]['sha']
+        return data
 
+    @classmethod
+    def get_json_file(cls, file_name):
+        with urllib.request.urlopen(f"{DATA_REPO_URL_RAW}/{file_name}") as url:
+            data = json.load(url)
 
-def put_file(file_name, content, sha=None):
-    """
-    Perform HTTP Put to create or update the file.
-    :param file_name: File name
-    :param content: Base 64 encoded string.
-    :param sha: Blob SHA of the file (required if update)
-    """
-    url = f'{DATA_REPO_URL_API}/{file_name}'
-    headers = AUTH | {'Accept': 'application/vnd.github.v3+json'}
-
-    data = {
-        "message": "file upload",
-        "content": content,
-    }
-
-    if sha:
-        data |= {"sha": sha}
-
-    res = requests.put(url, data=json.dumps(data), headers=headers)
-
-    if not res.ok:
-        raise requests.exceptions.HTTPError()
+        return data
 
 
 if __name__ == '__main__':
@@ -105,4 +106,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
     file = args.file
 
-    update_or_create(file_name=file)
+    DataRepoAPI.update_or_create(file_name=file)
