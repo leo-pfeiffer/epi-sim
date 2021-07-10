@@ -17,6 +17,8 @@ class DataRepoAPI:
 
     TOKEN = os.getenv("DATA_REPO_TOKEN")
     AUTH = {"Authorization": f"token {TOKEN}"}
+    CONTENT_TYPE = 'application/vnd.github.v3+json'
+    DEFAULT_FILE_DIR = '../experiments/results'
 
     @classmethod
     def update_or_create(cls, file_name, file_path=None):
@@ -27,7 +29,7 @@ class DataRepoAPI:
         """
         if file_path is None:
             file_path = os.path.join(
-                os.path.dirname(os.path.abspath(__file__)), '../experiments/results'
+                os.path.dirname(os.path.abspath(__file__)), cls.DEFAULT_FILE_DIR
             )
 
         with open(os.path.join(file_path, file_name), 'rb') as f:
@@ -68,7 +70,7 @@ class DataRepoAPI:
         :param sha: Blob SHA of the file (required if update)
         """
         url = f'{DATA_REPO_URL_API}/{file_name}'
-        headers = cls.AUTH | {'Accept': 'application/vnd.github.v3+json'}
+        headers = cls.AUTH | {'Accept': cls.CONTENT_TYPE}
 
         data = {
             "message": "file upload",
