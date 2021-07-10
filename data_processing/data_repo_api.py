@@ -14,6 +14,9 @@ load_dotenv(dotenv_path=os.path.join(ROOT_DIR, '.env'))
 
 
 class DataRepoAPI:
+    """
+    Simple wrapper around the Github API to interact with the data repository.
+    """
 
     TOKEN = os.getenv("DATA_REPO_TOKEN")
     AUTH = {"Authorization": f"token {TOKEN}"}
@@ -87,6 +90,11 @@ class DataRepoAPI:
 
     @classmethod
     def get_pickle_file(cls, file_name):
+        """
+        Get a Pickle file from the data repo.
+        :param file_name: Name of the file.
+        :return: The file.
+        """
         with urllib.request.urlopen(f"{DATA_REPO_URL_RAW}/{file_name}") as url:
             data = pickle.load(url)
 
@@ -94,6 +102,11 @@ class DataRepoAPI:
 
     @classmethod
     def get_json_file(cls, file_name):
+        """
+        Get a JSON file from the data repo.
+        :param file_name: Name of the file.
+        :return: The file.
+        """
         with urllib.request.urlopen(f"{DATA_REPO_URL_RAW}/{file_name}") as url:
             data = json.load(url)
 
