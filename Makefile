@@ -1,8 +1,4 @@
 # setup
-.PHONY: generate-data-paths
-generate-data-paths:
-	sh ./data_processing/generate_data_paths.sh
-
 .PHONY: requirements
 requirements:
 	pip install --upgrade pip

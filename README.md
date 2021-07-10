@@ -35,24 +35,9 @@ pip install -m upgrade pip
 pip install -r requirements.txt
 ```
 
-### Generate mobility network
-To generate the mobility network, run:
+### Analysis
 
-```shell
-make generate-data-paths
-```
-
-This generates the required data directories (if they don't exist yet).
-To add your own mobility CSV files, put them into the generated 
-`data_processing/data/raw` directory. This is optional: if you don't do it, the
-notebooks will pull the files from my server.
-
-Then, run the following notebooks in order (all inside `data_processing`):
-- `extraction.ipynb`
-- `transformation.ipynb`
-- `network_creation.ipynb`
-
-To analyse the resulting mobility network, use the `network_analysis.ipynb` notebook.
+todo....
 
 ## Web Application `EpiSim`
 The web application can be run independently of the model. You can either 
