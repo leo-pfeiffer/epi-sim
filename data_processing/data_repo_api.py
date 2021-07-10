@@ -7,7 +7,8 @@ import argparse
 import base64
 import os
 from dotenv import load_dotenv
-from configuration import ROOT_DIR, DATA_REPO_URL_API, DATA_REPO_URL_TREE, DATA_REPO_URL_RAW
+from configuration import ROOT_DIR, DATA_REPO_URL_API, DATA_REPO_URL_TREE, \
+    DATA_REPO_URL_RAW
 
 # load dotenv file and load variables
 load_dotenv(dotenv_path=os.path.join(ROOT_DIR, '.env'))
