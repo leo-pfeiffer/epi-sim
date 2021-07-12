@@ -9,10 +9,7 @@ OUT = os.path.join(DATA, 'out/')
 GRAPHICS = os.path.join(DATA, 'graphics/')
 GRAPHS = os.path.join(DATA, 'graphs/')
 
-# Github
+# Github data repo
 DATA_REPO_URL_API = "https://api.github.com/repos/leo-pfeiffer/msc-thesis-data/contents"
-
-# "/repos/leo-pfeiffer/msc-thesis-data/git/blobs/{file_sha}"
-
 DATA_REPO_URL_RAW = "https://raw.githubusercontent.com/leo-pfeiffer/msc-thesis-data/main"
 DATA_REPO_URL_TREE = "https://api.github.com/repos/leo-pfeiffer/msc-thesis-data/git/trees/main"

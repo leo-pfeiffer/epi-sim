@@ -4,6 +4,10 @@ requirements:
 	pip install --upgrade pip
 	pip install -r requirements.txt -r app/requirements.txt
 
+.PHONY: env
+env:
+	sh ./scripts/generate_dotenv.sh
+
 # unit tests
 .PHONY: test
 test:
