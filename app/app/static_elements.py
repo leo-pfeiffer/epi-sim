@@ -7,13 +7,14 @@ GITHUB = html.A(
     href="https://github.com/leo-pfeiffer/msc-thesis"
 )
 
-brand = dbc.Container(
+brand = html.Div(
     [
         dbc.Nav(
             [
                 dbc.NavLink("EpiSim", href="/", active="exact"),
                 dbc.NavLink("Models", href="/model", active="exact"),
                 dbc.NavLink("Data", href="/data", active="exact"),
+                dbc.NavLink("About", href="/about", active="exact"),
                 dbc.NavLink(GITHUB),
             ],
             vertical=False,
@@ -23,7 +24,7 @@ brand = dbc.Container(
     id="brand"
 )
 
-footer = dbc.Container(
+footer = html.Div(
     [
         html.Footer(
             [
@@ -47,5 +48,5 @@ footer = dbc.Container(
                 ),
             ]
         )
-    ]
+    ], id='footer'
 )

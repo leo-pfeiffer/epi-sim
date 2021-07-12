@@ -1,24 +1,79 @@
+#page {
+    display: grid;
+    width: 100vw;
+    height: 100vh;
+    grid-template-areas:
+            "h  h  h  h  h  h  h"
+            "c  m  m  m  m  t  t"
+            "c  w  w  w  v  v  v"
+            "f  f  f  f  f  f  f";
+    grid-template-rows: 4.5rem 2fr 1fr 0;
+    grid-template-columns: 250px 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-column-gap: 3px;
+    grid-row-gap: 3px;
+}
+
+#brand {
+    grid-area: h;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+#controls {
+  grid-area: c;
+  /*background-color: #ffa08c;*/
+    grid-auto-rows: auto;
+    grid-row-gap: 1rem;
+}
+
+#main {
+  grid-area: m;
+  /*background-color: #ffff64;*/
+}
+
+#table {
+  grid-area: t;
+  /*background-color: green;*/
+}
+
+#waterfall {
+    grid-area: w;
+    /*background-color: blue;*/
+}
+
+#heatmap {
+    grid-area: v;
+    /*background-color: pink;*/
+}
+
+#waterfall .card-body {
+    display: grid;
+}
+
+#heatmap .card-body {
+    display: grid;
+}
+
+
+#footer {
+  grid-area: f;
+  /*background-color: #8cffa0;*/
+}
+
+/* ===== */
+
 #page-content {
     width: 100%;
     padding-bottom: 1rem;
     padding-top: 0;
 }
 
-#brand {
-    width: 100%;
-    display: block;
-    font-size: 1.5rem;
-    padding-bottom: 0.5rem;
-    padding-top: 0.5rem;
-}
-
 .checklist-option {
     margin-right: 1rem;
     display: inline-block;
-}
-
-.row {
-    margin-bottom: 0.5rem;
 }
 
 .inline-form-group {
