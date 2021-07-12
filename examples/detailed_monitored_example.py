@@ -1,9 +1,33 @@
-from epydemic import SIR, ProcessSequence, Monitor, ERNetwork, StochasticDynamics
+from typing import Any
+
+from epydemic import SIR, Monitor, ERNetwork, StochasticDynamics, CompartmentedNodeLocus
 from epyc import Experiment
 from matplotlib import pyplot as plt
 
 
-class MonitoredSIR(SIR):
+class DetailedMonitor(Monitor):
+
+    def __init__(self):
+        super().__init__()
+
+    def observe(self, t: float, e: Any):
+        """
+        Override observe method to track not just the size of the loci but
+        also the nodes in each loci.
+        """
+        super().observe(t, e)
+
+        # track the actual nodes in the compartments not just the size
+        for (n, l) in self.dynamics().loci().items():
+            if isinstance(l, CompartmentedNodeLocus):
+                name = Monitor.timeSeriesForLocus(n) + '.nodes'
+                if name in self._timeSeries:
+                    self._timeSeries[name].append(list(l))
+                else:
+                    self._timeSeries[name] = [list(l)]
+
+
+class MonitoredSIR(SIR, DetailedMonitor):
 
     def __init__(self):
         super().__init__()
@@ -36,11 +60,8 @@ if __name__ == '__main__':
     # capture every 10 timesteps
     params[Monitor.DELTA] = 10
 
-    # build a compund process from the disease and the monitor
-    p = ProcessSequence([MonitoredSIR(), Monitor()])
-
     # run the compound process
-    e = StochasticDynamics(p, g=ERNetwork())
+    e = StochasticDynamics(MonitoredSIR(), g=ERNetwork())
     e.process().setMaximumTime(T)
     rc = e.set(params).run()
 
