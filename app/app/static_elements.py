@@ -1,11 +1,23 @@
 import dash_html_components as html
 import dash_bootstrap_components as dbc
-
+from app.factory import make_dropdown  # noqa
 
 GITHUB = html.A(
     html.I(className="fab fa-github"),
     href="https://github.com/leo-pfeiffer/msc-thesis"
 )
+
+theme_dropdown = make_dropdown('Theme', dict(
+    id='theme-dropdown',
+    options=[{"label": m, "value": v} for m, v in [
+        ('solar', dbc.themes.SOLAR),
+        ('flatly', dbc.themes.FLATLY),
+        ('lux', dbc.themes.LUX),
+        ('cyborg', dbc.themes.CYBORG),
+        ('slate', dbc.themes.SLATE),
+    ]],
+    value=dbc.themes.SOLAR,
+), div_id='themes')
 
 brand = html.Div(
     [
@@ -20,6 +32,7 @@ brand = html.Div(
             vertical=False,
             pills=True,
         ),
+        theme_dropdown
     ],
     id="brand"
 )

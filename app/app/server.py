@@ -11,28 +11,18 @@ import plotly.express as px
 from app.data_import import data  # noqa
 from app.static_elements import brand, footer  # noqa
 from app.layouts import fig_layout, fig_traces, px_line_props, table_layout  # noqa
+from app.factory import make_dropdown, make_slider, create_waterfall_figure, create_heatmap_figure  # noqa
 
+FONT_AWESOME = 'https://pro.fontawesome.com/releases/v5.10.0/css/all.css'
 
 external_stylesheets = [
     dbc.themes.SOLAR,
-    'https://pro.fontawesome.com/releases/v5.10.0/css/all.css'
+    dbc.themes.SOLAR,
+    FONT_AWESOME,
 ]
+
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 app.title = 'EpiSim'
-
-
-def make_dropdown(label, dropdown_options):
-    return html.Div([
-        html.Label(label),
-        dcc.Dropdown(**dropdown_options, clearable=False)
-    ])
-
-
-def make_slider(label, slider_options):
-    return html.Div([
-        html.Label(label),
-        dcc.Slider(**slider_options)
-    ])
 
 
 model_dropdown = make_dropdown('Model', dict(
@@ -65,8 +55,8 @@ ctrls = [model_dropdown, network_dropdown, quarantine_slider, vaccine_slider,
 controls = dbc.Card(ctrls, body=True, id='controls')
 
 somefig = dbc.Card([
-    dcc.Graph(id='my-graph')
-], body=True, id='main')
+    dbc.CardBody([dcc.Graph(id='my-graph')])
+], id='main')
 
 sometab = dbc.Card([
     dash_table.DataTable(
@@ -76,15 +66,15 @@ sometab = dbc.Card([
 ], body=True, id='table')
 
 waterfall = dbc.Card([
-        dbc.CardBody([dcc.Graph()])
+        dbc.CardBody([dcc.Graph(figure=create_waterfall_figure())])
 ], id='waterfall')
 
 heatmap = dbc.Card([
-        dbc.CardBody([dcc.Graph()])
+        dbc.CardBody([dcc.Graph(id="heatmap-figure", figure=create_heatmap_figure())])
 ], id='heatmap')
 
 app.layout = html.Div([
-    dcc.Location(id="url"), brand, controls, footer, somefig, sometab, waterfall, heatmap
+    dcc.Location(id="url"), brand, controls, footer, somefig, sometab, waterfall, heatmap, html.Div(id="blank_output")
 ], id="page")
 
 
@@ -97,19 +87,18 @@ app.layout = html.Div([
     Input('network-dropdown', 'value'),
 )
 def graph_callback(model, network):
-    ctx = dash.callback_context
 
     network='MN_pre'
 
     filtered_df = data[model]['df'][data[model]['df'].network == network]
 
-    fig = create_figure(filtered_df)
+    fig = create_main_figure(filtered_df)
     dat, cols = create_detail_table(filtered_df)
 
     return fig, dat, cols
 
 
-def create_figure(filtered_df):
+def create_main_figure(filtered_df):
     fig = px.line(filtered_df, **px_line_props)
     fig.update_traces(**fig_traces)
     fig.update_layout(**fig_layout)
@@ -183,3 +172,20 @@ def find_sub_threshold_after_peak(l: list, v: float) -> Union[int, None]:
 
     return 0 if l[0] <= v else None
 
+
+# Just for fun: Change the theme of the app
+# Source: https://github.com/AnnMarieW/HelloDash/blob/main/app.py
+app.clientside_callback(
+    """
+    function(url) {
+        // Select the FIRST stylesheet only.
+        var stylesheets = document.querySelectorAll('link[rel=stylesheet][href^="https://stackpath"]')
+        // Update the url of the main stylesheet.
+        stylesheets[stylesheets.length - 1].href = url
+        // Delay update of the url of the buffer stylesheet.
+        setTimeout(function() {stylesheets[0].href = url;}, 100);
+    }
+    """,
+    Output("blank_output", "children"),
+    Input("theme-dropdown", "value"),
+)

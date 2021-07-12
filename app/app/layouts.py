@@ -1,5 +1,5 @@
 fig_layout = dict(
-    margin=dict(l=20, r=20, t=35, b=5),
+    margin=dict(l=10, r=10, t=20, b=10),
     paper_bgcolor="#22444a",
     font_color="#839396",
     legend=dict(
@@ -11,7 +11,7 @@ fig_layout = dict(
     ),
     hovermode="x unified",
     # todo for some reason, setting transition_duration prevents loading of fig
-    # transition_duration=500
+    # transition_duration=500,
 )
 
 fig_traces = dict(
