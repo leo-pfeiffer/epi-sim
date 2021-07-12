@@ -34,11 +34,10 @@ table_layout = dict(
     style_cell={
         'padding': '5px',
         'textAlign': 'left',
-        'backgroundColor': '#38535a',
-        'color': 'white',
+        'backgroundColor': '#22444a',
     },
     style_header={
-        'fontWeight': 'bold'
+        'fontWeight': 'bold',
     },
     style_as_list_view=True
 )

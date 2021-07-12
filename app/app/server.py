@@ -61,20 +61,50 @@ somefig = dbc.Card([
 sometab = dbc.Card([
     dash_table.DataTable(
         id='my-table',
-        columns=[{"name": i, "id": i} for i in ['col1', 'col2']],
-        data=[{'col1': 1, 'col2': 1}, {'col1': 2, 'col2': 2}], **table_layout)
+        columns=[],
+        data=[], **table_layout)
 ], body=True, id='table')
 
-waterfall = dbc.Card([
-        dbc.CardBody([dcc.Graph(figure=create_waterfall_figure())])
-], id='waterfall')
 
-heatmap = dbc.Card([
-        dbc.CardBody([dcc.Graph(id="heatmap-figure", figure=create_heatmap_figure())])
-], id='heatmap')
+heatmap_tabs = dbc.Card(
+    [
+        dbc.CardHeader(
+            dbc.Tabs(
+                [
+                    dbc.Tab(label="Tab 1", tab_id='tab-1'),
+                    dbc.Tab(label="Tab 2", tab_id='tab-2'),
+                ],
+                id="heatmap-card-tabs",
+                card=True,
+                active_tab="tab-1",
+            )
+        ),
+        dbc.CardBody(dcc.Graph(id="heatmap-figure"))
+    ],
+    id='heatmap'
+)
+
+waterfall_tabs = dbc.Card(
+    [
+        dbc.CardHeader(
+            dbc.Tabs(
+                [
+                    dbc.Tab(label="Tab 1", tab_id='tab-1'),
+                    dbc.Tab(label="Tab 2", tab_id='tab-2'),
+                ],
+                id="waterfall-card-tabs",
+                card=True,
+                active_tab="tab-1",
+            )
+        ),
+        dbc.CardBody(dcc.Graph(id="waterfall-figure"))
+    ],
+    id='waterfall'
+)
+
 
 app.layout = html.Div([
-    dcc.Location(id="url"), brand, controls, footer, somefig, sometab, waterfall, heatmap, html.Div(id="blank_output")
+    dcc.Location(id="url"), brand, controls, footer, somefig, sometab, waterfall_tabs, heatmap_tabs, html.Div(id="blank_output")
 ], id="page")
 
 
@@ -104,6 +134,22 @@ def graph_callback(model, network):
 )
 def slider_callback(value):
     return value
+
+
+@app.callback(
+    Output("waterfall-figure", "figure"),
+    Input("waterfall-card-tabs", "active_tab")
+)
+def waterfall_tabs(active_tab):
+    return create_waterfall_figure()
+
+
+@app.callback(
+    Output("heatmap-figure", "figure"),
+    Input("heatmap-card-tabs", "active_tab")
+)
+def heatmap_tabs(active_tab):
+    return create_heatmap_figure()
 
 
 def create_main_figure(filtered_df):
