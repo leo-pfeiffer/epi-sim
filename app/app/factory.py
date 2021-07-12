@@ -14,7 +14,7 @@ def make_dropdown(label, dropdown_options, clearable=False, div_id=''):
 
 def make_slider(label, slider_options):
     return html.Div([
-        html.Label(label),
+        html.Label([label, ': ', html.Span(id={'type': 'label', 'index': slider_options['id']['index']})]),
         dcc.Slider(**slider_options)
     ])
 

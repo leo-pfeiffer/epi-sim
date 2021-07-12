@@ -5,7 +5,7 @@ import dash_table
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, MATCH
 import plotly.express as px
 
 from app.data_import import data  # noqa
@@ -38,16 +38,16 @@ network_dropdown = make_dropdown('Network', dict(
 ))
 
 quarantine_slider = make_slider('P_QUARANTINE', dict(
-    id='p-quarantine-slider', min=0, max=1, step=0.1, value=0))
+    id={'type': 'slider', 'index': 'p-quarantine'}, min=0, max=1, step=0.1, value=0))
 
 vaccine_slider = make_slider('P_VACCINE', dict(
-    id='p-vaccine-slider', min=0, max=1, step=0.1, value=0))
+    id={'type': 'slider', 'index': 'p-vaccine'}, min=0, max=1, step=0.1, value=0))
 
 vaccine_init_slider = make_slider('P_VACCINE_INIT', dict(
-    id='p-vaccine-init-slider', min=0, max=1, step=0.1, value=0))
+    id={'type': 'slider', 'index': 'p-vaccine-init'}, min=0, max=1, step=0.1, value=0))
 
 rrr_slider = make_slider('RRR', dict(
-    id='rrr-slider', min=0, max=1, step=0.1, value=0))
+    id={'type': 'slider', 'index': 'rrr'}, min=0, max=1, step=0.1, value=0))
 
 ctrls = [model_dropdown, network_dropdown, quarantine_slider, vaccine_slider,
          vaccine_init_slider, rrr_slider]
@@ -96,6 +96,14 @@ def graph_callback(model, network):
     dat, cols = create_detail_table(filtered_df)
 
     return fig, dat, cols
+
+
+@app.callback(
+    Output({'type': 'label', 'index': MATCH}, 'children'),
+    Input({'type': 'slider', 'index': MATCH}, 'value')
+)
+def slider_callback(value):
+    return value
 
 
 def create_main_figure(filtered_df):
