@@ -12,7 +12,7 @@ import json
 
 from app.cytoscape_graph import cyto_graph  # noqa
 from app.data_import import data  # noqa
-from app.static_elements import brand_narrow, brand_wide, footer  # noqa
+from app.static_elements import brand, footer  # noqa
 from app.layouts import fig_layout, fig_traces, px_line_props, table_layout  # noqa
 
 import pandas as pd
@@ -103,7 +103,7 @@ content = dbc.Container(
 )
 
 app.layout = html.Div([
-    dcc.Location(id="url"), brand_wide, brand_narrow, content, footer
+    dcc.Location(id="url"), brand, content, footer
 ])
 
 

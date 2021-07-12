@@ -1,46 +1,15 @@
 #page-content {
     width: 100%;
     padding-bottom: 1rem;
+    padding-top: 0;
 }
 
-#brand-wide {
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 250px;
-    padding: 2rem 1rem;
-}
-
-#brand-narrow {
+#brand {
     width: 100%;
+    display: block;
     font-size: 1.5rem;
     padding-bottom: 0.5rem;
     padding-top: 0.5rem;
-}
-
-@media only screen and (max-width: 1600px) {
-    #brand-narrow {
-        display: block;
-    }
-    #brand-wide {
-        display: none;
-    }
-    #page-content {
-        padding-top: 0;
-    }
-}
-
-@media only screen and (min-width: 1600px) {
-    #brand-narrow {
-        display: none;
-    }
-    #brand-wide {
-        display: block;
-    }
-    #page-content {
-        padding-top: 0.5rem;
-    }
 }
 
 .checklist-option {

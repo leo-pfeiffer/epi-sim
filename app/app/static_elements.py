@@ -7,27 +7,7 @@ GITHUB = html.A(
     href="https://github.com/leo-pfeiffer/msc-thesis"
 )
 
-brand_wide = html.Div(
-    [
-        html.H2("EpiSim", className="display-4", id="app-name-wide"),
-        html.Hr(),
-        html.P(
-            "Epidemic simulations", className="lead"
-        ),
-        dbc.Nav(
-            [
-                dbc.NavLink("Models", href="/model", active="exact"),
-                dbc.NavLink("Data", href="/data", active="exact"),
-                dbc.NavLink(GITHUB),
-            ],
-            vertical=True,
-            pills=True,
-        )
-    ],
-    id="brand-wide",
-)
-
-brand_narrow = dbc.Container(
+brand = dbc.Container(
     [
         dbc.Nav(
             [
@@ -40,7 +20,7 @@ brand_narrow = dbc.Container(
             pills=True,
         ),
     ],
-    id="brand-narrow"
+    id="brand"
 )
 
 footer = dbc.Container(
