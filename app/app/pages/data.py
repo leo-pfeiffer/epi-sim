@@ -1,12 +1,18 @@
 import dash_html_components as html
-
+import dash_core_components as dcc
 from ..static_elements import brand, footer
+import os
 
-some_text = html.Div(
-    html.Div(html.P('This is the data page'), id='text-content'),
+path = os.path.dirname(os.path.abspath(__file__))
+
+with open(os.path.join(path, 'markdown', 'data.md'), 'r') as f:
+    markdown = f.read()
+
+text = html.Div(
+    html.Div(dcc.Markdown(markdown), id='text-content'),
     id='text-container'
 )
 
 data_page = [
-    brand, footer, some_text
+    brand, footer, text
 ]
