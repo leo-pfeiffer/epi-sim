@@ -37,7 +37,7 @@ table_layout = dict(
         'backgroundColor': '#22444a',
     },
     style_header={
-        'fontWeight': 'bold',
+        'display': 'none'
     },
     style_as_list_view=True
 )

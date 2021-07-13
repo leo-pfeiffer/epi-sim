@@ -2,7 +2,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objects as go
 import plotly.express as px
-from app.layouts import fig_layout, fig_traces, px_line_props, table_layout  # noqa
+from .layouts import fig_layout, fig_traces, px_line_props, table_layout
 
 
 def make_dropdown(label, dropdown_options, clearable=False, div_id=''):

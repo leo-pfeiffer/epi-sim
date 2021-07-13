@@ -8,10 +8,10 @@ import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, MATCH
 import plotly.express as px
 
-from app.data_import import data  # noqa
-from app.static_elements import brand, footer  # noqa
-from app.layouts import fig_layout, fig_traces, px_line_props, table_layout  # noqa
-from app.factory import make_dropdown, make_slider, create_waterfall_figure, create_heatmap_figure  # noqa
+from .data_import import data
+from .static_elements import brand, footer
+from .layouts import fig_layout, fig_traces, px_line_props, table_layout
+from .factory import make_dropdown, make_slider, create_waterfall_figure, create_heatmap_figure
 
 FONT_AWESOME = 'https://pro.fontawesome.com/releases/v5.10.0/css/all.css'
 

@@ -1,6 +1,6 @@
 import dash_html_components as html
 import dash_bootstrap_components as dbc
-from app.factory import make_dropdown  # noqa
+from .factory import make_dropdown
 
 GITHUB = html.A(
     html.I(className="fab fa-github"),
