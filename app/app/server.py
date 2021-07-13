@@ -14,8 +14,8 @@ from .pages import *
 FONT_AWESOME = 'https://pro.fontawesome.com/releases/v5.10.0/css/all.css'
 
 external_stylesheets = [
-    dbc.themes.SOLAR,
-    dbc.themes.SOLAR,
+    dbc.themes.LUX,
+    dbc.themes.LUX,
     FONT_AWESOME,
 ]
 
@@ -124,4 +124,3 @@ def display_page(pathname):
         return about_page
     else:
         return not_found_page
-    # You could also return a 404 "URL not found" page here

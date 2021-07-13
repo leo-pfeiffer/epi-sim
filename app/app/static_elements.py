@@ -18,7 +18,7 @@ theme_dropdown = html.Div([
             ('cyborg', dbc.themes.CYBORG),
             ('slate', dbc.themes.SLATE),
         ]],
-        value=dbc.themes.SOLAR,
+        value=dbc.themes.LUX,
         clearable=False),
 ], id='themes')
 
@@ -59,7 +59,7 @@ footer = html.Div(
                     html.Hr(),
                     html.A([
                         "View on Github  ", GITHUB
-                    ], href=GITHUB.href, style={'color': 'white'})],
+                    ], href=GITHUB.href, style={'color': 'black'})],
                     className='footer-content'
                 ),
             ]

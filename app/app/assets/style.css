@@ -7,30 +7,25 @@
 }
 
 #controls {
-  grid-area: c;
-  /*background-color: #ffa08c;*/
+    grid-area: c;
     grid-auto-rows: auto;
     grid-row-gap: 1rem;
 }
 
 #main {
-  grid-area: m;
-  /*background-color: #ffff64;*/
+    grid-area: m;
 }
 
 #table {
-  grid-area: t;
-  /*background-color: green;*/
+    grid-area: t;
 }
 
 #waterfall {
     grid-area: w;
-    /*background-color: blue;*/
 }
 
 #heatmap {
     grid-area: v;
-    /*background-color: pink;*/
 }
 
 #waterfall .card-body {
@@ -43,8 +38,7 @@
 
 
 #footer {
-  grid-area: f;
-  /*background-color: #8cffa0;*/
+    grid-area: f;
 }
 
 #themes {
@@ -73,7 +67,7 @@
 }
 
 .footer-content {
-    color: white;
+    color: black;
     padding: 15px;
     text-align: center;
     position: absolute;

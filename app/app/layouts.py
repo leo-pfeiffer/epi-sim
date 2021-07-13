@@ -1,7 +1,7 @@
 fig_layout = dict(
     margin=dict(l=10, r=10, t=20, b=10),
-    paper_bgcolor="#22444a",
-    font_color="#839396",
+    paper_bgcolor="white",  # paper_bgcolor="#22444a",
+    font_color="black",  # font_color="#839396",
     legend=dict(
         orientation="h",
         yanchor="bottom",
