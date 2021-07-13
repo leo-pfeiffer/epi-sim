@@ -1,13 +1,13 @@
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
-import dash_table
+import pandas as pd
 import plotly.express as px
 from plotly.graph_objects import Figure, Heatmap
 
 from ..data_import import data
 from ..static_elements import brand, footer
-from ..layouts import table_layout, fig_layout, fig_traces, px_line_props
+from ..layouts import fig_layout, fig_traces, px_line_props
 
 
 # Factory and helper functions =====
@@ -20,7 +20,13 @@ def make_dropdown(label, dropdown_options, clearable=False, div_id=''):
 
 def make_slider(label, slider_options):
     return html.Div([
-        html.Label([label, ': ', html.Span(id={'type': 'label', 'index': slider_options['id']['index']})]),
+        html.Label([
+            label,
+            ': ',
+            html.Span(
+                id={'type': 'label', 'index': slider_options['id']['index']}
+            )
+        ]),
         dcc.Slider(**slider_options)
     ])
 
@@ -67,10 +73,10 @@ def make_detail_table(df):
     for k, v in out.items():
         out[k] = '%.4f' % v
 
-    columns = [{"name": i, "id": i} for i in ['key', 'value']]
-    records = [{'key': k, 'value': v} for k, v in out.items()]
-
-    return records, columns
+    return pd.DataFrame({
+        'key': list(out.keys()),
+        'value': list(out.values())
+    })
 
 
 def calc_perc_infected(df):
@@ -136,32 +142,43 @@ network_dropdown = make_dropdown('Network', dict(
 ))
 
 quarantine_slider = make_slider('P_QUARANTINE', dict(
-    id={'type': 'slider', 'index': 'p-quarantine'}, min=0, max=1, step=0.1, value=0))
+    id={'type': 'slider', 'index': 'p-quarantine'},
+    min=0, max=1, step=0.1, value=0))
 
 vaccine_slider = make_slider('P_VACCINE', dict(
-    id={'type': 'slider', 'index': 'p-vaccine'}, min=0, max=1, step=0.1, value=0))
+    id={'type': 'slider', 'index': 'p-vaccine'},
+    min=0, max=1, step=0.1, value=0))
 
 vaccine_init_slider = make_slider('P_VACCINE_INIT', dict(
-    id={'type': 'slider', 'index': 'p-vaccine-init'}, min=0, max=1, step=0.1, value=0))
+    id={'type': 'slider', 'index': 'p-vaccine-init'},
+    min=0, max=1, step=0.1, value=0))
 
 rrr_slider = make_slider('RRR', dict(
-    id={'type': 'slider', 'index': 'rrr'}, min=0, max=1, step=0.1, value=0))
+    id={'type': 'slider', 'index': 'rrr'},
+    min=0, max=1, step=0.1, value=0))
 
-ctrls = [model_dropdown, network_dropdown, quarantine_slider, vaccine_slider,
-         vaccine_init_slider, rrr_slider]
-
-controls = dbc.Card(ctrls, body=True, id='controls')
+controls = dbc.Card([
+    model_dropdown,
+    network_dropdown,
+    quarantine_slider,
+    vaccine_slider,
+    vaccine_init_slider,
+    rrr_slider
+], body=True, id='controls')
 
 main_graph = dbc.Card([
-    dbc.CardBody([dcc.Graph(id='epidemic-curve-graph', responsive=True, figure={})])
+    dbc.CardBody(
+        dcc.Graph(id='epidemic-curve-graph', responsive=True)
+    )
 ], id='main')
 
 data_table = dbc.Card([
-    dash_table.DataTable(
-        id='summary-data-table',
-        columns=[],
-        data=[], **table_layout)
-], body=True, id='table')
+    dbc.CardBody(
+        dbc.Table(),
+        style={'overflowY': 'auto'},
+        id='table-card-body'
+    )
+], id='table')
 
 heatmap_tabs = dbc.Card(
     [
@@ -176,7 +193,9 @@ heatmap_tabs = dbc.Card(
                 active_tab="tab-1",
             )
         ),
-        dbc.CardBody(dcc.Graph(id="heatmap-graph", responsive=True, figure={}))
+        dbc.CardBody(
+            dcc.Graph(id="heatmap-graph", responsive=True)
+        )
     ],
     id='heatmap'
 )
@@ -194,7 +213,9 @@ waterfall_tabs = dbc.Card(
                 active_tab="tab-1",
             )
         ),
-        dbc.CardBody(dcc.Graph(id="waterfall-graph", responsive=True, figure={}))
+        dbc.CardBody(
+            dcc.Graph(id="waterfall-graph", responsive=True)
+        )
     ],
     id='waterfall'
 )
@@ -202,6 +223,11 @@ waterfall_tabs = dbc.Card(
 # Assemble components into page
 
 index_page = [
-    brand, controls, footer, main_graph, data_table, waterfall_tabs,
+    brand,
+    controls,
+    footer,
+    main_graph,
+    data_table,
+    waterfall_tabs,
     heatmap_tabs
 ]

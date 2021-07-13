@@ -38,8 +38,7 @@ app.layout = html.Div([
 # CALLBACKS ====
 @app.callback(
     Output('epidemic-curve-graph', 'figure'),
-    Output('summary-data-table', 'data'),
-    Output('summary-data-table', 'columns'),
+    Output('table-card-body', 'children'),
     Input('model-dropdown', 'value'),
     Input('network-dropdown', 'value')
 )
@@ -49,9 +48,14 @@ def graph_callback(model, network):
 
     df = filter_df(model, network)
     fig = make_main_graph(df)
-    dat, cols = make_detail_table(df)
+    table_df = make_detail_table(df)
 
-    return fig, dat, cols
+    table = dbc.Table.from_dataframe(
+        table_df, striped=True, bordered=True, hover=True, responsive=True,
+        id='summary-data-table', className='table'
+    )
+
+    return fig, table
 
 
 @app.callback(

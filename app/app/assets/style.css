@@ -87,7 +87,15 @@
     height: 100%;
 }
 
-table {
+.table {
     font-family: inherit !important;
     color: inherit !important;
+}
+
+.table thead {
+    display: none;
+}
+
+.table td {
+    padding: 5px;
 }

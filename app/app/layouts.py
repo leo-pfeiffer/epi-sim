@@ -28,16 +28,3 @@ px_line_props = dict(
     hover_name="compartment",
     template="plotly_white"
 )
-
-table_layout = dict(
-    cell_selectable=False,
-    style_cell={
-        'padding': '5px',
-        'textAlign': 'left',
-        'backgroundColor': '#22444a',
-    },
-    style_header={
-        'display': 'none'
-    },
-    style_as_list_view=True
-)
