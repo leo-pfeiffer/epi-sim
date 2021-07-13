@@ -4,8 +4,12 @@ import dash_html_components as html
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, MATCH
 
-from .pages.index import index_page, make_main_graph, make_detail_table, \
+# page utils
+from .pages.index import make_main_graph, make_detail_table, \
     make_heatmap, make_waterfall, filter_df
+
+# pages
+from .pages import *
 
 FONT_AWESOME = 'https://pro.fontawesome.com/releases/v5.10.0/css/all.css'
 
@@ -97,12 +101,14 @@ app.clientside_callback(
               [dash.dependencies.Input('url', 'pathname')])
 def display_page(pathname):
     print(pathname)
-    if pathname == '/model':
+    if pathname == '/':
         return index_page
+    elif pathname == '/model':
+        return model_page
     elif pathname == '/data':
-        return index_page
+        return data_page
     elif pathname == '/about':
-        return index_page
+        return about_page
     else:
-        return index_page
+        return not_found_page
     # You could also return a 404 "URL not found" page here
