@@ -55,6 +55,11 @@
     padding-top: 0;
 }
 
+#logo {
+    height: 1.5rem;
+    margin-right: 10px;
+}
+
 .checklist-option {
     margin-right: 1rem;
     display: inline-block;
