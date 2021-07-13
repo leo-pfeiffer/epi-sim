@@ -2,7 +2,7 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
-from dash.dependencies import Input, Output, MATCH
+from dash.dependencies import Input, Output, MATCH, ClientsideFunction
 
 # page utils
 from .pages.index import make_main_graph, make_detail_table, \
@@ -95,10 +95,19 @@ app.clientside_callback(
     Input("theme-dropdown", "value"),
 )
 
+app.clientside_callback(
+    ClientsideFunction(
+        namespace='clientside',
+        function_name='switchStylesheet'
+    ),
+    Output('blank_output', 'style'),
+    Input('url', 'pathname')
+)
+
 
 # Update the index
-@app.callback(dash.dependencies.Output('page', 'children'),
-              [dash.dependencies.Input('url', 'pathname')])
+@app.callback(Output('page', 'children'),
+              Input('url', 'pathname'))
 def display_page(pathname):
     print(pathname)
     if pathname == '/':
