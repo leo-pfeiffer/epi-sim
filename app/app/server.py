@@ -1,17 +1,18 @@
-from typing import Union
-
 import dash
 import dash_table
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, MATCH
-import plotly.express as px
 
 from .data_import import data
 from .static_elements import brand, footer
-from .layouts import fig_layout, fig_traces, px_line_props, table_layout
-from .factory import make_dropdown, make_slider, create_waterfall_figure, create_heatmap_figure
+from .layouts import table_layout
+from .factory import make_dropdown, make_slider, create_detail_table
+
+from .layouts import fig_layout, fig_traces, px_line_props
+import plotly.express as px
+from plotly.graph_objects import Figure, Heatmap
 
 FONT_AWESOME = 'https://pro.fontawesome.com/releases/v5.10.0/css/all.css'
 
@@ -54,17 +55,16 @@ ctrls = [model_dropdown, network_dropdown, quarantine_slider, vaccine_slider,
 
 controls = dbc.Card(ctrls, body=True, id='controls')
 
-somefig = dbc.Card([
-    dbc.CardBody([dcc.Graph(id='my-graph')])
+main_graph = dbc.Card([
+    dbc.CardBody([dcc.Graph(id='my-graph', responsive=True)])
 ], id='main')
 
-sometab = dbc.Card([
+data_table = dbc.Card([
     dash_table.DataTable(
         id='my-table',
         columns=[],
         data=[], **table_layout)
 ], body=True, id='table')
-
 
 heatmap_tabs = dbc.Card(
     [
@@ -79,7 +79,7 @@ heatmap_tabs = dbc.Card(
                 active_tab="tab-1",
             )
         ),
-        dbc.CardBody(dcc.Graph(id="heatmap-figure"))
+        dbc.CardBody(dcc.Graph(id="heatmap-figure", responsive=True))
     ],
     id='heatmap'
 )
@@ -97,14 +97,13 @@ waterfall_tabs = dbc.Card(
                 active_tab="tab-1",
             )
         ),
-        dbc.CardBody(dcc.Graph(id="waterfall-figure"))
+        dbc.CardBody(dcc.Graph(id="waterfall-figure", responsive=True))
     ],
     id='waterfall'
 )
 
-
 app.layout = html.Div([
-    dcc.Location(id="url"), brand, controls, footer, somefig, sometab, waterfall_tabs, heatmap_tabs, html.Div(id="blank_output")
+    dcc.Location(id="url"), brand, controls, footer, main_graph, data_table, waterfall_tabs, heatmap_tabs, html.Div(id="blank_output")
 ], id="page")
 
 
@@ -114,15 +113,18 @@ app.layout = html.Div([
     Output('my-table', 'data'),
     Output('my-table', 'columns'),
     Input('model-dropdown', 'value'),
-    Input('network-dropdown', 'value'),
+    Input('network-dropdown', 'value')
 )
 def graph_callback(model, network):
 
-    network='MN_pre'
+    network = 'MN_pre'
 
     filtered_df = data[model]['df'][data[model]['df'].network == network]
 
-    fig = create_main_figure(filtered_df)
+    fig = px.line(filtered_df, **px_line_props)
+    fig.update_traces(**fig_traces)
+    fig.update_layout(**fig_layout)
+
     dat, cols = create_detail_table(filtered_df)
 
     return fig, dat, cols
@@ -141,7 +143,10 @@ def slider_callback(value):
     Input("waterfall-card-tabs", "active_tab")
 )
 def waterfall_tabs(active_tab):
-    return create_waterfall_figure()
+    df = px.data.iris()
+    fig = px.scatter(df, x="sepal_width", y="sepal_length")
+    fig.update_layout(**fig_layout)
+    return fig
 
 
 @app.callback(
@@ -149,82 +154,13 @@ def waterfall_tabs(active_tab):
     Input("heatmap-card-tabs", "active_tab")
 )
 def heatmap_tabs(active_tab):
-    return create_heatmap_figure()
+    fig = Figure(data=Heatmap(
+        z=[[1, 20, 30],
+           [20, 1, 60],
+           [30, 60, 1]]))
 
-
-def create_main_figure(filtered_df):
-    fig = px.line(filtered_df, **px_line_props)
-    fig.update_traces(**fig_traces)
     fig.update_layout(**fig_layout)
     return fig
-
-
-def create_detail_table(df):
-    out = {}
-
-    last_time = df[df.time == max(df.time)]
-
-    out['total infected'] = calc_perc_infected(last_time)
-    out['susceptible remaining'] = calc_susceptible_remaining(last_time)
-    out['peak time'] = calc_peak_time(df)
-    out['peak infected'] = calc_peak_infected(df)
-    out['effective end'] = calc_effective_end(df)
-
-    for k, v in out.items():
-        out[k] = '%.4f' % v
-
-    columns = [{"name": i, "id": i} for i in ['key', 'value']]
-    records = [{'key': k, 'value': v} for k, v in out.items()]
-
-    return records, columns
-
-
-def calc_perc_infected(df):
-    r = df[df.compartment == 'removed'].iloc[0]['value']
-    e = df[df.compartment == 'exposed'].iloc[0]['value']
-    return r + e
-
-
-def calc_susceptible_remaining(df):
-    return df[df.compartment == 'susceptible'].iloc[0]['value']
-
-
-def calc_peak_time(df):
-    return df.loc[df[df.compartment == 'infected'].value.idxmax(), 'time']
-
-
-def calc_peak_infected(df):
-    return df[df.compartment == 'infected'].value.max()
-
-
-def calc_effective_end(df):
-    # first time, infected is sub 1% again
-    # todo what threshold makes sense here?
-    infected = df[df.compartment == 'infected']
-
-    idx = find_sub_threshold_after_peak(infected.value.tolist(), 0.01)
-
-    if idx is None:
-        return None
-
-    return infected.time.values[idx]
-
-
-def find_sub_threshold_after_peak(l: list, v: float) -> Union[int, None]:
-    """
-    Find the index of the value in a list that is below a threshold  for the
-    first time after a value above the peak. If the condition is not met for
-    any values, return 0 if the first value of the list is below the threshold
-    or None if the first value is above the threshold.
-    :param l: List of values
-    :param v: Threshold value
-    :return: Index or None
-    """
-    for i in range(1, len(l)):
-        if l[i - 1] > v >= l[i]:
-            return i
-
-    return 0 if l[0] <= v else None
 
 
 # Just for fun: Change the theme of the app
