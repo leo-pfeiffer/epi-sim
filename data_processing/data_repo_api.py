@@ -6,12 +6,8 @@ import json
 import argparse
 import base64
 import os
-from dotenv import load_dotenv
-from configuration import ROOT_DIR, DATA_REPO_URL_API, DATA_REPO_URL_TREE, \
-    DATA_REPO_URL_RAW
-
-# load dotenv file and load variables
-load_dotenv(dotenv_path=os.path.join(ROOT_DIR, '.env'))
+from configuration import DATA_REPO_URL_API, DATA_REPO_URL_TREE, \
+    DATA_REPO_URL_RAW, DATA_REPO_TOKEN
 
 
 class DataRepoAPI:
@@ -19,8 +15,7 @@ class DataRepoAPI:
     Simple wrapper around the Github API to interact with the data repository.
     """
 
-    TOKEN = os.getenv("DATA_REPO_TOKEN")
-    AUTH = {"Authorization": f"token {TOKEN}"}
+    AUTH = {"Authorization": f"token {DATA_REPO_TOKEN}"}
     CONTENT_TYPE = 'application/vnd.github.v3+json'
     DEFAULT_FILE_DIR = '../experiments/results'
 
