@@ -16,8 +16,10 @@ Section 1.10.33 of "de Finibus Bonorum et Malorum", written by Cicero in 45 BC
 """
 
 some_text = html.Div(
-    html.P(TEXT + TEXT),
-    id='text-content'
+    html.Div([
+        html.P(TEXT + TEXT),
+    ], id='text-content'),
+    id='text-container'
 )
 
 about_page = [

@@ -11,11 +11,15 @@
     grid-row-gap: 3px;
 }
 
+#text-container {
+    width: 100%;
+    vertical-align: top;
+}
+
 #text-content {
     margin-left: auto;
     margin-right: auto;
-    width: 100%;
-    vertical-align: top;
+    width: 60%;
 }
 
 #h1-404, #h3-404 {
