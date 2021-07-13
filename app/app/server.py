@@ -82,19 +82,32 @@ def heatmap_tabs(active_tab):
     return make_heatmap()
 
 
+# Update the index
+@app.callback(
+    Output('page', 'children'),
+    Input('url', 'pathname')
+)
+def display_page(pathname):
+    if pathname == '/':
+        return index_page
+    elif pathname == '/model':
+        return model_page
+    elif pathname == '/data':
+        return data_page
+    elif pathname == '/about':
+        return about_page
+    else:
+        return not_found_page
+
+
+# Client side callbacks ====
 # Just for fun: Change the theme of the app
 # Source: https://github.com/AnnMarieW/HelloDash/blob/main/app.py
 app.clientside_callback(
-    """
-    function(url) {
-        // Select the FIRST stylesheet only.
-        var stylesheets = document.querySelectorAll('link[rel=stylesheet][href^="https://stackpath"]')
-        // Update the url of the main stylesheet.
-        stylesheets[stylesheets.length - 1].href = url
-        // Delay update of the url of the buffer stylesheet.
-        setTimeout(function() {stylesheets[0].href = url;}, 100);
-    }
-    """,
+    ClientsideFunction(
+        namespace='clientside',
+        function_name='switchTheme'
+    ),
     Output("blank_output", "children"),
     Input("theme-dropdown", "value"),
 )
@@ -107,20 +120,3 @@ app.clientside_callback(
     Output('blank_output', 'style'),
     Input('url', 'pathname')
 )
-
-
-# Update the index
-@app.callback(Output('page', 'children'),
-              Input('url', 'pathname'))
-def display_page(pathname):
-    print(pathname)
-    if pathname == '/':
-        return index_page
-    elif pathname == '/model':
-        return model_page
-    elif pathname == '/data':
-        return data_page
-    elif pathname == '/about':
-        return about_page
-    else:
-        return not_found_page
