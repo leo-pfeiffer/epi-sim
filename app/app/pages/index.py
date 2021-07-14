@@ -3,14 +3,11 @@ import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
 import plotly.express as px
-from plotly.graph_objects import Figure, Heatmap
+from plotly.graph_objects import Figure, Heatmap, Layout
 
-from ..data_import import SimulationData
+from ..data_import import simulation_data
 from ..static_elements import brand, footer
-from ..layouts import fig_layout, fig_traces, px_line_props
-
-
-simulation_data = SimulationData()
+from ..layouts import fig_layout, fig_traces, main_graph_props, px_template
 
 
 # Factory and helper functions =====
@@ -35,10 +32,8 @@ def make_slider(label, slider_options):
 
 
 def make_heatmap():
-    fig = Figure(data=Heatmap(
-        z=[[1, 20, 30],
-           [20, 1, 60],
-           [30, 60, 1]]))
+    fig = Figure(data=Heatmap(z=[[1, 20, 30], [20, 1, 60], [30, 60, 1]]),
+                 layout=Layout(template=px_template))
 
     fig.update_layout(**fig_layout)
     return fig
@@ -46,13 +41,13 @@ def make_heatmap():
 
 def make_waterfall():
     df = px.data.iris()
-    fig = px.scatter(df, x="sepal_width", y="sepal_length")
+    fig = px.scatter(df, x="sepal_width", y="sepal_length", template=px_template)
     fig.update_layout(**fig_layout)
     return fig
 
 
 def make_main_graph(df):
-    fig = px.line(df, **px_line_props)
+    fig = px.line(df, **main_graph_props, template=px_template)
     fig.update_traces(**fig_traces)
     fig.update_layout(**fig_layout)
     return fig
@@ -132,6 +127,8 @@ def find_sub_threshold_after_peak(l: list, v: float):
 
 # Create elements =====
 
+# TODO make sure to only include those combinations that actually exist
+
 model_dropdown = make_dropdown('Model', dict(
     id='model-dropdown',
     options=[{"label": m, "value": m} for m in simulation_data.models],
@@ -143,6 +140,8 @@ network_dropdown = make_dropdown('Network', dict(
     options=[{"label": m, "value": m} for m in simulation_data.networks],
     value=list(simulation_data.networks)[0],
 ))
+
+# TODO make sure to only activate those sliders that are available for the model
 
 quarantine_slider = make_slider('P_QUARANTINE', dict(
     id={'type': 'slider', 'index': 'p-quarantine'},

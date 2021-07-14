@@ -19,19 +19,6 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
     clientside: {
 
         /**
-         * Change the theme of the app.
-         * Source: https://github.com/AnnMarieW/HelloDash/blob/main/app.py
-         * */
-        switchTheme: function(url) {
-            // Select the FIRST stylesheet only.
-            const stylesheets = document.querySelectorAll('link[rel=stylesheet][href^="https://stackpath"]')
-            // Update the url of the main stylesheet.
-            stylesheets[stylesheets.length - 1].href = url
-            // Delay update of the url of the buffer stylesheet.
-            setTimeout(function() {stylesheets[0].href = url;}, 100);
-        },
-
-        /**
          * Switch between stylesheet when rerouting occurs.
          * */
         switchStylesheet: function(url) {

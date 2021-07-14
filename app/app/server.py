@@ -99,17 +99,6 @@ def display_page(pathname):
 
 
 # Client side callbacks ====
-# Just for fun: Change the theme of the app
-# Source: https://github.com/AnnMarieW/HelloDash/blob/main/app.py
-app.clientside_callback(
-    ClientsideFunction(
-        namespace='clientside',
-        function_name='switchTheme'
-    ),
-    Output("blank_output", "children"),
-    Input("theme-dropdown", "value"),
-)
-
 app.clientside_callback(
     ClientsideFunction(
         namespace='clientside',

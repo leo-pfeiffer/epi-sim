@@ -2,7 +2,8 @@
 .PHONY: requirements
 requirements:
 	pip install --upgrade pip
-	pip install -r requirements.txt -r app/requirements.txt
+	pip install -U setuptools wheel
+	pip install -U -r requirements.txt -r app/requirements.txt
 
 .PHONY: env
 env:

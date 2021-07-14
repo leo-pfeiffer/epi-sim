@@ -104,8 +104,9 @@ class SimulationData:
                 break
 
         if not found:
-            raise ValueError(f"Provided combination of `model` and `network` "
-                             f"does not exist. The available combinations are "
+            raise ValueError(f"Provided combination of `model={model}` and "
+                             f"`network={network}` does not exist. "
+                             f"The available combinations are "
                              f"{[(x['model'], x['network']) for x in self.FILES]}.")
 
         subset = df[df.apply(apply_func, 1)].copy()
@@ -159,33 +160,4 @@ class SimulationData:
             })
 
 
-# def get_files():
-#     seir_df = pd.read_csv(SEIR_FILE, index_col=0)
-#     seivr_df = pd.read_csv(SEIVR_FILE, index_col=0)
-#
-#     return dict(
-#         seir=dict(
-#             model='SEIR',
-#             df=seir_df[seir_df.model == 'SEIR'],
-#             networks=seir_df[seir_df.model == 'SEIR'].network.unique().tolist()
-#         ),
-#         seir_q=dict(
-#             model='SEIR_Q',
-#             df=seir_df[seir_df.model == 'SEIR_Q'],
-#             networks=seir_df[seir_df.model == 'SEIR_Q'].network.unique().tolist()
-#         ),
-#         seivr=dict(
-#             model='SEIVR',
-#             df=seivr_df[seivr_df.model == 'SEIVR'],
-#             networks=seivr_df[seivr_df.model == 'SEIVR'].network.unique().tolist()
-#         ),
-#         seivr_q=dict(
-#             model='SEIVR_Q',
-#             df=seivr_df[seivr_df.model == 'SEIVR_Q'],
-#             networks=seivr_df[seivr_df.model == 'SEIVR_Q'].network.unique().tolist()
-#         )
-#     )
-
-
-# data = get_files()
-
+simulation_data = SimulationData()

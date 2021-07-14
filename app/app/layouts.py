@@ -1,3 +1,8 @@
+from dash_bootstrap_templates import load_figure_template
+
+px_template = "lux"
+load_figure_template(px_template)
+
 fig_layout = dict(
     margin=dict(l=10, r=10, t=20, b=10),
     legend=dict(
@@ -16,11 +21,10 @@ fig_traces = dict(
     hovertemplate=None
 )
 
-px_line_props = dict(
+main_graph_props = dict(
     x="time",
     y="value",
     color="compartment",
     line_group="compartment",
     hover_name="compartment",
-    template="plotly_white"
 )
