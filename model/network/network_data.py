@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 from dataclasses import dataclass, field
 
 import numpy as np
@@ -7,7 +7,7 @@ from model.types import TRIP_COUNT_CHANGE, COMB_COUNTS, TRIP_COUNTS,\
 
 
 # special types for convenience...
-DEMOGRAPHICS = dict[str, dict[str, float]]
+DEMOGRAPHICS = Dict[str, Dict[str, float]]
 
 
 @dataclass

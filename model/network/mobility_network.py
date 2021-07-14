@@ -2,7 +2,7 @@ import numpy as np
 import networkx as nx
 import sys
 if sys.version_info >= (3, 8):
-    from typing import Final, Dict
+    from typing import Final, Dict, List
 else:
     # backwards compatibility with Python35, Python36, and Python37
     from typing_extensions import Final
@@ -17,9 +17,9 @@ from model.distributions import discrete_trunc_normal, draw_cbg, \
 # special types for convenience...
 from model.utils import discrete_rejection_sample
 
-HOUSEHOLDS = list[nx.Graph]
-STUBS = list[int]
-CBG_DEGREE_MAP = dict[str, list[int]]
+HOUSEHOLDS = List[nx.Graph]
+STUBS = List[int]
+CBG_DEGREE_MAP = Dict[str, List[int]]
 
 
 class MobilityNetwork:

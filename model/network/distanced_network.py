@@ -1,6 +1,6 @@
 import sys
 if sys.version_info >= (3, 8):
-    from typing import Final, Dict
+    from typing import Final, Dict, List
 else:
     # backwards compatibility with Python35, Python36, and Python37
     from typing_extensions import Final
@@ -11,8 +11,8 @@ import numpy as np
 from epydemic import NetworkGenerator
 
 # special types for convenience...
-HOUSEHOLDS = list[nx.Graph]
-STUBS = list[int]
+HOUSEHOLDS = List[nx.Graph]
+STUBS = List[int]
 
 
 # todo comments, docstrings, unit tests
