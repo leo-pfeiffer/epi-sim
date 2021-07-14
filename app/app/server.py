@@ -44,8 +44,6 @@ app.layout = html.Div([
 )
 def graph_callback(model, network):
 
-    network = 'MN_pre'
-
     df = filter_df(model, network)
     fig = make_main_graph(df)
     table_df = make_detail_table(df)

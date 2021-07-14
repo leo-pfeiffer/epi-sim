@@ -5,9 +5,12 @@ import pandas as pd
 import plotly.express as px
 from plotly.graph_objects import Figure, Heatmap
 
-from ..data_import import data
+from ..data_import import SimulationData
 from ..static_elements import brand, footer
 from ..layouts import fig_layout, fig_traces, px_line_props
+
+
+simulation_data = SimulationData()
 
 
 # Factory and helper functions =====
@@ -56,7 +59,7 @@ def make_main_graph(df):
 
 
 def filter_df(model, network):
-    return data[model]['df'][data[model]['df'].network == network]
+    return simulation_data.subset_data(model, network)
 
 
 def make_detail_table(df):
@@ -131,14 +134,14 @@ def find_sub_threshold_after_peak(l: list, v: float):
 
 model_dropdown = make_dropdown('Model', dict(
     id='model-dropdown',
-    options=[{"label": m, "value": m} for m in data.keys()],
-    value=list(data.keys())[0],
+    options=[{"label": m, "value": m} for m in simulation_data.models],
+    value=list(simulation_data.models)[0],
 ))
 
 network_dropdown = make_dropdown('Network', dict(
     id='network-dropdown',
-    options=[{"label": m, "value": m} for m in data.keys()],
-    value=list(data.keys())[0],
+    options=[{"label": m, "value": m} for m in simulation_data.networks],
+    value=list(simulation_data.networks)[0],
 ))
 
 quarantine_slider = make_slider('P_QUARANTINE', dict(

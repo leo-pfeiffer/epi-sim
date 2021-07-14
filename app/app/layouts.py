@@ -20,7 +20,6 @@ px_line_props = dict(
     x="time",
     y="value",
     color="compartment",
-    facet_col="network",
     line_group="compartment",
     hover_name="compartment",
     template="plotly_white"
