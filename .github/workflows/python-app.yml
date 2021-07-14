@@ -7,7 +7,7 @@ name: msc-thesis
 
 on:
   push:
-    branches: [ main, issue-1-frontend-redesign ]
+    branches: [ main ]
 
 jobs:
   build:
