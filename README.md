@@ -1,4 +1,6 @@
 [![Build status](https://github.com/leo-pfeiffer/msc-thesis/actions/workflows/python-app.yml/badge.svg)](https://github.com/leo-pfeiffer/msc-thesis/actions/workflows/python-app.yml)
+[![Online status](https://img.shields.io/website?down_color=lightgrey&down_message=offline&up_color=green&up_message=online&url=http%3A%2F%2F209.182.235.76%2F)]
+
 
 # msc-thesis
 Repository for my MSc Thesis `A compartmented network model for COVID-19'
