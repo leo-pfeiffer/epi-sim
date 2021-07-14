@@ -1,6 +1,6 @@
 import sys
 if sys.version_info >= (3, 8):
-    from typing import Final
+    from typing import Final, Dict
 else:
     # backwards compatibility with Python35, Python36, and Python37
     from typing_extensions import Final

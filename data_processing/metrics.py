@@ -1,5 +1,5 @@
 # Functions to calculate some metrics for a network
-from typing import Union
+from typing import Union, List
 import sys
 if sys.version_info >= (3, 8):
     from typing import Final
