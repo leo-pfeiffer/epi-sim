@@ -1,7 +1,3 @@
-import sys
-if sys.version_info >= (3, 7):
-    from __future__ import annotations
-
 from typing import List
 from dataclasses import dataclass, field
 
@@ -76,7 +72,7 @@ class NetworkData:
         for key in self.adjacency_list:
             self.cum_prob[key] = np.array(self.adjacency_list[key]).cumsum()
 
-    def calc_trip_count_change(self, pre_data: NetworkData):
+    def calc_trip_count_change(self, pre_data):
         """
         Calculate the change in trip counts compared to another NetworkData
         instance. The trip count change is saved in the `trip_count_change`
