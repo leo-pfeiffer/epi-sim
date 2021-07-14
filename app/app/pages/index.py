@@ -108,7 +108,7 @@ def calc_effective_end(df):
     return infected.time.values[idx]
 
 
-def find_sub_threshold_after_peak(l: list, v: float):
+def find_sub_threshold_after_peak(l: List, v: float):
     """
     Find the index of the value in a list that is below a threshold  for the
     first time after a value above the peak. If the condition is not met for

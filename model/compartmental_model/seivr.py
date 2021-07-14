@@ -1,4 +1,11 @@
-from typing import Any, Dict, Final
+from typing import Any, Dict
+import sys
+if sys.version_info >= (3, 8):
+    from typing import Final
+else:
+    # backwards compatibility with Python35, Python36, and Python37
+    from typing_extensions import Final
+
 
 from epydemic import CompartmentedModel, Monitor
 from epydemic.types import Node, Edge

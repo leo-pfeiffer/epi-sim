@@ -1,4 +1,11 @@
-from typing import Final, Callable, Any
+import sys
+if sys.version_info >= (3, 8):
+    from typing import Final, Dict
+else:
+    # backwards compatibility with Python35, Python36, and Python37
+    from typing_extensions import Final
+from typing import Callable, Any
+
 
 import pandas as pd
 import json
@@ -48,7 +55,7 @@ class SimulationData:
             self.load_file(file)
 
     @classmethod
-    def load_file(cls, file: dict) -> dict:
+    def load_file(cls, file: Dict) -> Dict:
         """
         Load JSON file from data repo inplace.
         :param file: Dict containing file info, crucially the `name`
@@ -63,7 +70,7 @@ class SimulationData:
         return file
 
     @staticmethod
-    def make_filter_func(filters: dict[str, Any]) -> Callable:
+    def make_filter_func(filters: Dict[str, Any]) -> Callable:
         """
         Make a filter function from a dictionary of filter.
          For example, to filter for `compartment == 'susceptible`, pass

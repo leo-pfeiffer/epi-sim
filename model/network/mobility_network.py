@@ -1,6 +1,12 @@
 import numpy as np
 import networkx as nx
-from typing import Any, Final, Callable, Optional
+import sys
+if sys.version_info >= (3, 8):
+    from typing import Final
+else:
+    # backwards compatibility with Python35, Python36, and Python37
+    from typing_extensions import Final
+from typing import Any, Callable, Optional
 from epydemic import NetworkGenerator
 from networkx import Graph, read_graphml
 
@@ -269,7 +275,7 @@ class MNGenerator(NetworkGenerator):
         """
         return 'MN'
 
-    def _generate(self, params: dict[str, Any]) -> Graph:
+    def _generate(self, params: Dict[str, Any]) -> Graph:
         raise NotImplementedError('MNGenerator._generate needs to be '
                                   'overridden by sub-classes')
 
@@ -289,7 +295,7 @@ class MNGeneratorFromFile(MNGenerator):
         """
         super(MNGeneratorFromFile, self).__init__(params, limit)
 
-    def _generate(self, params: dict[str, Any]) -> Graph:
+    def _generate(self, params: Dict[str, Any]) -> Graph:
         """
         Generate the graph of a mobility network from a GraphML file
         :param params: experiment parameters
@@ -321,7 +327,7 @@ class MNGeneratorFromNetworkData(MNGenerator):
         super(MNGeneratorFromNetworkData, self).__init__(
             params, limit, network_data=network_data)
 
-    def _generate(self, params: dict[str, Any]) -> nx.Graph:
+    def _generate(self, params: Dict[str, Any]) -> nx.Graph:
         """
         Generate the graph of a mobility network from a NetworkData object.
         :param params: experiment parameters

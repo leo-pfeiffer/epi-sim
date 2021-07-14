@@ -1,14 +1,16 @@
 import os
 import pickle
+from typing import Dict
+
 from configuration import OUT
 from data_processing.data_repo_api import DataRepoAPI
 
 from model.network.network_data import NetworkData
 
 
-def load_network_data_from_files(names: dict[str, str],
+def load_network_data_from_files(names: Dict[str, str],
                                  dirname: str = OUT,
-                                 disk: bool = False) -> dict[str, NetworkData]:
+                                 disk: bool = False) -> Dict[str, NetworkData]:
     """
     Utility function to create the pre and post network data from input files.
     By default data is pulled from data repository unless `disk=True`.

@@ -1,5 +1,5 @@
 from __future__ import annotations
-
+from typing import List
 from dataclasses import dataclass, field
 
 import numpy as np
@@ -22,7 +22,7 @@ class NetworkData:
     trip_counts: TRIP_COUNTS    # Total count of trips leaving one CBG
 
     # not initialised in dataclass
-    ordered_cbgs: list[str] = field(init=False)  # CBGs in order
+    ordered_cbgs: List[str] = field(init=False)  # CBGs in order
     adjacency_list: ADJACENCY_LIST = field(init=False)  # Adjacency list of CBGs
     cum_prob: CUM_PROB = field(init=False)  # Cumulative transition prob.
     trip_count_change: TRIP_COUNT_CHANGE = field(init=False)  # Trip ct change

@@ -1,5 +1,12 @@
 # Functions to calculate some metrics for a network
-from typing import Final, Union
+from typing import Union
+import sys
+if sys.version_info >= (3, 8):
+    from typing import Final
+else:
+    # backwards compatibility with Python35, Python36, and Python37
+    from typing_extensions import Final
+
 
 import networkx as nx
 from epydemic import NetworkExperiment, NetworkGenerator
@@ -42,7 +49,7 @@ def calc_density(graph: nx.Graph) -> float:
     return num_edges / num_edges_max
 
 
-def calc_shortest_paths(graph: nx.Graph) -> list[int]:
+def calc_shortest_paths(graph: nx.Graph) -> List[int]:
     """
     Calculate the shortest path distances of a graph.
     :param graph: The graph.
@@ -54,7 +61,7 @@ def calc_shortest_paths(graph: nx.Graph) -> list[int]:
     return shortest_paths
 
 
-def calc_cluster_coeff(graph: nx.Graph) -> list[float]:
+def calc_cluster_coeff(graph: nx.Graph) -> List[float]:
     """
     Calculate the cluster coefficients of the nodes of a graph.
     :param graph: The graph.
@@ -64,7 +71,7 @@ def calc_cluster_coeff(graph: nx.Graph) -> list[float]:
     return list(coefficients.values())
 
 
-def calc_degrees(graph: nx.Graph) -> list[int]:
+def calc_degrees(graph: nx.Graph) -> List[int]:
     """
     Get the the node degrees of a graph.
     :param graph: The graph.

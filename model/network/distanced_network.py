@@ -1,4 +1,10 @@
-from typing import Callable, Any, Final
+import sys
+if sys.version_info >= (3, 8):
+    from typing import Final
+else:
+    # backwards compatibility with Python35, Python36, and Python37
+    from typing_extensions import Final
+from typing import Callable, Any
 
 import networkx as nx
 import numpy as np
@@ -159,7 +165,7 @@ class DNGenerator(NetworkGenerator):
         """
         return 'DN'
 
-    def _generate(self, params: dict[str, Any]) -> nx.Graph:
+    def _generate(self, params: Dict[str, Any]) -> nx.Graph:
 
         # Set the distribution functions (could also have been set at
         #  initialisation).
