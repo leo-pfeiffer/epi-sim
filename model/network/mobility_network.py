@@ -1,7 +1,7 @@
 import numpy as np
 import networkx as nx
 import sys
-from typing import Any, Callable, Optional, Dict, List
+from typing import Any, Callable, Optional, Dict, List, Tuple
 if sys.version_info >= (3, 8):
     from typing import Final
 else:
@@ -130,7 +130,7 @@ class MobilityNetwork:
         return households
 
     def _create_stubs(self, households: HOUSEHOLDS) -> \
-            tuple[STUBS, CBG_DEGREE_MAP]:
+            Tuple[STUBS, CBG_DEGREE_MAP]:
         """
         Part of the creation process to create (still) unconnected nodes as
         extra-household connections.
