@@ -2,7 +2,7 @@
 ![Online status](https://img.shields.io/website?down_color=lightgrey&down_message=offline&up_color=blue&up_message=online&url=http%3A%2F%2F209.182.235.76%2F)
 ![codecov](https://codecov.io/gh/leo-pfeiffer/epi-sim/branch/main/graph/badge.svg?token=AK3O2NL82O)
 
-# msc-thesis
+# EpiSim
 Repository for my MSc Thesis `A compartmented network model for COVID-19'
 
 ### Requirements
