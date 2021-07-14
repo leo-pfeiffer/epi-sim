@@ -1,10 +1,10 @@
 import sys
+from typing import Callable, Any, Dict
 if sys.version_info >= (3, 8):
-    from typing import Final, Dict
+    from typing import Final
 else:
     # backwards compatibility with Python35, Python36, and Python37
     from typing_extensions import Final
-from typing import Callable, Any
 
 
 import pandas as pd

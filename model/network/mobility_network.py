@@ -1,12 +1,12 @@
 import numpy as np
 import networkx as nx
 import sys
+from typing import Any, Callable, Optional, Dict, List
 if sys.version_info >= (3, 8):
-    from typing import Final, Dict, List
+    from typing import Final
 else:
     # backwards compatibility with Python35, Python36, and Python37
     from typing_extensions import Final
-from typing import Any, Callable, Optional
 from epydemic import NetworkGenerator
 from networkx import Graph, read_graphml
 

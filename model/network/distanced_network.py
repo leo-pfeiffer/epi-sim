@@ -1,10 +1,10 @@
 import sys
+from typing import Callable, Any, Dict, List
 if sys.version_info >= (3, 8):
-    from typing import Final, Dict, List
+    from typing import Final
 else:
     # backwards compatibility with Python35, Python36, and Python37
     from typing_extensions import Final
-from typing import Callable, Any
 
 import networkx as nx
 import numpy as np
