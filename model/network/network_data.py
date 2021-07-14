@@ -1,4 +1,7 @@
-from __future__ import annotations
+import sys
+if sys.version_info >= (3, 7):
+    from __future__ import annotations
+
 from typing import List
 from dataclasses import dataclass, field
 
