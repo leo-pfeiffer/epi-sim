@@ -1,0 +1,29 @@
+#page {
+    display: grid;
+    width: 99vw;
+    height: 99vh;
+    padding: 5px;
+    grid-template-areas:
+            "h"
+            "x"
+            "f ";
+    grid-template-rows: 4.5rem 1fr 0;
+    grid-row-gap: 3px;
+}
+
+#text-container {
+    width: 100%;
+    vertical-align: top;
+}
+
+#text-content {
+    margin-left: auto;
+    margin-right: auto;
+    width: 60%;
+}
+
+#h1-404, #h3-404 {
+    margin-top: 10px;
+    color: black;
+    background-color: rgba(255, 255, 255, 0.8)
+}
