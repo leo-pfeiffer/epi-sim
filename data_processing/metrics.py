@@ -23,13 +23,13 @@ class MetricExperiment(NetworkExperiment):
     def do(self, params):
 
         densities = calc_density(self.network())
-        shortest_paths = calc_shortest_paths(self.network())
+        # shortest_paths = calc_shortest_paths(self.network())
         cluster_coeffs = calc_cluster_coeff(self.network())
         degrees = calc_degrees(self.network())
 
         result = dict(
             densities=densities,
-            shortest_paths=shortest_paths,
+            # shortest_paths=shortest_paths,
             cluster_coeffs=cluster_coeffs,
             degrees=degrees,
         )
