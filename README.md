@@ -30,15 +30,17 @@ To build the project using docker compose, you also need those installed on your
 
 ### Setup
 For the setup of the modelling environment, create a virtual enviromnet in the 
-project directory, activate it and intall the requirements.
+project directory, activate it and call `make setup`.
 
 ```shell
 python -m venv venv
 source venv/bin/acitvate
 
-pip install -m upgrade pip
-pip install -r requirements.txt
+make setup
 ```
+
+This will install all requirements in your virtual environmant and generates
+the required .env files.
 
 ### Analysis
 
@@ -48,6 +50,9 @@ todo....
 The web application can be run independently of the model. You can either 
 build it using docker compose (recommended for production) or the built-in
 Flask server (recommended for development).
+
+The application is deployed under the following URL:
+todo
 
 ### Build web app with docker compose
 The web application can be built using docker compose using Nginx as the HTTP server 
@@ -59,10 +64,7 @@ To build the application, run
 make build
 ```
 
-or (similarly)
-```shell
-docker compose up --build -d
-```
+This also generates the required env files (if they don't exist yet).
 
 Go to http://localhost:4401.
 
@@ -74,10 +76,13 @@ production but much simpler for development and test purposes.
 make run
 ```
 
-or (similarly)
-
-```shell
-python app/run.py
-```
+This also generates the required env files (if they don't exist yet).
 
 Go to http://localhost:4401
+
+### Data source of the application
+For easy access and updating of the simulation data underlying the application,
+the data is stored in a [public data git repository hosted on GitHub](https://github.com/leo-pfeiffer/msc-thesis-data).
+
+todo
+However, the data source can be changed to any URL via the .env variable ....

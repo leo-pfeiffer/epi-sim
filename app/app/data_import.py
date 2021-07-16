@@ -3,18 +3,14 @@ from typing import Callable, Any, Dict
 if sys.version_info >= (3, 8):
     from typing import Final
 else:
-    # backwards compatibility with Python35, Python36, and Python37
     from typing_extensions import Final
-
 
 import pandas as pd
 import json
 import urllib
 import os
 
-REPO_URL = "https://raw.githubusercontent.com/leo-pfeiffer/msc-thesis-data/main"
-SEIR_FILE = f"{REPO_URL}/sim_seir.csv"
-SEIVR_FILE = f"{REPO_URL}/sim_seivr.csv"
+from configuration import DATA_REPO_URL_RAW
 
 
 class SimulationData:
@@ -22,8 +18,7 @@ class SimulationData:
     Contains simulation data and associated functionality.
     """
 
-    REPO_URL: Final[str] = "https://raw.githubusercontent.com/" \
-                           "leo-pfeiffer/msc-thesis-data/main"
+    DATA_REPO_URL_RAW: Final[str] = DATA_REPO_URL_RAW
 
     def __init__(self):
 
@@ -61,7 +56,7 @@ class SimulationData:
         :param file: Dict containing file info, crucially the `name`
         :return: Updated dict including the `content`
         """
-        url = os.path.join(cls.REPO_URL, file['name'])
+        url = os.path.join(cls.DATA_REPO_URL_RAW, file['name'])
 
         with urllib.request.urlopen(url) as f:
             # todo convert to dataframe
@@ -121,8 +116,8 @@ class SimulationData:
         return subset
 
     def _load_file_old(self):
-        seir_file = f"{self.REPO_URL}/sim_seir.csv"
-        seivr_file = f"{self.REPO_URL}/sim_seivr.csv"
+        seir_file = f"{self.DATA_REPO_URL_RAW}/sim_seir.csv"
+        seivr_file = f"{self.DATA_REPO_URL_RAW}/sim_seivr.csv"
 
         seir_df = pd.read_csv(seir_file, index_col=0)
         seir_q_df = seir_df[seir_df.model == 'SEIR_Q']
