@@ -1,5 +1,7 @@
 ## SETUP ========================
 
+DOCK_COMP = "./app/docker-compose.yml"
+
 # install pip requirements
 .PHONY: requirements
 requirements:
@@ -35,41 +37,46 @@ run:
 	make env
 	python app/run.py
 
-# build with docker-compose
+# build with docker-compose -f $(DOCK_COMP)
 .PHONY: build
 build:
 	make env
-	docker-compose up --build -d
-	docker-compose ps
+	docker-compose -f $(DOCK_COMP) up --build -d
+	docker-compose -f $(DOCK_COMP) ps
 
 # start existing container
 .PHONY: up
 up:
-	docker-compose up -d
-	docker-compose ps
+	docker-compose -f $(DOCK_COMP) up -d
+	docker-compose -f $(DOCK_COMP) ps
 
 # stop running container
 .PHONY: down
 down:
-	docker-compose down
-	docker-compose ps
+	docker-compose -f $(DOCK_COMP) down
+	docker-compose -f $(DOCK_COMP) ps
+
+# show docker compose logs
+.PHONY: logs
+logs:
+	docker-compose -f $(DOCK_COMP) logs --follow
 
 # start bash session inside container
 .PHONY: bash
 bash:
-	docker-compose run --rm app bash
+	docker-compose -f $(DOCK_COMP) run --rm app bash
 
 # shut down containers, remove volumes, remove images - DESTRUCTIVE !
 .PHONY: destroy
 destroy:
-	docker-compose down --volumes
+	docker-compose -f $(DOCK_COMP) down --volumes
 	if [ ! -z "$(shell docker images -a -q)" ]; then \
 		docker rmi $(shell docker images -a -q); \
 	fi
-	docker-compose ps
+	docker-compose -f $(DOCK_COMP) ps
 
 # restart container
 .PHONY: restart
 restart:
-	docker-compose restart
-	docker-compose ps
+	docker-compose -f $(DOCK_COMP) restart
+	docker-compose -f $(DOCK_COMP) ps

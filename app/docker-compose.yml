@@ -3,13 +3,11 @@ version: "3.7"
 services:
 
   app:
-    build:
-      context: .
-      dockerfile: ./app/Dockerfile
+    build: ./app
     container_name: app
     restart: always
-    environment:
-      - APP_NAME=EpiSim
+    env_file:
+      - .env
     expose:
       - 8080
 
