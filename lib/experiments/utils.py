@@ -3,7 +3,7 @@ import pickle
 from typing import Dict
 
 from lib.configuration import OUT
-from lib.data_processing.data_repo_api import DataRepoAPI
+from lib.experiments.data_repo_api import DataRepoAPI
 
 from lib.model.network.network_data import NetworkData
 
