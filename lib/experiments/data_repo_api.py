@@ -16,7 +16,6 @@ class DataRepoAPI:
 
     AUTH = {"Authorization": f"token {DATA_REPO_TOKEN}"}
     CONTENT_TYPE = 'application/vnd.github.v3+json'
-    DEFAULT_FILE_DIR = '../experiments/results'
 
     @classmethod
     def update_or_create(cls, file_name, file_path=None, repo_path=None):
@@ -26,12 +25,13 @@ class DataRepoAPI:
         :param file_path: (optional) Path to the file
         :param repo_path: (optional) Path to the file in the repository.
         """
-        if file_path is None:
-            file_path = os.path.join(
-                os.path.dirname(os.path.abspath(__file__)), cls.DEFAULT_FILE_DIR
-            )
 
-        with open(os.path.join(file_path, file_name), 'rb') as f:
+        file_to_read = file_name
+
+        if file_path is not None:
+            file_to_read = os.path.join(file_path, file_name)
+
+        with open(file_to_read, 'rb') as f:
             data = f.read()
             content = base64.b64encode(data).decode()
 
