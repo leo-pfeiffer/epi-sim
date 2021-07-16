@@ -8,7 +8,6 @@ Repository for my MSc Thesis `A compartmented network model for COVID-19'
 ### Requirements
 This project was developed using Python 3.9 and we recommend using this version. 
 However, backward compatibility is given for Python versions 3.6+.
-Todo... add 3.6 and 3.7 to CI...
 
 Since the web application and the model can 
 be run on its own, the requirements are listed in two separate requirements.txt files:
