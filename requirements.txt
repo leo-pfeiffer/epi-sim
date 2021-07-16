@@ -6,7 +6,7 @@ requests~=2.25.1
 
 # backwards compatibility
 typing-extensions~=3.10.0.0
-dataclasses~=0.8; python_version <= '3.6'
+dataclasses~=0.8; python_version >= '3.6' and python_version < '3.7'
 
 # modelling
 epydemic==1.7.2
