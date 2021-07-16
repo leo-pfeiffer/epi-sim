@@ -1,15 +1,15 @@
-# Global configuration file
+# Lib configuration file
 
 import os
 from dotenv import load_dotenv
 
-ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+LIB_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # load environment variables
-load_dotenv(dotenv_path=os.path.join(ROOT_DIR, '../.env'))
+load_dotenv(dotenv_path=os.path.join(LIB_DIR, '.env'))
 
 # Paths...
-DATA = os.path.join(ROOT_DIR, 'data_processing', 'data')
+DATA = os.path.join(LIB_DIR, 'data_processing', 'data')
 REMOTE_RAW = 'http://209.182.235.76/data/msc/'
 RAW = os.path.join(DATA, 'raw/')
 OUT = os.path.join(DATA, 'out/')

@@ -19,11 +19,12 @@ class DataRepoAPI:
     DEFAULT_FILE_DIR = '../experiments/results'
 
     @classmethod
-    def update_or_create(cls, file_name, file_path=None):
+    def update_or_create(cls, file_name, file_path=None, repo_path=None):
         """
         Update or create the file in the data repo on github.
         :param file_name: Name of the file
         :param file_path: (optional) Path to the file
+        :param repo_path: (optional) Path to the file in the repository.
         """
         if file_path is None:
             file_path = os.path.join(
@@ -34,40 +35,59 @@ class DataRepoAPI:
             data = f.read()
             content = base64.b64encode(data).decode()
 
-        sha = cls.get_sha(file_name=file_name)
-        cls.put_file(file_name, content, sha)
+        sha = cls.get_sha(file_name=file_name, repo_path=repo_path)
+        cls.put_file(file_name, content, repo_path, sha)
 
     @classmethod
-    def get_sha(cls, file_name):
-        """
-        Get the Blob Sha of the file on Github if it exists.
-        :param file_name: Name of the file
-        :return: SHA or None
-        """
-        res = requests.get(DATA_REPO_URL_TREE, headers=cls.AUTH)
-
+    def get_tree(cls, tree_url, target):
+        res = requests.get(tree_url, headers=cls.AUTH)
         if res.status_code != 200:
             print(res, res.text)
             raise requests.exceptions.HTTPError()
 
         jsn = res.json()
-        e = [x for x in jsn['tree'] if x['path'] == file_name]
+        e = [x for x in jsn['tree'] if x['path'] == target]
 
         if len(e) == 0:
-            return None
+            return None, None
 
-        else:
-            return e[0]['sha']
+        return e[0]['sha'], e[0]['url']
 
     @classmethod
-    def put_file(cls, file_name, content, sha=None):
+    def get_sha(cls, file_name, repo_path=None):
+        """
+        Get the Blob Sha of the file on Github if it exists.
+        :param file_name: Name of the file
+        :param repo_path: (optional) Path to the file in the repository.
+        :return: SHA or None
+        """
+
+        if repo_path:
+            _, url = cls.get_tree(DATA_REPO_URL_TREE, repo_path)
+        else:
+            url = DATA_REPO_URL_TREE
+
+        if not url:
+            return None
+
+        sha, _ = cls.get_tree(url, file_name)
+
+        return sha
+
+    @classmethod
+    def put_file(cls, file_name, content, repo_path=None, sha=None):
         """
         Perform HTTP Put to create or update the file.
         :param file_name: File name
         :param content: Base 64 encoded string.
+        :param repo_path: (optional) Path to the file in the repository.
         :param sha: Blob SHA of the file (required if update)
         """
-        url = f'{DATA_REPO_URL_API}/{file_name}'
+
+        if not repo_path:
+            repo_path = ''
+
+        url = os.path.join(DATA_REPO_URL_API, repo_path, file_name)
         headers = {**cls.AUTH, 'Accept': cls.CONTENT_TYPE}
 
         data = {
@@ -111,9 +131,13 @@ class DataRepoAPI:
 if __name__ == '__main__':
     # if called from command line
     parser = argparse.ArgumentParser()
-    parser.add_argument('--file', type=str, help='file name', required=True)
+    parser.add_argument('--file_name', type=str, help='file name', required=True)
+    parser.add_argument('--file_path', type=str, help='file path', required=False)
+    parser.add_argument('--repo_path', type=str, help='repo path', required=False)
 
     args = parser.parse_args()
-    file = args.file
+    name = args.file_name
+    path = None if args.file_path == '' else args.file_path
+    r_path = None if args.repo_path == '' else args.repo_path
 
-    DataRepoAPI.update_or_create(file_name=file)
+    DataRepoAPI.update_or_create(name, path, r_path)
