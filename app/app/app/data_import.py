@@ -10,7 +10,7 @@ import json
 import urllib
 import os
 
-from configuration import DATA_REPO_URL_RAW
+from lib.configuration import DATA_REPO_URL_RAW
 
 
 class SimulationData:
@@ -21,8 +21,6 @@ class SimulationData:
     DATA_REPO_URL_RAW: Final[str] = DATA_REPO_URL_RAW
 
     def __init__(self):
-
-        print('Data instantiated')
 
         self.FILES = [
             {'model': 'SEIR', 'network': 'MN_Pre', 'name': 'sim_seir.json'},

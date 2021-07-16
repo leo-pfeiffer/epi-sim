@@ -7,12 +7,12 @@ DOCK_COMP = "./app/docker-compose.yml"
 requirements:
 	pip install --upgrade pip
 	pip install -U setuptools wheel
-	pip install -U -r requirements.txt -r app/requirements.txt
+	pip install -U -r lib/requirements.txt -r app/requirements.txt
 
 # generate .env and app.env files
 .PHONY: env
 env:
-	sh ./scripts/generate_dotenv.sh
+	sh ./setup/generate_dotenv.sh
 
 # full setup
 .PHONY: setup
