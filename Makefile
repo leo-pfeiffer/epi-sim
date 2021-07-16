@@ -1,6 +1,7 @@
-## SETUP ========================
-
 DOCK_COMP = "./app/docker-compose.yml"
+
+
+## SETUP ========================
 
 # install pip requirements
 .PHONY: requirements
