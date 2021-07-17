@@ -85,7 +85,7 @@ To build the project using docker compose, you also need those installed on your
 ## Lib
 
 ### Setup
-For the setup of the modelling environment, create a virtual enviromnet in the 
+For the setup of the modelling environment, create a virtual environment in the 
 project directory, activate it and call `make setup`.
 
 ```shell
@@ -121,7 +121,7 @@ make build
 ```
 
 This also generates the required env files (if they don't exist yet).
-By default, this builds the production environment (ENV=prod). If you want
+By default, this builds the production environment (`ENV=prod`). If you want
 to build the dev environment instead, call
 
 ```shell
@@ -129,7 +129,7 @@ make build ENV=dev
 ```
 
 The application starts at whichever port is specified in `./app/.env` as an environment
-variable for PORT (default 80) and DEV_PORT (default 4401).
+variable for `PORT` (default 80) and `DEV_PORT` (default 4401).
 
 ### Run web app with Flask only (dev)
 Alternatively, you can also run the web app using the builtin server, which is 
@@ -140,7 +140,7 @@ make run
 ```
 
 This also generates the required env files (if they don't exist yet).
-Since this is meant for development only, the DEV_PORT specified in `./app/.env`
+Since this is meant for development only, the `DEV_PORT` specified in `./app/.env`
 as an environment variable is used.
 
 ### Data source of the application
