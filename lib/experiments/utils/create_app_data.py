@@ -85,6 +85,7 @@ def _load_file(file: Dict):
             comp_key = TIMESERIES_STEM + '-' + stem + comp
 
             # todo delete value by N
+            # todo you idiot have to include the variable parameters as well... duuuh...
             values = experiment[RESULTS][comp_key]
 
             dic = {

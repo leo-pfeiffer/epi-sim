@@ -56,11 +56,8 @@ class SimulationData:
         Load all files from repo.
         :return: Updated files
         """
-        start = time.time()
         for file in self.FILES:
             self.load_file(file)
-            print(f"{time.time() - start}: {file['name']}")
-            start = time.time()
 
     @classmethod
     def load_file(cls, file: Dict) -> Dict:

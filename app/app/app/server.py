@@ -3,7 +3,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
 import pandas as pd
-from dash.dependencies import Input, Output, MATCH, ClientsideFunction
+from dash.dependencies import Input, Output, MATCH, ALL, ClientsideFunction, State
 
 # page utils
 from .pages.index import make_main_graph, make_detail_table, \
@@ -40,13 +40,23 @@ app.layout = html.Div([
 @app.callback(
     Output('epidemic-curve-graph', 'figure'),
     Output('table-card-body', 'children'),
-    Input('model-dropdown', 'value'),
-    Input('network-dropdown', 'value')
+    [Input('model-dropdown', 'value'),
+     Input('network-dropdown', 'value')],
+    [State({'type': 'slider', 'index': ALL}, 'value')]
 )
-def graph_callback(model, network):
+def graph_callback(model, network, slider):
+
+    ctx = dash.callback_context
+
+    # todo:
+    #  - parse the values of the sliders
+    #  - create filter functions from them
+    #  - pass them to filter_df...
 
     df = filter_df(model, network)
     fig = make_main_graph(df)
+
+    # todo include table again
     # table_df = make_detail_table(df)
     table_df = pd.DataFrame()
 
