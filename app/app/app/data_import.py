@@ -1,5 +1,9 @@
 import sys
 from typing import Callable, Any, Dict
+
+import epyc
+import epydemic
+
 if sys.version_info >= (3, 8):
     from typing import Final
 else:
@@ -7,10 +11,19 @@ else:
 
 import pandas as pd
 import json
-import urllib
+from urllib.request import urlopen
 import os
 
 from lib.configuration import DATA_REPO_URL_RAW
+
+EXPERIMENT_ID = epyc.RepeatedExperiment.I
+OBSERVATIONS = epydemic.Monitor.OBSERVATIONS
+TIMESERIES_STEM = epydemic.Monitor.TIMESERIES_STEM
+
+RESULTSETS = 'resultsets'
+RESULTSETS_DEFAULT = epyc.LabNotebook.DEFAULT_RESULTSET
+RESULTS = epyc.Experiment.RESULTS
+METADATA = epyc.Experiment.METADATA
 
 
 class SimulationData:
@@ -19,17 +32,28 @@ class SimulationData:
     """
 
     DATA_REPO_URL_RAW: Final[str] = DATA_REPO_URL_RAW
+    DATA_REPO_SIMULATIONS_PATH: Final[str] = 'simulations'
+
+    MODEL_META = {
+        'SEIR': {'compartments': ['S', 'E', 'I', 'R'], 'stem': 'epydemic.SEIR.'},
+        'SEIR_Q': {'compartments': ['S', 'E', 'I', 'R'], 'stem': 'epydemic.SEIR.'},
+        'SEIVR': {'compartments': ['S', 'E', 'I', 'V', 'R'], 'stem': 'epydemic.SEIVR.'},
+        'SEIVR_Q': {'compartments': ['S', 'E', 'I', 'V', 'R'], 'stem': 'epydemic.SEIVR.'},
+    }
+
+    COLUMNS = ['experiment_id', 'time', 'compartment', 'value']
 
     def __init__(self):
 
         self.FILES = [
             {'model': 'SEIR', 'network': 'MN_Pre', 'name': 'sim_seir.json'},
+            # todo add all files (24 in total)
         ]
 
         # load file contents
         # todo change to new version
-        # self._load_files()
-        self._load_file_old()
+        self._load_files()
+        # self._load_file_old()
 
     @property
     def models(self):
@@ -54,13 +78,45 @@ class SimulationData:
         :param file: Dict containing file info, crucially the `name`
         :return: Updated dict including the `content`
         """
-        url = os.path.join(cls.DATA_REPO_URL_RAW, file['name'])
+        url = os.path.join(
+            cls.DATA_REPO_URL_RAW,
+            cls.DATA_REPO_SIMULATIONS_PATH,
+            file['name']
+        )
 
-        with urllib.request.urlopen(url) as f:
-            # todo convert to dataframe
-            file['content'] = json.load(f)
+        with urlopen(url) as f:
+            content = json.load(f)
 
-        return file
+        results = content[RESULTSETS][RESULTSETS_DEFAULT][RESULTS]
+
+        df = pd.DataFrame(
+            columns=cls.COLUMNS
+        )
+
+        for experiment in results:
+
+            experiment_id = experiment[METADATA][EXPERIMENT_ID]
+            times = experiment[RESULTS][OBSERVATIONS]
+
+            num_obs = len(times)
+
+            model = cls.MODEL_META[file['model']]
+            stem = model['stem']
+
+            for comp in model['compartments']:
+                comp_key = TIMESERIES_STEM + '-' + stem + comp
+                values = experiment[RESULTS][comp_key]
+
+                dic = {col: ls for col, ls in zip(cls.COLUMNS, [
+                    [experiment_id] * num_obs, times,
+                    [comp] * num_obs, values])
+               }
+
+                df = df.append(pd.DataFrame(dic), ignore_index=True)
+
+        file['df'] = df
+
+        return df
 
     @staticmethod
     def make_filter_func(filters: Dict[str, Any]) -> Callable:
@@ -161,3 +217,11 @@ class SimulationData:
 
 
 simulation_data = SimulationData()
+
+
+if __name__ == '__main__':
+    test_df = SimulationData.load_file({
+        'name': 'seir_plc_pre.json',
+        'repo_path': 'simulations',
+        'model': 'SEIR'
+    })
