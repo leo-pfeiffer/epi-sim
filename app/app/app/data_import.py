@@ -1,29 +1,20 @@
 import sys
 from typing import Callable, Any, Dict
 
-import epyc
-import epydemic
-
 if sys.version_info >= (3, 8):
     from typing import Final
 else:
     from typing_extensions import Final
 
 import pandas as pd
-import json
+import pickle
 from urllib.request import urlopen
 import os
 
-from lib.configuration import DATA_REPO_URL_RAW
+from ..configuration import DATA_REPO_URL_RAW
+from lib.experiments.utils.simulation_files import FILES
 
-EXPERIMENT_ID = epyc.RepeatedExperiment.I
-OBSERVATIONS = epydemic.Monitor.OBSERVATIONS
-TIMESERIES_STEM = epydemic.Monitor.TIMESERIES_STEM
-
-RESULTSETS = 'resultsets'
-RESULTSETS_DEFAULT = epyc.LabNotebook.DEFAULT_RESULTSET
-RESULTS = epyc.Experiment.RESULTS
-METADATA = epyc.Experiment.METADATA
+import time
 
 
 class SimulationData:
@@ -33,6 +24,7 @@ class SimulationData:
 
     DATA_REPO_URL_RAW: Final[str] = DATA_REPO_URL_RAW
     DATA_REPO_SIMULATIONS_PATH: Final[str] = 'simulations'
+    DATA_REPO_APP_DATA_PATH: Final[str] = 'app-data'
 
     MODEL_META = {
         'SEIR': {'compartments': ['S', 'E', 'I', 'R'], 'stem': 'epydemic.SEIR.'},
@@ -45,13 +37,9 @@ class SimulationData:
 
     def __init__(self):
 
-        self.FILES = [
-            {'model': 'SEIR', 'network': 'MN_Pre', 'name': 'sim_seir.json'},
-            # todo add all files (24 in total)
-        ]
+        self.FILES = FILES
 
         # load file contents
-        # todo change to new version
         self._load_files()
         # self._load_file_old()
 
@@ -68,8 +56,11 @@ class SimulationData:
         Load all files from repo.
         :return: Updated files
         """
+        start = time.time()
         for file in self.FILES:
             self.load_file(file)
+            print(f"{time.time() - start}: {file['name']}")
+            start = time.time()
 
     @classmethod
     def load_file(cls, file: Dict) -> Dict:
@@ -80,43 +71,14 @@ class SimulationData:
         """
         url = os.path.join(
             cls.DATA_REPO_URL_RAW,
-            cls.DATA_REPO_SIMULATIONS_PATH,
-            file['name']
+            cls.DATA_REPO_APP_DATA_PATH,
+            file['name'] + '.pkl'
         )
 
         with urlopen(url) as f:
-            content = json.load(f)
+            file['df'] = pickle.load(f)
 
-        results = content[RESULTSETS][RESULTSETS_DEFAULT][RESULTS]
-
-        df = pd.DataFrame(
-            columns=cls.COLUMNS
-        )
-
-        for experiment in results:
-
-            experiment_id = experiment[METADATA][EXPERIMENT_ID]
-            times = experiment[RESULTS][OBSERVATIONS]
-
-            num_obs = len(times)
-
-            model = cls.MODEL_META[file['model']]
-            stem = model['stem']
-
-            for comp in model['compartments']:
-                comp_key = TIMESERIES_STEM + '-' + stem + comp
-                values = experiment[RESULTS][comp_key]
-
-                dic = {col: ls for col, ls in zip(cls.COLUMNS, [
-                    [experiment_id] * num_obs, times,
-                    [comp] * num_obs, values])
-               }
-
-                df = df.append(pd.DataFrame(dic), ignore_index=True)
-
-        file['df'] = df
-
-        return df
+        return file
 
     @staticmethod
     def make_filter_func(filters: Dict[str, Any]) -> Callable:
@@ -216,10 +178,13 @@ class SimulationData:
             })
 
 
+start = time.time()
 simulation_data = SimulationData()
-
+end = time.time()
+duration = end - start
 
 if __name__ == '__main__':
+
     test_df = SimulationData.load_file({
         'name': 'seir_plc_pre.json',
         'repo_path': 'simulations',

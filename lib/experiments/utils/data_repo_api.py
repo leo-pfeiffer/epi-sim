@@ -1,5 +1,12 @@
+# This file contains a wrapper around the official GitHub API to simplify
+#  the upload of data files to the data repo.
+#
+# The functionality of the API is limited to what we actually need for our
+#  use case, i.e. a simple PUT request suffices to upload files, as well
+#  as a simple GET request for pickled files and JSON files.
+
 import pickle
-import urllib
+from urllib.request import urlopen
 import requests
 import json
 import argparse
@@ -40,6 +47,12 @@ class DataRepoAPI:
 
     @classmethod
     def get_tree(cls, tree_url, target):
+        """
+        Return the SHA and URL of a target in the GitHub URL tree.
+        :param tree_url: URL of the tree.
+        :param target: Target to look for.
+        :return: SHA and URL of target.
+        """
         res = requests.get(tree_url, headers=cls.AUTH)
         if res.status_code != 200:
             print(res, res.text)
@@ -101,7 +114,8 @@ class DataRepoAPI:
         res = requests.put(url, data=json.dumps(data), headers=headers)
 
         if not res.ok:
-            raise requests.exceptions.HTTPError()
+            print(res.text)
+            raise requests.exceptions.HTTPError(res.text)
 
     @classmethod
     def get_pickle_file(cls, file_name):
@@ -110,7 +124,7 @@ class DataRepoAPI:
         :param file_name: Name of the file.
         :return: The file.
         """
-        with urllib.request.urlopen(f"{DATA_REPO_URL_RAW}/{file_name}") as url:
+        with urlopen(f"{DATA_REPO_URL_RAW}/{file_name}") as url:
             data = pickle.load(url)
 
         return data
@@ -122,7 +136,7 @@ class DataRepoAPI:
         :param file_name: Name of the file.
         :return: The file.
         """
-        with urllib.request.urlopen(f"{DATA_REPO_URL_RAW}/{file_name}") as url:
+        with urlopen(f"{DATA_REPO_URL_RAW}/{file_name}") as url:
             data = json.load(url)
 
         return data

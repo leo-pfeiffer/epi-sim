@@ -1,10 +1,12 @@
-# Functions to calculate some metrics for a network
-from typing import Union, List
+# This file defines a class for an epyc MetricExperiment to calculate
+#  network metrics for a given network.
+
+
 import sys
+from typing import Union, List
 if sys.version_info >= (3, 8):
     from typing import Final
 else:
-    # backwards compatibility with Python35, Python36, and Python37
     from typing_extensions import Final
 
 
@@ -14,7 +16,11 @@ from networkx import Graph
 
 
 class MetricExperiment(NetworkExperiment):
+    """
+    A MetricExperiment to compute metrics of a given network using epyc.
+    """
 
+    # Generator
     GENERATOR: Final[str] = 'metric.generator'
 
     def __init__(self, g: Union[Graph, NetworkGenerator] = None):
@@ -23,15 +29,17 @@ class MetricExperiment(NetworkExperiment):
     def do(self, params):
 
         densities = calc_density(self.network())
-        # shortest_paths = calc_shortest_paths(self.network())
         cluster_coeffs = calc_cluster_coeff(self.network())
         degrees = calc_degrees(self.network())
 
+        # to computationally expensive ...
+        # shortest_paths = calc_shortest_paths(self.network())
+
         result = dict(
             densities=densities,
-            # shortest_paths=shortest_paths,
             cluster_coeffs=cluster_coeffs,
             degrees=degrees,
+            # shortest_paths=shortest_paths,
         )
 
         return result

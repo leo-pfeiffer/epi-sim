@@ -1,10 +1,12 @@
-import os
-import pickle
+# This file contains some utils to loading, creating and processing data
+#  required for the creation of NetworkData instances used for mobility
+#  networks.
+
 from typing import Dict
 
 from lib.configuration import OUT
-from lib.experiments.data_repo_api import DataRepoAPI
-
+from lib.experiments.utils.data_repo_api import DataRepoAPI
+from lib.experiments.utils.file_utils import load_pickle_from_disk
 from lib.model.network.network_data import NetworkData
 
 
@@ -55,6 +57,15 @@ def load_network_data_from_files(names: Dict[str, str],
 
 
 def make_network_data(demographics, comb_pre, comb_post, trip_pre, trip_post):
+    """
+    Return a Pre and Post NetworkData instance from the input files.
+    :param demographics: Demographics data.
+    :param comb_pre: CBG trip combinations (pre)
+    :param comb_post: CBG trip combinations (post)
+    :param trip_pre: CBG trip counts (pre)
+    :param trip_post: CBG trip counts (post)
+    :return: Pre and Post NetworkData instance
+    """
     # create the instances
     network_data_pre = NetworkData(demographics, comb_pre, trip_pre)
     network_data_post = NetworkData(demographics, comb_post, trip_post)
@@ -69,7 +80,3 @@ def make_network_data(demographics, comb_pre, comb_post, trip_pre, trip_post):
     network_data_post.create_cum_prob()
 
     return dict(pre=network_data_pre, post=network_data_post)
-
-
-def load_pickle_from_disk(dirname, file_name):
-    return pickle.load(open(os.path.join(dirname, file_name), 'rb'))

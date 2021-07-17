@@ -9,6 +9,7 @@ LIB_DIR = os.path.dirname(os.path.abspath(__file__))
 load_dotenv(dotenv_path=os.path.join(LIB_DIR, '.env'))
 
 # Paths...
+EXPERIMENTS_DIR = os.path.join(LIB_DIR, 'experiments')
 DATA = os.path.join(LIB_DIR, 'data_processing', 'data')
 REMOTE_RAW = 'http://209.182.235.76/data/msc/'
 RAW = os.path.join(DATA, 'raw/')
