@@ -3,7 +3,10 @@ import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
 import pandas as pd
-from dash.dependencies import Input, Output, MATCH, ALL, ClientsideFunction, State
+from dash.dependencies import Input, Output, MATCH, ALL, ClientsideFunction, \
+    State
+
+from .simulation_files import PARAM_MAPPING
 
 # page utils
 from .pages.index import make_main_graph, make_detail_table, \
@@ -40,6 +43,7 @@ app.layout = html.Div([
 @app.callback(
     Output('epidemic-curve-graph', 'figure'),
     Output('table-card-body', 'children'),
+    Output({'type': 'slider', 'index': ALL}, 'disabled'),
     [Input('model-dropdown', 'value'),
      Input('network-dropdown', 'value')],
     [State({'type': 'slider', 'index': ALL}, 'value')]
@@ -47,6 +51,9 @@ app.layout = html.Div([
 def graph_callback(model, network, slider):
 
     ctx = dash.callback_context
+
+    sliders = [x['id']['index'] for x in ctx.outputs_list[2]]
+    slider_disabled = [not PARAM_MAPPING[model][slider] for slider in sliders]
 
     # todo:
     #  - parse the values of the sliders
@@ -65,7 +72,7 @@ def graph_callback(model, network, slider):
         id='summary-data-table', className='table'
     )
 
-    return fig, table
+    return fig, table, slider_disabled
 
 
 @app.callback(

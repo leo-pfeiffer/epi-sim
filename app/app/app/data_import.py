@@ -14,8 +14,6 @@ import os
 from .configuration import DATA_REPO_URL_RAW, DATA_DIR
 from .simulation_files import FILES, MODEL, NETWORK
 
-import time
-
 
 class SimulationData:
     """

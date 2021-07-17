@@ -30,6 +30,19 @@ MODEL: Final[str] = 'model'
 NETWORK: Final[str] = 'network'
 NAME: Final[str] = 'name'
 
+# Parameter mapping
+ID_P_QUAR: Final[str] = 'p_quarantine'
+ID_P_VACC: Final[str] = 'p_vaccinated'
+ID_P_VACC_INIT: Final[str] = 'p_vaccinated_initial'
+ID_RRR: Final[str] = 'rrr'
+
+PARAM_MAPPING = {
+    SEIR: {ID_P_QUAR: False, ID_P_VACC: False, ID_P_VACC_INIT: False, ID_RRR: False},
+    SEIR_Q: {ID_P_QUAR: True, ID_P_VACC: False, ID_P_VACC_INIT: False, ID_RRR: False},
+    SEIVR: {ID_P_QUAR: False, ID_P_VACC: True, ID_P_VACC_INIT: True, ID_RRR: True},
+    SEIVR_Q: {ID_P_QUAR: True, ID_P_VACC: True, ID_P_VACC_INIT: True, ID_RRR: True},
+}
+
 MODELS: List[str] = [SEIR, SEIR_Q, SEIVR, SEIVR_Q]
 NETWORKS: List[str] = [MN_PRE, MN_POST, PLC_PRE, PLC_POST]
 

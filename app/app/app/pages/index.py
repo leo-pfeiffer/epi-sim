@@ -10,7 +10,8 @@ from plotly.graph_objects import Figure, Heatmap, Layout
 from ..data_import import simulation_data
 from ..static_elements import brand, footer
 from ..layouts import fig_layout, fig_traces, main_graph_props, px_template
-from ..simulation_files import NETWORKS, MODELS
+from ..simulation_files import NETWORKS, MODELS, ID_RRR, ID_P_VACC_INIT, \
+    ID_P_VACC, ID_P_QUAR
 
 
 # Factory and helper functions =====
@@ -143,22 +144,20 @@ network_dropdown = make_dropdown('Network', dict(
     value=NETWORKS[0],
 ))
 
-# TODO make sure to only activate those sliders that are available for the model
-
 quarantine_slider = make_slider('P_QUARANTINE', dict(
-    id={'type': 'slider', 'index': 'p-quarantine'},
+    id={'type': 'slider', 'index': ID_P_QUAR},
     min=0, max=1, step=0.1, value=0))
 
 vaccine_slider = make_slider('P_VACCINE', dict(
-    id={'type': 'slider', 'index': 'p-vaccine'},
+    id={'type': 'slider', 'index': ID_P_VACC},
     min=0, max=1, step=0.1, value=0))
 
 vaccine_init_slider = make_slider('P_VACCINE_INIT', dict(
-    id={'type': 'slider', 'index': 'p-vaccine-init'},
+    id={'type': 'slider', 'index': ID_P_VACC_INIT},
     min=0, max=1, step=0.1, value=0))
 
 rrr_slider = make_slider('RRR', dict(
-    id={'type': 'slider', 'index': 'rrr'},
+    id={'type': 'slider', 'index': ID_RRR},
     min=0, max=1, step=0.1, value=0))
 
 controls = dbc.Card([
