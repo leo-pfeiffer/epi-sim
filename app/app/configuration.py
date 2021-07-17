@@ -10,3 +10,4 @@ PARENT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 load_dotenv(dotenv_path=os.path.join(PARENT_DIR, '.env'))
 
 DATA_REPO_URL_RAW = os.getenv('DATA_REPO_URL_RAW')
+DEV_PORT = os.getenv('DEV_PORT')

@@ -17,4 +17,3 @@ services:
     restart: always
     ports:
       - "${DEV_PORT}:80"
-      # - "${PORT}:80"  # production

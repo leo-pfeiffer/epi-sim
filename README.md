@@ -5,6 +5,46 @@
 # EpiSim
 Repository for my MSc Thesis `A compartmented network model for COVID-19'
 
+### Make
+We provide a Makefile with the following commands:
+
+```text
+==============================================
+    
+    make help           Print available commands
+
+==============================================
+SETUP ========================================
+
+   make requirements    install pip requirements
+   make env             generate .env files
+   make setup           make a full setup
+
+==============================================
+TESTING ======================================
+
+   make test            run unit tests
+
+==============================================
+WEB APP ======================================
+
+   FLASK (dev only)
+      make run             (dev only) run app with Flask
+
+   DOCKER (defaults to prod, for dev specify ENV=dev with the command)
+      make build           build app with docker-compose
+      make up              start existing container
+      make down            stop running container
+      make logs            attach docker-compose logs
+      make bash            enter running container and start bash session
+      make destroy         shut down and destroy container (remove volumes & images)
+      make restart         restart container
+
+==============================================
+```
+
+To see this output, run ```make help```.
+
 ### Requirements
 This project was developed using Python 3.9 and we recommend using this version. 
 However, backward compatibility is given for Python versions 3.6+.
@@ -65,24 +105,31 @@ make build
 ```
 
 This also generates the required env files (if they don't exist yet).
+By default, this builds the production environment (ENV=prod). If you want
+to build the dev environment instead, call
 
-Go to http://localhost:4401.
+```shell
+make build ENV=dev
+```
+
+The application starts at whichever port is specified in `./app/.env` as an environment
+variable for PORT (default 80) and DEV_PORT (default 4401).
 
 ### Run web app without build
-Alternatively, you can also run the web app using the builtin server, which is not suitable for 
-production but much simpler for development and test purposes.
+Alternatively, you can also run the web app using the builtin server, which is 
+not suitable for production but much simpler for development and test purposes.
 
 ```shell
 make run
 ```
 
 This also generates the required env files (if they don't exist yet).
-
-Go to http://localhost:4401
+Since this is meant for development only, the DEV_PORT specified in `./app/.env`
+as an environment variable is used.
 
 ### Data source of the application
 For easy access and updating of the simulation data underlying the application,
-the data is stored in a [public data git repository hosted on GitHub](https://github.com/leo-pfeiffer/msc-thesis-data).
+the data is stored in a [public data git repository hosted on GitHub](https://github.com/leo-pfeiffer/epi-sim-data).
 
 todo
 However, the data source can be changed to any URL via the .env variable ....
