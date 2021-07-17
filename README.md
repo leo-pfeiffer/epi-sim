@@ -5,7 +5,20 @@
 # EpiSim
 Repository for my MSc Thesis `A compartmented network model for COVID-19'
 
-### Make
+---
++ [:gear: Make](#make)
++ [:card_index_dividers: Project Structure](#project-structure)
++ [:safety_pin: Requirements](#requirements)
++ [:chart_with_upwards_trend: Lib](#lib)
+  - [Setup](#setup)
+  - [Analysis](#analysis)
++ [:globe_with_meridians: Web Application](#web-application-episim)
+  - [Build with Docker Compose](#build-web-app-with-docker-compose-prod--dev)
+  - [Run with Flask](#run-web-app-with-flask-only-dev)
+  - [Data sources](#data-source-of-the-application)
+---
+
+## Make
 We provide a Makefile with the following commands:
 
 ```text
@@ -45,7 +58,10 @@ WEB APP ======================================
 
 To see this output, run ```make help```.
 
-### Requirements
+## Project Structure
+![Project Structure][img-project-structure]
+
+## Requirements
 This project was developed using Python 3.9 and we recommend using this version. 
 However, backward compatibility is given for Python versions 3.6+.
 
@@ -66,7 +82,7 @@ from within your virtual environment.
 To build the project using docker compose, you also need those installed on your machine
 ([Docker](https://docs.docker.com/engine/install/), [Docker compose](https://docs.docker.com/compose/install/)).
 
-## Model
+## Lib
 
 ### Setup
 For the setup of the modelling environment, create a virtual enviromnet in the 
@@ -94,7 +110,7 @@ Flask server (recommended for development).
 The application is deployed under the following URL:
 todo
 
-### Build web app with docker compose
+### Build web app with docker compose (prod / dev)
 The web application can be built using docker compose using Nginx as the HTTP server 
 and uWSGI as the application server.
 
@@ -115,7 +131,7 @@ make build ENV=dev
 The application starts at whichever port is specified in `./app/.env` as an environment
 variable for PORT (default 80) and DEV_PORT (default 4401).
 
-### Run web app without build
+### Run web app with Flask only (dev)
 Alternatively, you can also run the web app using the builtin server, which is 
 not suitable for production but much simpler for development and test purposes.
 
@@ -133,3 +149,6 @@ the data is stored in a [public data git repository hosted on GitHub](https://gi
 
 todo
 However, the data source can be changed to any URL via the .env variable ....
+
+
+[img-project-structure]: https://github.com/leo-pfeiffer/epi-sim/blob/main/.github/images/project-structure.jpeg
