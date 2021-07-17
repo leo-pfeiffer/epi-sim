@@ -133,7 +133,7 @@ def _pickle_file(file, df):
     # make temporary directory
     file_name = os.path.join(TMP_DIR, file['name'] + '.pkl')
     df.to_pickle(file_name)
-    print(f"pickled file {file['name']}")
+    print(f"%s pickled file {file['name']}" % dt.now())
 
 
 def _upload_file(file):
@@ -148,7 +148,7 @@ def _upload_file(file):
         file_path=TMP_DIR,
         repo_path=repo_path
     )
-    print(f"uploaded file {file['name']}")
+    print(f"%s uploaded file {file['name']}" % dt.now())
 
 
 def main():
@@ -160,7 +160,7 @@ def main():
     os.mkdir(TMP_DIR)
 
     try:
-        for file in FILES[-2:]:
+        for file in FILES:
             df = _load_file(file)
             _pickle_file(file, df)
             _upload_file(file)

@@ -57,7 +57,7 @@ SEIVR_Q_COLS = {
 }
 
 ADD_COLUMN_MAPPING = {
-    SEIR: [],
+    SEIR: {},
     SEIR_Q: SEIR_Q_COLS,
     SEIVR: SEIVR_COLS,
     SEIVR_Q: SEIVR_Q_COLS
@@ -66,7 +66,7 @@ ADD_COLUMN_MAPPING = {
 # Access parameter size
 SIZE_KEY = {
     PLC_PRE: PLC.N,
-    PLC_PRE: PLC.N,
+    PLC_POST: PLC.N,
     MN_PRE: MN.N,
     MN_POST: MN.N,
     DIST_PRE: DN.N,
