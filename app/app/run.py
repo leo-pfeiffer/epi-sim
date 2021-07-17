@@ -1,5 +1,5 @@
 from app import app
-from configuration import DEV_PORT
+from app.configuration import DEV_PORT
 
 server = app.server
 

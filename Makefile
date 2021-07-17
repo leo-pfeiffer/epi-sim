@@ -1,5 +1,6 @@
-ENV="prod"
+ENV=prod
 DOCK_COMP = "./app/docker-compose.$(ENV).yml"
+CLEAR_DATA = ./app/app/app/data/clear_data.py
 
 
 ## SETUP ========================
@@ -78,10 +79,16 @@ destroy:
 	docker-compose -f $(DOCK_COMP) ps
 
 # restart container
-    .PHONY: restart
+.PHONY: restart
 restart:
 	docker-compose -f $(DOCK_COMP) restart
 	docker-compose -f $(DOCK_COMP) ps
+
+# clear data repo
+.PHONY: clear-data
+clear-data:
+	python $(CLEAR_DATA)
+
 
 # ----- Usage -----
 
@@ -116,6 +123,9 @@ WEB APP ======================================
       make bash            enter running container and start bash session
       make destroy         shut down and destroy container (remove volumes & images)
       make restart         restart container
+
+   OTHER UTILS
+      make clear-data      Clear the data directory
 
 ==============================================
 endef

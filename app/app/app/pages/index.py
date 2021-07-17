@@ -10,6 +10,7 @@ from plotly.graph_objects import Figure, Heatmap, Layout
 from ..data_import import simulation_data
 from ..static_elements import brand, footer
 from ..layouts import fig_layout, fig_traces, main_graph_props, px_template
+from ..simulation_files import NETWORKS, MODELS
 
 
 # Factory and helper functions =====
@@ -49,8 +50,9 @@ def make_waterfall():
 
 
 def make_main_graph(df):
-    fig = px.line(df, **main_graph_props, template=px_template)
-    fig.update_traces(**fig_traces)
+    # fig = px.line(df, **main_graph_props, template=px_template)
+    fig = px.scatter(df, **main_graph_props, template=px_template)
+    # fig.update_traces(**fig_traces)
     fig.update_layout(**fig_layout)
     return fig
 
@@ -129,18 +131,16 @@ def find_sub_threshold_after_peak(l: List, v: float):
 
 # Create elements =====
 
-# TODO make sure to only include those combinations that actually exist
-
 model_dropdown = make_dropdown('Model', dict(
     id='model-dropdown',
-    options=[{"label": m, "value": m} for m in simulation_data.models],
-    value=list(simulation_data.models)[0],
+    options=[{"label": m, "value": m} for m in MODELS],
+    value=MODELS[0],
 ))
 
 network_dropdown = make_dropdown('Network', dict(
     id='network-dropdown',
-    options=[{"label": m, "value": m} for m in simulation_data.networks],
-    value=list(simulation_data.networks)[0],
+    options=[{"label": m, "value": m} for m in NETWORKS],
+    value=NETWORKS[0],
 ))
 
 # TODO make sure to only activate those sliders that are available for the model

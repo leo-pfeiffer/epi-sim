@@ -11,8 +11,8 @@ import pickle
 from urllib.request import urlopen
 import os
 
-from ..configuration import DATA_REPO_URL_RAW
-from lib.experiments.utils.simulation_files import FILES
+from .configuration import DATA_REPO_URL_RAW, DATA_DIR
+from .simulation_files import FILES, MODEL, NETWORK
 
 import time
 
@@ -45,11 +45,11 @@ class SimulationData:
 
     @property
     def models(self):
-        return sorted(list(set([x['model'] for x in self.FILES])))
+        return sorted(list(set([x[MODEL] for x in self.FILES])))
 
     @property
     def networks(self):
-        return sorted(list(set([x['network'] for x in self.FILES])))
+        return sorted(list(set([x[NETWORK] for x in self.FILES])))
 
     def _load_files(self):
         """
@@ -69,14 +69,31 @@ class SimulationData:
         :param file: Dict containing file info, crucially the `name`
         :return: Updated dict including the `content`
         """
+
+        file_name = file['name'] + '.pkl'
+
+        # check if file is available on disk
+        local_file = os.path.join(DATA_DIR, file_name)
+        if os.path.isfile(local_file):
+
+            with open(local_file, 'rb') as f:
+                file['df'] = pickle.load(f)
+
+            return file
+
+        # else, get from data repo
         url = os.path.join(
             cls.DATA_REPO_URL_RAW,
             cls.DATA_REPO_APP_DATA_PATH,
-            file['name'] + '.pkl'
+            file_name
         )
 
         with urlopen(url) as f:
-            file['df'] = pickle.load(f)
+            df = pickle.load(f)
+            file['df'] = df
+
+            # ... and save to file for next time
+            df.to_pickle(local_file)
 
         return file
 
@@ -116,8 +133,8 @@ class SimulationData:
         df = pd.DataFrame()
         found = False
         for file in self.FILES:
-            if file['model'] == model and file['network'] == network:
-                df = file['content']
+            if file[MODEL] == model and file[NETWORK] == network:
+                df = file['df']
                 found = True
                 break
 
@@ -125,7 +142,7 @@ class SimulationData:
             raise ValueError(f"Provided combination of `model={model}` and "
                              f"`network={network}` does not exist. "
                              f"The available combinations are "
-                             f"{[(x['model'], x['network']) for x in self.FILES]}.")
+                             f"{[(x[MODEL], x[NETWORK]) for x in self.FILES]}.")
 
         subset = df[df.apply(apply_func, 1)].copy()
 
@@ -148,45 +165,42 @@ class SimulationData:
         # SEIR
         for network in seir_df.network.unique().tolist():
             self.FILES.append({
-                'model': 'SEIR',
-                'network': network,
-                'content': seir_df[seir_df.network == network]
+                MODEL: 'SEIR',
+                NETWORK: network,
+                'df': seir_df[seir_df.network == network]
             })
 
         # SEIR_Q
         for network in seir_q_df.network.unique().tolist():
             self.FILES.append({
-                'model': 'SEIR_Q',
-                'network': network,
-                'content': seir_q_df[seir_q_df.network == network]
+                MODEL: 'SEIR_Q',
+                NETWORK: network,
+                'df': seir_q_df[seir_q_df.network == network]
             })
 
         # SEIVR
         for network in seivr_df.network.unique().tolist():
             self.FILES.append({
-                'model': 'SEIVR',
-                'network': network,
-                'content': seivr_df[seivr_df.network == network]
+                MODEL: 'SEIVR',
+                NETWORK: network,
+                'df': seivr_df[seivr_df.network == network]
             })
 
         # SEIVR_Q
         for network in seivr_q_df.network.unique().tolist():
             self.FILES.append({
-                'model': 'SEIVR_Q',
-                'network': network,
-                'content': seir_df[seir_df.network == network]
+                MODEL: 'SEIVR_Q',
+                NETWORK: network,
+                'df': seir_df[seir_df.network == network]
             })
 
 
-start = time.time()
 simulation_data = SimulationData()
-end = time.time()
-duration = end - start
 
 if __name__ == '__main__':
 
     test_df = SimulationData.load_file({
         'name': 'seir_plc_pre.json',
         'repo_path': 'simulations',
-        'model': 'SEIR'
+        MODEL: 'SEIR'
     })

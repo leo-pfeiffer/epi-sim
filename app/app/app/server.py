@@ -2,6 +2,7 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
+import pandas as pd
 from dash.dependencies import Input, Output, MATCH, ClientsideFunction
 
 # page utils
@@ -46,7 +47,8 @@ def graph_callback(model, network):
 
     df = filter_df(model, network)
     fig = make_main_graph(df)
-    table_df = make_detail_table(df)
+    # table_df = make_detail_table(df)
+    table_df = pd.DataFrame()
 
     table = dbc.Table.from_dataframe(
         table_df, striped=True, bordered=True, hover=True, responsive=True,

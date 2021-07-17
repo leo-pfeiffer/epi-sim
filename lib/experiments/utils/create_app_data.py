@@ -83,6 +83,8 @@ def _load_file(file: Dict):
 
         for comp in model['compartments']:
             comp_key = TIMESERIES_STEM + '-' + stem + comp
+
+            # todo delete value by N
             values = experiment[RESULTS][comp_key]
 
             dic = {

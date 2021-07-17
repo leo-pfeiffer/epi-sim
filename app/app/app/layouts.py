@@ -25,6 +25,6 @@ main_graph_props = dict(
     x="time",
     y="value",
     color="compartment",
-    line_group="compartment",
+    # line_group="compartment",
     hover_name="compartment",
 )
