@@ -36,9 +36,28 @@ def make_slider(label, slider_options):
     ])
 
 
-def make_heatmap(param, network):
-    fig = Figure(data=Heatmap(z=[[1, 20, 30], [20, 1, 60], [30, 60, 1]]),
-                 layout=Layout(template=px_template))
+def make_heatmap(param, network, model_filters):
+
+    vm = VALS_MAPPING[param]
+    x = np.arange(vm['min'], vm['max'], vm['step'])
+
+    y = list(model_filters.keys())
+    z = []
+
+    for m, f in model_filters.items():
+        df = filter_df(m, network, f)
+        epi = epidemic_size_per_param(df, param).groupby(param).mean()
+        epi.sort_index(inplace=True)
+        z.append(list(epi.epidemic_size.values))
+        print(m, z[-1])
+
+    fig = Figure(
+        data=Heatmap(
+            z=z, x=x, y=y,
+            colorscale=[[0, 'rgb(237, 198, 48)'], [1, 'rgb(5, 38, 150)']]
+        ),
+        layout=Layout(template=px_template),
+    )
 
     fig.update_layout(**fig_layout)
     return fig

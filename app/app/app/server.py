@@ -116,11 +116,29 @@ def waterfall_tabs(active_tab, model, network, slider_values):
     Output("heatmap-graph", "figure"),
     [
         Input("heatmap-card-tabs", "active_tab"),
-        Input('network-dropdown', 'value')
+        Input('network-dropdown', 'value'),
+        Input({'type': 'slider', 'index': ALL}, 'value')
     ]
 )
-def heatmap_tabs(active_tab, network):
-    return make_heatmap(active_tab, network)
+def heatmap_tabs(active_tab, network, slider_values):
+
+    ctx = dash.callback_context
+    sliders_states = ctx.inputs_list[2]
+
+    # models to include in heatmap
+    model_filters = {}
+    for k, v in PARAM_MAPPING.items():
+        if v[active_tab]:
+            model_filters[k] = {}
+
+    # filters to apply per model
+    for k in model_filters:
+        for slider in sliders_states:
+            idx = slider['id']['index']
+            if PARAM_MAPPING[k][idx] and idx != active_tab:
+                model_filters[k][idx] = slider['value']
+
+    return make_heatmap(active_tab, network, model_filters)
 
 
 # Update the index
