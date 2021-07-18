@@ -60,8 +60,8 @@ class SEIVR(CompartmentedModel):
         # add compartments
         self.addCompartment(self.SUSCEPTIBLE, 1.0 - p_exposed - p_vac_init)
         self.addCompartment(self.EXPOSED, p_exposed)
-        self.addCompartment(self.INFECTED, p_vac_init)
-        self.addCompartment(self.VACCINATED, 0.0)
+        self.addCompartment(self.INFECTED)
+        self.addCompartment(self.VACCINATED, p_vac_init)
         self.addCompartment(self.REMOVED, 0.0)
 
         # track edges
