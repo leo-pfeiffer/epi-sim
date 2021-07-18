@@ -52,15 +52,21 @@ def graph_callback(model, network, slider):
 
     ctx = dash.callback_context
 
-    sliders = [x['id']['index'] for x in ctx.outputs_list[2]]
-    slider_disabled = [not PARAM_MAPPING[model][slider] for slider in sliders]
+    sliders_out = [x['id']['index'] for x in ctx.outputs_list[2]]
+    slider_disabled = [
+        not PARAM_MAPPING[model][slider] for slider in sliders_out
+    ]
 
-    # todo:
-    #  - parse the values of the sliders
-    #  - create filter functions from them
-    #  - pass them to filter_df...
+    sliders_states = ctx.states_list[0]
 
-    df = filter_df(model, network)
+    filters = {}
+    for slider in sliders_states:
+        idx = slider['id']['index']
+        if PARAM_MAPPING[model][idx]:
+            filters[idx] = slider['value']
+
+    df = filter_df(model, network, filters)
+
     fig = make_main_graph(df)
 
     # todo include table again

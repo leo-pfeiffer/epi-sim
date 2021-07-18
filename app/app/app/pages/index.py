@@ -58,8 +58,12 @@ def make_main_graph(df):
     return fig
 
 
-def filter_df(model, network):
-    return simulation_data.subset_data(model, network)
+def filter_df(model, network, filters):
+
+    # todo... not tested yet ...
+    filter_func = simulation_data.make_filter_func(filters)
+
+    return simulation_data.subset_data(model, network, filter_func)
 
 
 def make_detail_table(df):
