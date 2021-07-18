@@ -1,5 +1,5 @@
 import sys
-from typing import Callable, Any, Dict
+from typing import Callable, Any, Dict, List
 
 if sys.version_info >= (3, 8):
     from typing import Final
@@ -10,6 +10,7 @@ import pandas as pd
 import pickle
 from urllib.request import urlopen
 import os
+from tqdm import tqdm
 
 from .configuration import DATA_REPO_URL_RAW, DATA_DIR
 from .simulation_files import FILES, MODEL, NETWORK
@@ -54,8 +55,10 @@ class SimulationData:
         Load all files from repo.
         :return: Updated files
         """
-        for file in self.FILES:
+        pbar = tqdm(self.FILES)
+        for file in pbar:
             self.load_file(file)
+            pbar.set_description_str("Loading file %s" % file['name'])
 
     @classmethod
     def load_file(cls, file: Dict) -> Dict:
@@ -70,7 +73,6 @@ class SimulationData:
         # check if file is available on disk
         local_file = os.path.join(DATA_DIR, file_name)
         if os.path.isfile(local_file):
-
             with open(local_file, 'rb') as f:
                 file['df'] = pickle.load(f)
 
@@ -92,8 +94,8 @@ class SimulationData:
 
         return file
 
-    @staticmethod
-    def make_filter_func(filters: Dict[str, Any]) -> Callable:
+    @classmethod
+    def make_filter_func(cls, filters: Dict[str, Any]) -> Callable:
         """
         Make a filter function from a dictionary of filter.
          For example, to filter for `compartment == 'susceptible`, pass
@@ -101,18 +103,7 @@ class SimulationData:
         :param filters: Dictionary of filter criteria
         :return: Callable to use for filtering
         """
-
-        # base case: always return True
-        func: Callable = lambda x: True
-
-        # consider all filter conditions
-        for k, v in filters.items():
-            # new filter condition as a function
-            new_func: Callable = lambda x: x[k] == v
-            # combine new and old filter with AND
-            func: Callable = lambda x: func(x) & new_func(x)
-
-        return func
+        return lambda x: all(x[k] == v for k, v in filters.items())
 
     def subset_data(self, model: str, network: str,
                     apply_func: Callable = lambda x: True) -> pd.DataFrame:
@@ -193,7 +184,6 @@ class SimulationData:
 simulation_data = SimulationData()
 
 if __name__ == '__main__':
-
     test_df = SimulationData.load_file({
         'name': 'seir_plc_pre.json',
         'repo_path': 'simulations',
