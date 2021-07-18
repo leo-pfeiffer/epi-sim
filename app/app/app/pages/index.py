@@ -156,19 +156,19 @@ network_dropdown = make_dropdown('Network', dict(
 
 quarantine_slider = make_slider('P_QUARANTINE', dict(
     id={'type': 'slider', 'index': ID_P_QUAR},
-    **VALS_MAPPING[ID_P_QUAR], value=0))
+    **VALS_MAPPING[ID_P_QUAR], value=VALS_MAPPING[ID_P_QUAR]['min']))
 
 vaccine_slider = make_slider('P_VACCINE', dict(
     id={'type': 'slider', 'index': ID_P_VACC},
-    **VALS_MAPPING[ID_P_VACC], value=0))
+    **VALS_MAPPING[ID_P_VACC], value=VALS_MAPPING[ID_P_VACC]['min']))
 
 vaccine_init_slider = make_slider('P_VACCINE_INIT', dict(
     id={'type': 'slider', 'index': ID_P_VACC_INIT},
-    **VALS_MAPPING[ID_P_VACC_INIT], value=0))
+    **VALS_MAPPING[ID_P_VACC_INIT], value=VALS_MAPPING[ID_P_VACC_INIT]['min']))
 
 rrr_slider = make_slider('RRR', dict(
     id={'type': 'slider', 'index': ID_RRR},
-    **VALS_MAPPING[ID_RRR], value=0))
+    **VALS_MAPPING[ID_RRR], value=VALS_MAPPING[ID_RRR]['min']))
 
 controls = dbc.Card([
     model_dropdown,

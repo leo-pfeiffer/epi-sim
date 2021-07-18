@@ -124,9 +124,10 @@ class SimulationData:
         # create array with true values only
         arr = np.array([True] * len(df))
 
-        # boolean AND the array and each filter condition
         for k, v in filters.items():
-            filter_func = lambda x: x == v
+            # define filter (taking into account floating point imprecision)
+            filter_func = lambda x: np.isclose(x, v)
+            # apply filter of current column and combine with previous filters
             arr = arr & filter_func(df[k].values)
 
         return df.loc[arr]
