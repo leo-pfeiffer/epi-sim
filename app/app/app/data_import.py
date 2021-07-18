@@ -33,7 +33,7 @@ class SimulationData:
         'SEIVR_Q': {'compartments': ['S', 'E', 'I', 'V', 'R'], 'stem': 'epydemic.SEIVR.'},
     }
 
-    COLUMNS = ['experiment_id', 'time', 'compartment', 'value']
+    COLUMNS = ['time', 'compartment', 'value']
 
     def __init__(self):
 

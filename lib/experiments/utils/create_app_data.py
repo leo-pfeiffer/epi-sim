@@ -31,14 +31,12 @@ from lib.experiments.utils.data_repo_api import DataRepoAPI
 TMP_DIR = 'tmp' + str(int(time.time()))
 
 # String constants
-EXPERIMENT_ID = epyc.RepeatedExperiment.I
 OBSERVATIONS = epydemic.Monitor.OBSERVATIONS
 TIMESERIES_STEM = epydemic.Monitor.TIMESERIES_STEM
 
 RESULTSETS = 'resultsets'
 RESULTSETS_DEFAULT = epyc.LabNotebook.DEFAULT_RESULTSET
 RESULTS = epyc.Experiment.RESULTS
-METADATA = epyc.Experiment.METADATA
 PARAMETERS = epyc.Experiment.PARAMETERS
 
 # Repo directories
@@ -52,7 +50,7 @@ MODEL_META = {
     'SEIVR_Q': {'compartments': ['S', 'E', 'I', 'V', 'R'], 'stem': 'epydemic.SEIVR.'},
 }
 
-COLUMNS = ['experiment_id', 'time', 'compartment', 'value']
+COLUMNS = ['time', 'compartment', 'value']
 
 
 def _load_file(file: Dict):
@@ -83,7 +81,6 @@ def _load_file(file: Dict):
 
         # Get parameters
         N = experiment[PARAMETERS][SIZE_KEY[file['network']]]
-        experiment_id = experiment[METADATA][EXPERIMENT_ID]
         times = experiment[RESULTS][OBSERVATIONS]
 
         # number of observations recorded
@@ -108,9 +105,7 @@ def _load_file(file: Dict):
             values = [x / N for x in experiment[RESULTS][comp_key]]
 
             # column values for data frame creation
-            col_val_list = [
-                [experiment_id] * num_obs, times, [comp] * num_obs, values
-            ]
+            col_val_list = [times, [comp] * num_obs, values]
 
             # Map the column value lists (including `add_vals`) to columns
             dic = {
