@@ -88,18 +88,39 @@ def slider_callback(value):
 
 @app.callback(
     Output("waterfall-graph", "figure"),
-    Input("waterfall-card-tabs", "active_tab")
+    [
+        Input("waterfall-card-tabs", "active_tab"),
+        Input('model-dropdown', 'value'),
+        Input('network-dropdown', 'value'),
+        Input({'type': 'slider', 'index': ALL}, 'value')
+    ]
 )
-def waterfall_tabs(active_tab):
-    return make_waterfall()
+def waterfall_tabs(active_tab, model, network, slider_values):
+
+    if not PARAM_MAPPING[model][active_tab]:
+        return {}
+
+    ctx = dash.callback_context
+    sliders_states = ctx.inputs_list[3]
+
+    filters = {}
+    for slider in sliders_states:
+        idx = slider['id']['index']
+        if PARAM_MAPPING[model][idx] and idx != active_tab:
+            filters[idx] = slider['value']
+
+    return make_waterfall(active_tab, model, network, filters)
 
 
 @app.callback(
     Output("heatmap-graph", "figure"),
-    Input("heatmap-card-tabs", "active_tab")
+    [
+        Input("heatmap-card-tabs", "active_tab"),
+        Input('network-dropdown', 'value')
+    ]
 )
-def heatmap_tabs(active_tab):
-    return make_heatmap()
+def heatmap_tabs(active_tab, network):
+    return make_heatmap(active_tab, network)
 
 
 # Update the index

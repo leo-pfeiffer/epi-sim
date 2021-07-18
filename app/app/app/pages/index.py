@@ -3,6 +3,7 @@ from typing import List
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
+import numpy as np
 import pandas as pd
 import plotly.express as px
 from plotly.graph_objects import Figure, Heatmap, Layout, Scatter
@@ -35,7 +36,7 @@ def make_slider(label, slider_options):
     ])
 
 
-def make_heatmap():
+def make_heatmap(param, network):
     fig = Figure(data=Heatmap(z=[[1, 20, 30], [20, 1, 60], [30, 60, 1]]),
                  layout=Layout(template=px_template))
 
@@ -43,9 +44,10 @@ def make_heatmap():
     return fig
 
 
-def make_waterfall():
-    df = px.data.iris()
-    fig = px.scatter(df, x="sepal_width", y="sepal_length", template=px_template)
+def make_waterfall(param, model, network, filters):
+    df = filter_df(model, network, filters)
+    epidemic_size = epidemic_size_per_param(df, param)
+    fig = px.scatter(epidemic_size, x=param, y="epidemic_size", template=px_template)
     fig.update_layout(**fig_layout)
     return fig
 
@@ -71,6 +73,27 @@ def df_group_mean(df):
     grouped = df.groupby(['time', 'compartment']).mean()
     grouped.reset_index(inplace=True)
     return grouped
+
+
+def epidemic_size_per_param(df, param):
+
+    time_max = df.groupby(['experiment_id', param]).agg(
+        time_max=pd.NamedAgg(column='time', aggfunc='max')
+    ).to_dict()['time_max']
+
+    filtered = df[df.apply(
+        lambda x: np.isclose(time_max[(x['experiment_id'], x[param])], x['time']) and
+                  x['compartment'] in ['R', 'E'], axis=1)
+    ]
+
+    epidemic_size = filtered.groupby(
+        ['experiment_id', param]
+    ).value.sum()
+
+    epidemic_size = epidemic_size.reset_index()
+    epidemic_size.rename(columns={'value': 'epidemic_size'}, inplace=True)
+
+    return epidemic_size[[param, 'epidemic_size']]
 
 
 def make_detail_table_df(df):
@@ -164,19 +187,19 @@ network_dropdown = make_dropdown('Network', dict(
     value=NETWORKS[0],
 ))
 
-quarantine_slider = make_slider('P_QUARANTINE', dict(
+quarantine_slider = make_slider(ID_P_QUAR, dict(
     id={'type': 'slider', 'index': ID_P_QUAR},
     **VALS_MAPPING[ID_P_QUAR], value=VALS_MAPPING[ID_P_QUAR]['min']))
 
-vaccine_slider = make_slider('P_VACCINE', dict(
+vaccine_slider = make_slider(ID_P_VACC, dict(
     id={'type': 'slider', 'index': ID_P_VACC},
     **VALS_MAPPING[ID_P_VACC], value=VALS_MAPPING[ID_P_VACC]['min']))
 
-vaccine_init_slider = make_slider('P_VACCINE_INIT', dict(
+vaccine_init_slider = make_slider(ID_P_VACC_INIT, dict(
     id={'type': 'slider', 'index': ID_P_VACC_INIT},
     **VALS_MAPPING[ID_P_VACC_INIT], value=VALS_MAPPING[ID_P_VACC_INIT]['min']))
 
-rrr_slider = make_slider('RRR', dict(
+rrr_slider = make_slider(ID_RRR, dict(
     id={'type': 'slider', 'index': ID_RRR},
     **VALS_MAPPING[ID_RRR], value=VALS_MAPPING[ID_RRR]['min']))
 
@@ -208,12 +231,14 @@ heatmap_tabs = dbc.Card(
         dbc.CardHeader(
             dbc.Tabs(
                 [
-                    dbc.Tab(label="Tab 1", tab_id='tab-1'),
-                    dbc.Tab(label="Tab 2", tab_id='tab-2'),
+                    dbc.Tab(label=ID_P_QUAR, tab_id=ID_P_QUAR),
+                    dbc.Tab(label=ID_P_VACC, tab_id=ID_P_VACC),
+                    dbc.Tab(label=ID_P_VACC_INIT, tab_id=ID_P_VACC_INIT),
+                    dbc.Tab(label=ID_RRR, tab_id=ID_RRR),
                 ],
                 id="heatmap-card-tabs",
                 card=True,
-                active_tab="tab-1",
+                active_tab=ID_P_QUAR,
             )
         ),
         dbc.CardBody(
@@ -228,12 +253,14 @@ waterfall_tabs = dbc.Card(
         dbc.CardHeader(
             dbc.Tabs(
                 [
-                    dbc.Tab(label="Tab 1", tab_id='tab-1'),
-                    dbc.Tab(label="Tab 2", tab_id='tab-2'),
+                    dbc.Tab(label=ID_P_QUAR, tab_id=ID_P_QUAR),
+                    dbc.Tab(label=ID_P_VACC, tab_id=ID_P_VACC),
+                    dbc.Tab(label=ID_P_VACC_INIT, tab_id=ID_P_VACC_INIT),
+                    dbc.Tab(label=ID_RRR, tab_id=ID_RRR),
                 ],
                 id="waterfall-card-tabs",
                 card=True,
-                active_tab="tab-1",
+                active_tab=ID_P_QUAR,
             )
         ),
         dbc.CardBody(
