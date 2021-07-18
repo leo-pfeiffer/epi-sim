@@ -83,9 +83,8 @@ def make_detail_table_df(df):
 
 
 def make_detail_table(df):
-    # todo include again
-    # table_df = make_detail_table_df(df)
-    table_df = pd.DataFrame()
+    # todo use mean values for this...
+    table_df = make_detail_table_df(df)
     return dbc.Table.from_dataframe(
         table_df, striped=True, bordered=True, hover=True, responsive=True,
         id='summary-data-table', className='table'
@@ -93,27 +92,27 @@ def make_detail_table(df):
 
 
 def calc_perc_infected(df):
-    r = df[df.compartment == 'removed'].iloc[0]['value']
-    e = df[df.compartment == 'exposed'].iloc[0]['value']
+    r = df[df.compartment == 'R'].iloc[0]['value']
+    e = df[df.compartment == 'E'].iloc[0]['value']
     return r + e
 
 
 def calc_susceptible_remaining(df):
-    return df[df.compartment == 'susceptible'].iloc[0]['value']
+    return df[df.compartment == 'S'].iloc[0]['value']
 
 
 def calc_peak_time(df):
-    return df.loc[df[df.compartment == 'infected'].value.idxmax(), 'time']
+    return df.loc[df[df.compartment == 'I'].value.idxmax(), 'time']
 
 
 def calc_peak_infected(df):
-    return df[df.compartment == 'infected'].value.max()
+    return df[df.compartment == 'I'].value.max()
 
 
 def calc_effective_end(df):
     # first time, infected is sub 1% again
     # todo what threshold makes sense here?
-    infected = df[df.compartment == 'infected']
+    infected = df[df.compartment == 'I']
 
     idx = find_sub_threshold_after_peak(infected.value.tolist(), 0.01)
 
