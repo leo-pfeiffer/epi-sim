@@ -11,7 +11,7 @@ from ..data_import import simulation_data
 from ..static_elements import brand, footer
 from ..layouts import fig_layout, fig_traces, main_graph_props, px_template
 from ..simulation_files import NETWORKS, MODELS, ID_RRR, ID_P_VACC_INIT, \
-    ID_P_VACC, ID_P_QUAR
+    ID_P_VACC, ID_P_QUAR, VALS_MAPPING
 
 
 # Factory and helper functions =====
@@ -59,14 +59,10 @@ def make_main_graph(df):
 
 
 def filter_df(model, network, filters):
-
-    # todo... not tested yet ...
-    filter_func = simulation_data.make_filter_func(filters)
-
-    return simulation_data.subset_data(model, network, filter_func)
+    return simulation_data.subset_data(model, network, filters)
 
 
-def make_detail_table(df):
+def make_detail_table_df(df):
     out = {}
 
     last_time = df[df.time == max(df.time)]
@@ -84,6 +80,16 @@ def make_detail_table(df):
         'key': list(out.keys()),
         'value': list(out.values())
     })
+
+
+def make_detail_table(df):
+    # todo include again
+    # table_df = make_detail_table_df(df)
+    table_df = pd.DataFrame()
+    return dbc.Table.from_dataframe(
+        table_df, striped=True, bordered=True, hover=True, responsive=True,
+        id='summary-data-table', className='table'
+    )
 
 
 def calc_perc_infected(df):
@@ -150,19 +156,19 @@ network_dropdown = make_dropdown('Network', dict(
 
 quarantine_slider = make_slider('P_QUARANTINE', dict(
     id={'type': 'slider', 'index': ID_P_QUAR},
-    min=0, max=1, step=0.1, value=0))
+    **VALS_MAPPING[ID_P_QUAR], value=0))
 
 vaccine_slider = make_slider('P_VACCINE', dict(
     id={'type': 'slider', 'index': ID_P_VACC},
-    min=0, max=1, step=0.1, value=0))
+    **VALS_MAPPING[ID_P_VACC], value=0))
 
 vaccine_init_slider = make_slider('P_VACCINE_INIT', dict(
     id={'type': 'slider', 'index': ID_P_VACC_INIT},
-    min=0, max=1, step=0.1, value=0))
+    **VALS_MAPPING[ID_P_VACC_INIT], value=0))
 
 rrr_slider = make_slider('RRR', dict(
     id={'type': 'slider', 'index': ID_RRR},
-    min=0, max=1, step=0.1, value=0))
+    **VALS_MAPPING[ID_RRR], value=0))
 
 controls = dbc.Card([
     model_dropdown,

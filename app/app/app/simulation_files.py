@@ -36,6 +36,14 @@ ID_P_VACC: Final[str] = 'p_vaccinated'
 ID_P_VACC_INIT: Final[str] = 'p_vaccinated_initial'
 ID_RRR: Final[str] = 'rrr'
 
+# Values
+VALS_MAPPING = {
+    ID_P_QUAR: {'min': 0, 'max': 1, 'step': 0.25},
+    ID_P_VACC: {'min': 0.001, 'max': 0.01, 'step': 0.003},
+    ID_P_VACC_INIT: {'min': 0, 'max': 1, 'step': 0.2},
+    ID_RRR: {'min': 0.5, 'max': 0.95, 'step': 0.15},
+}
+
 PARAM_MAPPING = {
     SEIR: {ID_P_QUAR: False, ID_P_VACC: False, ID_P_VACC_INIT: False, ID_RRR: False},
     SEIR_Q: {ID_P_QUAR: True, ID_P_VACC: False, ID_P_VACC_INIT: False, ID_RRR: False},

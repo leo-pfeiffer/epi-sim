@@ -41,14 +41,18 @@ app.layout = html.Div([
 
 # CALLBACKS ====
 @app.callback(
-    Output('epidemic-curve-graph', 'figure'),
-    Output('table-card-body', 'children'),
-    Output({'type': 'slider', 'index': ALL}, 'disabled'),
-    [Input('model-dropdown', 'value'),
-     Input('network-dropdown', 'value')],
-    [State({'type': 'slider', 'index': ALL}, 'value')]
+    [
+        Output('epidemic-curve-graph', 'figure'),
+        Output('table-card-body', 'children'),
+        Output({'type': 'slider', 'index': ALL}, 'disabled'),
+    ],
+    [
+        Input('model-dropdown', 'value'),
+        Input('network-dropdown', 'value'),
+        Input({'type': 'slider', 'index': ALL}, 'value')
+     ],
 )
-def graph_callback(model, network, slider):
+def graph_callback(model, network, sliders):
 
     ctx = dash.callback_context
 
@@ -57,7 +61,7 @@ def graph_callback(model, network, slider):
         not PARAM_MAPPING[model][slider] for slider in sliders_out
     ]
 
-    sliders_states = ctx.states_list[0]
+    sliders_states = ctx.inputs_list[2]
 
     filters = {}
     for slider in sliders_states:
@@ -66,17 +70,8 @@ def graph_callback(model, network, slider):
             filters[idx] = slider['value']
 
     df = filter_df(model, network, filters)
-
     fig = make_main_graph(df)
-
-    # todo include table again
-    # table_df = make_detail_table(df)
-    table_df = pd.DataFrame()
-
-    table = dbc.Table.from_dataframe(
-        table_df, striped=True, bordered=True, hover=True, responsive=True,
-        id='summary-data-table', className='table'
-    )
+    table = make_detail_table(df)
 
     return fig, table, slider_disabled
 

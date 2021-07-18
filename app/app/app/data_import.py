@@ -7,6 +7,7 @@ else:
     from typing_extensions import Final
 
 import pandas as pd
+import numpy as np
 import pickle
 from urllib.request import urlopen
 import os
@@ -94,25 +95,15 @@ class SimulationData:
 
         return file
 
-    @classmethod
-    def make_filter_func(cls, filters: Dict[str, Any]) -> Callable:
-        """
-        Make a filter function from a dictionary of filter.
-         For example, to filter for `compartment == 'susceptible`, pass
-         `filters = {'compartment' : 'susceptible'}`.
-        :param filters: Dictionary of filter criteria
-        :return: Callable to use for filtering
-        """
-        return lambda x: all(x[k] == v for k, v in filters.items())
-
     def subset_data(self, model: str, network: str,
-                    apply_func: Callable = lambda x: True) -> pd.DataFrame:
+                    filters: Dict) -> pd.DataFrame:
         """
         Return a subset of the data for a `model`, a `network`, and potentially
-        filtered by an apply function.
+        filtered by the values specified in `filters`.
         :param model: Model of the subset.
         :param network: Network of the subset.
-        :param apply_func: Function to filter with.
+        :param filters: Dictionary containing columns as keys and filter values
+            as values
         :return: The subset as a data frame.
         """
 
@@ -130,9 +121,15 @@ class SimulationData:
                              f"The available combinations are "
                              f"{[(x[MODEL], x[NETWORK]) for x in self.FILES]}.")
 
-        subset = df[df.apply(apply_func, 1)].copy()
+        # create array with true values only
+        arr = np.array([True] * len(df))
 
-        return subset
+        # boolean AND the array and each filter condition
+        for k, v in filters.items():
+            filter_func = lambda x: x == v
+            arr = arr & filter_func(df[k].values)
+
+        return df.loc[arr]
 
     def _load_file_old(self):
         seir_file = f"{self.DATA_REPO_URL_RAW}/sim_seir.csv"
