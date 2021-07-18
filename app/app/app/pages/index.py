@@ -44,12 +44,12 @@ def make_heatmap(param, network, model_filters):
     y = list(model_filters.keys())
     z = []
 
+    # todo this is a bit slow....
     for m, f in model_filters.items():
         df = filter_df(m, network, f)
         epi = epidemic_size_per_param(df, param).groupby(param).mean()
         epi.sort_index(inplace=True)
         z.append(list(epi.epidemic_size.values))
-        print(m, z[-1])
 
     fig = Figure(
         data=Heatmap(
