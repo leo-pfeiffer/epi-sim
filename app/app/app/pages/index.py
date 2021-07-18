@@ -5,11 +5,11 @@ import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
 import plotly.express as px
-from plotly.graph_objects import Figure, Heatmap, Layout
+from plotly.graph_objects import Figure, Heatmap, Layout, Scatter
 
 from ..data_import import simulation_data
 from ..static_elements import brand, footer
-from ..layouts import fig_layout, fig_traces, main_graph_props, px_template
+from ..layouts import fig_layout, main_graph_props, px_template
 from ..simulation_files import NETWORKS, MODELS, ID_RRR, ID_P_VACC_INIT, \
     ID_P_VACC, ID_P_QUAR, VALS_MAPPING
 
@@ -50,16 +50,27 @@ def make_waterfall():
     return fig
 
 
-def make_main_graph(df):
-    # fig = px.line(df, **main_graph_props, template=px_template)
-    fig = px.scatter(df, **main_graph_props, template=px_template)
-    # fig.update_traces(**fig_traces)
-    fig.update_layout(**fig_layout)
+def make_main_graph(df, grouped_df):
+
+    fig_line = px.line(grouped_df, **main_graph_props)
+    fig_line.update_layout(showlegend=False)
+
+    fig_scat = px.scatter(df, **main_graph_props, template=px_template)
+    fig_scat.update_layout(**fig_layout)
+
+    fig = Figure(data=fig_line.data + fig_scat.data)
+
     return fig
 
 
 def filter_df(model, network, filters):
     return simulation_data.subset_data(model, network, filters)
+
+
+def df_group_mean(df):
+    grouped = df.groupby(['time', 'compartment']).mean()
+    grouped.reset_index(inplace=True)
+    return grouped
 
 
 def make_detail_table_df(df):

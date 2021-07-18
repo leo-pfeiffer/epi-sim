@@ -16,15 +16,10 @@ fig_layout = dict(
     transition_duration=500,
 )
 
-fig_traces = dict(
-    mode="lines",
-    hovertemplate=None
-)
-
 main_graph_props = dict(
     x="time",
     y="value",
     color="compartment",
-    # line_group="compartment",
     hover_name="compartment",
+    category_orders={"compartment": ['S', 'E', 'I', 'V', 'R']}
 )
