@@ -6,7 +6,7 @@ import dash_html_components as html
 import numpy as np
 import pandas as pd
 import plotly.express as px
-from plotly.graph_objects import Figure, Heatmap, Layout, Scatter
+from plotly.graph_objects import Figure, Heatmap, Layout
 
 from ..data_import import simulation_data
 from ..static_elements import brand, footer
@@ -117,7 +117,6 @@ def make_detail_table_df(df):
 
 
 def make_detail_table(df):
-    # todo use mean values for this...
     table_df = make_detail_table_df(df)
     return dbc.Table.from_dataframe(
         table_df, striped=True, bordered=True, hover=True, responsive=True,
