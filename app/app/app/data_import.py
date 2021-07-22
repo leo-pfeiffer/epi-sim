@@ -1,5 +1,5 @@
 import sys
-from typing import Callable, Any, Dict, List
+from typing import Dict
 
 if sys.version_info >= (3, 8):
     from typing import Final
@@ -41,7 +41,6 @@ class SimulationData:
 
         # load file contents
         self._load_files()
-        # self._load_file_old()
 
     @property
     def models(self):
@@ -131,52 +130,6 @@ class SimulationData:
             arr = arr & filter_func(df[k].values)
 
         return df.loc[arr]
-
-    def _load_file_old(self):
-        seir_file = f"{self.DATA_REPO_URL_RAW}/sim_seir.csv"
-        seivr_file = f"{self.DATA_REPO_URL_RAW}/sim_seivr.csv"
-
-        seir_df = pd.read_csv(seir_file, index_col=0)
-        seir_q_df = seir_df[seir_df.model == 'SEIR_Q']
-        seir_df = seir_df[seir_df.model == 'SEIR']
-
-        seivr_df = pd.read_csv(seivr_file, index_col=0)
-        seivr_q_df = seivr_df[seivr_df.model == 'SEIVR_Q']
-        seivr_df = seivr_df[seivr_df.model == 'SEIVR']
-
-        self.FILES = []
-
-        # SEIR
-        for network in seir_df.network.unique().tolist():
-            self.FILES.append({
-                MODEL: 'SEIR',
-                NETWORK: network,
-                'df': seir_df[seir_df.network == network]
-            })
-
-        # SEIR_Q
-        for network in seir_q_df.network.unique().tolist():
-            self.FILES.append({
-                MODEL: 'SEIR_Q',
-                NETWORK: network,
-                'df': seir_q_df[seir_q_df.network == network]
-            })
-
-        # SEIVR
-        for network in seivr_df.network.unique().tolist():
-            self.FILES.append({
-                MODEL: 'SEIVR',
-                NETWORK: network,
-                'df': seivr_df[seivr_df.network == network]
-            })
-
-        # SEIVR_Q
-        for network in seivr_q_df.network.unique().tolist():
-            self.FILES.append({
-                MODEL: 'SEIVR_Q',
-                NETWORK: network,
-                'df': seir_df[seir_df.network == network]
-            })
 
 
 simulation_data = SimulationData()
