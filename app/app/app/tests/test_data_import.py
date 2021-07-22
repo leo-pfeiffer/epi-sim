@@ -1,4 +1,4 @@
-from factory import create_simulation_df
+from .factory import create_simulation_df
 from ..data_import import SimulationData
 
 
