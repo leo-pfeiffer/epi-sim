@@ -45,11 +45,28 @@ def load_network_data_from_files(names: Dict[str, str],
         trip_post = load_pickle_from_disk(dirname, names['trip_post'])
 
     else:
-        demographics = DataRepoAPI.get_pickle_file(names['demographics'])
-        comb_pre = DataRepoAPI.get_pickle_file(names['comb_pre'])
-        comb_post = DataRepoAPI.get_pickle_file(names['comb_post'])
-        trip_pre = DataRepoAPI.get_pickle_file(names['trip_pre'])
-        trip_post = DataRepoAPI.get_pickle_file(names['trip_post'])
+
+        NETWORK_DATA = 'network-data'
+
+        demographics = DataRepoAPI.get_pickle_file(
+            os.path.join(NETWORK_DATA, names['demographics'])
+        )
+
+        comb_pre = DataRepoAPI.get_pickle_file(
+            os.path.join(NETWORK_DATA, names['comb_pre'])
+        )
+
+        comb_post = DataRepoAPI.get_pickle_file(
+            os.path.join(NETWORK_DATA, names['comb_post'])
+        )
+
+        trip_pre = DataRepoAPI.get_pickle_file(
+            os.path.join(NETWORK_DATA, names['trip_pre'])
+        )
+
+        trip_post = DataRepoAPI.get_pickle_file(
+            os.path.join(NETWORK_DATA, names['trip_post'])
+        )
 
     # return the instances
     return make_network_data(demographics, comb_pre, comb_post, trip_pre,
