@@ -2,27 +2,41 @@
 #  required for the creation of NetworkData instances used for mobility
 #  networks.
 
-from typing import Dict
+from typing import Dict, Tuple
 import os
 
-from lib.configuration import OUT
 from lib.experiments.utils.data_repo_api import DataRepoAPI
 from lib.experiments.utils.file_utils import load_pickle_from_disk
 from lib.model.network.network_data import NetworkData
 
 
 def load_network_data_from_files(names: Dict[str, str],
-                                 dirname: str = OUT,
+                                 dirname: str = '',
                                  disk: bool = False) -> Dict[str, NetworkData]:
     """
-    Utility function to create the pre and post network data from input files.
-    By default data is pulled from data repository unless `disk=True`.
+    Load network data from file (either local or repo) and create NetworkData
+    instances.
     :param names: file names of input data
-    :param dirname: (optional) directory of the files
+    :param dirname: (optional) directory of the files. If not provided, files
+        must be in the same directory as the caller.
     :param disk: (optional) load from disk
     :return: dictionary with network data
     """
+    return make_network_data(*get_network_data(names, dirname, disk))
 
+
+def get_network_data(names: Dict[str, str],
+                     dirname: str = '',
+                     disk: bool = False) -> Tuple:
+    """
+    Retrieve raw network data from file either from disk or by default from
+    the data repo.
+    :param names: file names of input data
+    :param dirname: (optional) directory of the files. If not provided, files
+        must be in the same directory as the caller.
+    :param disk: (optional) load from disk
+    :return: dictionary with network data
+    """
     # default file names
     if names is None:
         names = dict(
@@ -69,9 +83,7 @@ def load_network_data_from_files(names: Dict[str, str],
             os.path.join(NETWORK_DATA, names['trip_post'])
         )
 
-    # return the instances
-    return make_network_data(demographics, comb_pre, comb_post, trip_pre,
-                             trip_post)
+    return demographics, comb_pre, comb_post, trip_pre, trip_post
 
 
 def make_network_data(demographics, comb_pre, comb_post, trip_pre, trip_post):
