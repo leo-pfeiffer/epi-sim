@@ -4,16 +4,17 @@ px_template = "lux"
 load_figure_template(px_template)
 
 fig_layout = dict(
-    margin=dict(l=10, r=10, t=20, b=10),
+    margin=dict(l=10, r=10, t=10, b=0),
     legend=dict(
         orientation="h",
         yanchor="bottom",
-        y=-0.25,
+        y=-0.15,
         xanchor="center",
         x=0.5
     ),
     hovermode="x unified",
     transition_duration=500,
+    autosize=True
 )
 
 main_graph_props = dict(

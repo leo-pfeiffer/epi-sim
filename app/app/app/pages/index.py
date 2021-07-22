@@ -56,7 +56,7 @@ def make_heatmap(param, network, model_filters):
             z=z, x=x, y=y,
             colorscale=[[0, 'rgb(237, 198, 48)'], [1, 'rgb(5, 38, 150)']]
         ),
-        layout=Layout(template=px_template),
+        layout=Layout(template=px_template)
     )
 
     fig.update_layout(**fig_layout)
@@ -74,12 +74,13 @@ def make_waterfall(param, model, network, filters):
 def make_main_graph(df, grouped_df):
 
     fig_line = px.line(grouped_df, **main_graph_props)
-    fig_line.update_layout(showlegend=False)
-
     fig_scat = px.scatter(df, **main_graph_props, template=px_template)
-    fig_scat.update_layout(**fig_layout)
+    fig_scat.update_traces(showlegend=False)
 
-    fig = Figure(data=fig_line.data + fig_scat.data)
+    fig = Figure(data=fig_line.data + fig_scat.data,
+                 layout=Layout(template=px_template))
+
+    fig.update_layout(**fig_layout)
 
     return fig
 
