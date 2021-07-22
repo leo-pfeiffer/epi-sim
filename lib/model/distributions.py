@@ -66,7 +66,6 @@ class PowerLawCutoffDist:
         Mean of the distribution.
         :return: mean.
         """
-        # todo use epydemic gf
         n = polylog(self._tau - 1, np.exp(-1 / self._kappa))
         m = polylog(self._tau, np.exp(-1 / self._kappa))
         return n / m
@@ -77,7 +76,6 @@ class PowerLawCutoffDist:
         Variance of the distribution.
         :return: variance.
         """
-        # todo use epydemic gf
         x = np.exp(-1 / self._kappa)
         n = polylog(self._tau - 2, x) - polylog(self._tau - 1, x)
         m = polylog(self._tau, x)
