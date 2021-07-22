@@ -1,5 +1,5 @@
 import sys
-from typing import Dict
+from typing import Dict, Any
 
 if sys.version_info >= (3, 8):
     from typing import Final
@@ -120,6 +120,17 @@ class SimulationData:
                              f"The available combinations are "
                              f"{[(x[MODEL], x[NETWORK]) for x in self.FILES]}.")
 
+        return self._apply_filters(df, filters)
+
+    @staticmethod
+    def _apply_filters(df, filters: Dict[str, Any]):
+        """
+        Filter `df` by the conditions provided in `filters` where the keys
+        correspond to columns in `df` and values are the values to filter for.
+        :param df: Data frame to filter
+        :param filters: Dictionary with filter conditions
+        :return: filtered df
+        """
         # create array with true values only
         arr = np.array([True] * len(df))
 
