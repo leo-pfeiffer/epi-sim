@@ -151,7 +151,7 @@ def calc_perc_infected(df):
 
 
 def calc_susceptible_remaining(df):
-    return df[df.compartment == 'S'].iloc[0]['value']
+    return df[df.compartment == 'S'].iloc[-1]['value']
 
 
 def calc_peak_time(df):
@@ -164,7 +164,6 @@ def calc_peak_infected(df):
 
 def calc_effective_end(df):
     # first time, infected is sub 1% again
-    # todo what threshold makes sense here?
     infected = df[df.compartment == 'I']
 
     idx = find_sub_threshold_after_peak(infected.value.tolist(), 0.01)
