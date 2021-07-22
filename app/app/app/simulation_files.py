@@ -52,7 +52,7 @@ PARAM_MAPPING = {
 }
 
 MODELS: List[str] = [SEIR, SEIR_Q, SEIVR, SEIVR_Q]
-NETWORKS: List[str] = [MN_PRE, MN_POST, PLC_PRE, PLC_POST]
+NETWORKS: List[str] = [MN_PRE, MN_POST, PLC_PRE, PLC_POST, DIST_PRE, DIST_POST]
 
 FILES: List[Dict[str, Any]] = [
     {MODEL: SEIR, NETWORK: MN_PRE, NAME: 'seir_mobility_pre'},
