@@ -1,6 +1,6 @@
 from .factory import create_simulation_df
 import pandas as pd
-from ..app.calculations import df_group_mean, epidemic_size_per_param, \
+from ..calculations import df_group_mean, epidemic_size_per_param, \
     calc_perc_infected, calc_susceptible_remaining, calc_peak_time, \
     calc_peak_infected, calc_effective_end, find_sub_threshold_after_peak
 

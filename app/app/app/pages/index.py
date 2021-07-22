@@ -6,7 +6,7 @@ import pandas as pd
 import plotly.express as px
 from plotly.graph_objects import Figure, Heatmap, Layout
 
-from ..data_import import simulation_data
+from ..data_import import SimulationData
 from ..static_elements import brand, footer
 from ..layouts import fig_layout, main_graph_props, px_template
 from ..simulation_files import NETWORKS, MODELS, ID_RRR, ID_P_VACC_INIT, \
@@ -15,6 +15,10 @@ from ..simulation_files import NETWORKS, MODELS, ID_RRR, ID_P_VACC_INIT, \
 from ..calculations import epidemic_size_per_param, calc_perc_infected, \
     calc_susceptible_remaining, calc_peak_time, calc_peak_infected, \
     calc_effective_end
+
+
+# Load data set ==========
+simulation_data = SimulationData()
 
 
 # Factory and helper functions =====

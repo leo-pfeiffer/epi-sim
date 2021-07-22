@@ -131,8 +131,6 @@ class SimulationData:
         return df.loc[arr]
 
 
-simulation_data = SimulationData()
-
 if __name__ == '__main__':
     test_df = SimulationData.load_file({
         'name': 'seir_plc_pre.json',
