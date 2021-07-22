@@ -26,14 +26,14 @@ params[ERNetwork.N] = N = 10000
 params[ERNetwork.KMEAN] = k_mean = 3
 
 # set the parameters the same as above
-params[SEIVR.P_EXPOSED] = 0.001
+params[SEIVR.P_EXPOSED] = 0
 params[SEIVR.P_INFECT_ASYMPTOMATIC] = 0.01
 params[SEIVR.P_INFECT_SYMPTOMATIC] = 0.02
 params[SEIVR.P_REMOVE] = 0.002
 params[SEIVR.P_SYMPTOMS] = 0.002
-params[SEIVR.P_VACCINATED_INITIAL] = 0.0
+params[SEIVR.P_VACCINATED_INITIAL] = 1.0
 params[SEIVR.P_VACCINATED] = 0.0002
-params[SEIVR.VACCINE_RRR] = 0.95
+params[SEIVR.VACCINE_RRR] = 0.0
 
 # capture every 10 time steps
 params[Monitor.DELTA] = 10
@@ -53,7 +53,7 @@ T = 1000
 
 e.process().setMaximumTime(T)
 e.set(params)
-rc = e.run()
+rc = e.run(fatal=True)
 result = rc[Experiment.RESULTS]
 
 times = result[Monitor.OBSERVATIONS]

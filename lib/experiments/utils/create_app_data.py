@@ -161,8 +161,6 @@ def main():
 
     try:
         for file in FILES:
-            if not file['name'].startswith('seivrq'):
-                continue
             print(file)
             df = _load_file(file)
             _pickle_file(file, df)
