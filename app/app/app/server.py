@@ -2,9 +2,7 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
-import pandas as pd
-from dash.dependencies import Input, Output, MATCH, ALL, ClientsideFunction, \
-    State
+from dash.dependencies import Input, Output, MATCH, ALL, ClientsideFunction
 
 from .simulation_files import PARAM_MAPPING
 
