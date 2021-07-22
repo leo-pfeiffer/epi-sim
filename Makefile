@@ -50,7 +50,7 @@ batch_upload_experiments:
 .PHONY: run
 run:
 	make env
-	python app/run.py
+	python app/app/run.py
 
 # build with docker-compose -f $(DOCK_COMP)
 .PHONY: build
