@@ -95,8 +95,21 @@ source venv/bin/acitvate
 make setup
 ```
 
-This will install all requirements in your virtual environmant and generates
+This will install all requirements in your virtual environment and generates
 the required .env files.
+
+### Data Repo API
+The Data Repo API is a simple client for the Github API to upload and retrieve
+simulation results. The default repo URLs are automatically included in the
+.env file when you run `make env`. 
+
+Retrieval is open to anyone (since it's a public repo), however, 
+to upload data to a repo, you need to add your own repository URLs.
+
+Both for uploading and downloading files from any repo, you need to add a
+Github Personal Access token as the DATA_REPO_TOKEN to your .env file.
+Learn [here](https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token)
+how to create such a token.
 
 ### Analysis
 
