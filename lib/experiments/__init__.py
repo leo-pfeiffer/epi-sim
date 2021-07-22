@@ -1,6 +1,7 @@
 import os
 import sys
 
+
 def append_sys_path():
     """
     Append project dir to sys path... required to allow relative imports and

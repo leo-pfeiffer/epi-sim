@@ -14,7 +14,6 @@ from lib.model.compartmental_model.seir import SEIRWithQuarantine
 from lib.model.compartmental_model.seivr import SEIVR as SEIVRModel
 from lib.model.compartmental_model.seivr import SEIVRWithQuarantine
 
-
 # Define string constants
 
 # Models

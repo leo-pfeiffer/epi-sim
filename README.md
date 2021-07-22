@@ -62,8 +62,8 @@ To see this output, run ```make help```.
 ![Project Structure][img-project-structure]
 
 ## Requirements
-This project was developed using Python 3.9 and we recommend using this version. 
-However, backward compatibility is given for Python versions 3.6+.
+We developed the project using Python 3.9, and recommend using this version. 
+However, the project is backward compatible for Python versions 3.6+.
 
 Since the web application and the model can 
 be run on its own, the requirements are listed in two separate requirements.txt files:
@@ -99,7 +99,7 @@ This will install all requirements in your virtual environment and generates
 the required .env files.
 
 ### Data Repo API
-The Data Repo API is a simple client for the Github API to upload and retrieve
+The Data Repo API is a simple client for the GitHub API to upload and retrieve
 simulation results. The default repo URLs are automatically included in the
 .env file when you run `make env`. 
 
@@ -107,7 +107,7 @@ Retrieval is open to anyone (since it's a public repo), however,
 to upload data to a repo, you need to add your own repository URLs.
 
 Both for uploading and downloading files from any repo, you need to add a
-Github Personal Access token as the DATA_REPO_TOKEN to your .env file.
+GitHub Personal Access token as the DATA_REPO_TOKEN to your .env file.
 Learn [here](https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token)
 how to create such a token.
 
@@ -117,7 +117,7 @@ todo....
 
 ## Web Application `EpiSim`
 The web application can be run independently of the model. You can either 
-build it using docker compose (recommended for production) or the built-in
+build it using docker compose (recommended for production), or the built-in
 Flask server (recommended for development).
 
 The application is deployed under the following URL:

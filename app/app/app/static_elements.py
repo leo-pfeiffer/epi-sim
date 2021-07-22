@@ -10,7 +10,10 @@ brand = html.Div(
     [
         dbc.Nav(
             [
-                dbc.NavLink([html.Img(src='assets/logo.png', id='logo'), html.Span("EpiSim")], href="/", active="exact"),
+                dbc.NavLink([
+                    html.Img(src='assets/logo.png', id='logo'),
+                    html.Span("EpiSim")
+                ], href="/", active="exact"),
                 dbc.NavLink("Models", href="/model", active="exact"),
                 dbc.NavLink("Data", href="/data", active="exact"),
                 dbc.NavLink("About", href="/about", active="exact"),

@@ -1,5 +1,6 @@
 import sys
 from typing import Callable, Any, Dict, List
+
 if sys.version_info >= (3, 8):
     from typing import Final
 else:
@@ -165,7 +166,6 @@ class DNGenerator(NetworkGenerator):
         return 'DN'
 
     def _generate(self, params: Dict[str, Any]) -> nx.Graph:
-
         # Set the distribution functions (could also have been set at
         #  initialisation).
         self._household_size_dist = params.get(self.HOUSEHOLD_SIZE_DIST) \

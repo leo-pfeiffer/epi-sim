@@ -124,10 +124,9 @@ class SimulationData:
         arr = np.array([True] * len(df))
 
         for k, v in filters.items():
-            # define filter (taking into account floating point imprecision)
-            filter_func = lambda x: np.isclose(x, v)
-            # apply filter of current column and combine with previous filters
-            arr = arr & filter_func(df[k].values)
+            # define filter (taking into account floating point imprecision) and
+            #  combine with previous filters
+            arr = arr & (lambda x: np.isclose(x, v))(df[k].values)
 
         return df.loc[arr]
 

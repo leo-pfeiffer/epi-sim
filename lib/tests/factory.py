@@ -9,7 +9,7 @@ def create_cbgs():
 def create_demographics():
     cbgs = create_cbgs()
 
-    population = [i for i in range(1, len(cbgs)+1)]
+    population = [i for i in range(1, len(cbgs) + 1)]
     population_prop = [p / sum(population) for p in population]
 
     household_size = [3 for _ in range(len(cbgs))]

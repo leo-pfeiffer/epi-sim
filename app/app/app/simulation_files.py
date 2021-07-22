@@ -8,7 +8,6 @@ if sys.version_info >= (3, 8):
 else:
     from typing_extensions import Final
 
-
 # Define string constants
 
 # Models

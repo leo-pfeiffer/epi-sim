@@ -5,6 +5,7 @@
 # All files specified in lib/experiments/scripts/simulation_files are included.
 
 import sys
+
 if sys.version_info >= (3, 8):
     from typing import Final
 else:
@@ -122,8 +123,8 @@ def _load_file(file: Dict):
 
             # Map the column value lists (including `add_vals`) to columns
             dic = {
-                col: ls for col, ls in zip(columns, col_val_list+add_vals)
-           }
+                col: ls for col, ls in zip(columns, col_val_list + add_vals)
+            }
 
             # append this compartment to the data frame
             df = df.append(pd.DataFrame(dic), ignore_index=True)

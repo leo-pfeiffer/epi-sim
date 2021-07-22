@@ -8,7 +8,9 @@ from .simulation_files import PARAM_MAPPING
 
 # page utils
 from .pages.index import make_main_graph, make_detail_table, \
-    make_heatmap, make_waterfall, filter_df, df_group_mean
+    make_heatmap, make_waterfall, filter_df
+
+from .calculations import df_group_mean
 
 # pages
 from .pages import *
@@ -50,13 +52,13 @@ app.layout = html.Div([
         Input({'type': 'slider', 'index': ALL}, 'value')
      ],
 )
-def graph_callback(model, network, sliders):
+def graph_callback(mod, net, sliders):
 
     ctx = dash.callback_context
 
     sliders_out = [x['id']['index'] for x in ctx.outputs_list[2]]
     slider_disabled = [
-        not PARAM_MAPPING[model][slider] for slider in sliders_out
+        not PARAM_MAPPING[mod][slider] for slider in sliders_out
     ]
 
     sliders_states = ctx.inputs_list[2]
@@ -64,10 +66,10 @@ def graph_callback(model, network, sliders):
     filters = {}
     for slider in sliders_states:
         idx = slider['id']['index']
-        if PARAM_MAPPING[model][idx]:
+        if PARAM_MAPPING[mod][idx]:
             filters[idx] = slider['value']
 
-    df = filter_df(model, network, filters)
+    df = filter_df(mod, net, filters)
     grouped = df_group_mean(df)
     fig = make_main_graph(df, grouped)
 
@@ -93,9 +95,9 @@ def slider_callback(value):
         Input({'type': 'slider', 'index': ALL}, 'value')
     ]
 )
-def waterfall_tabs(active_tab, model, network, slider_values):
+def waterfall_tabs(active_tab, mod, net, slider_values):
 
-    if not PARAM_MAPPING[model][active_tab]:
+    if not PARAM_MAPPING[mod][active_tab]:
         return {}
 
     ctx = dash.callback_context
@@ -104,10 +106,10 @@ def waterfall_tabs(active_tab, model, network, slider_values):
     filters = {}
     for slider in sliders_states:
         idx = slider['id']['index']
-        if PARAM_MAPPING[model][idx] and idx != active_tab:
+        if PARAM_MAPPING[mod][idx] and idx != active_tab:
             filters[idx] = slider['value']
 
-    return make_waterfall(active_tab, model, network, filters)
+    return make_waterfall(active_tab, mod, net, filters)
 
 
 @app.callback(
