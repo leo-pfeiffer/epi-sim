@@ -11,6 +11,7 @@ requirements:
 	pip install --upgrade pip
 	pip install -U setuptools wheel
 	pip install -U -r lib/requirements.txt -r app/app/requirements.txt
+	pip install -U lib/.
 
 # generate .env files
 .PHONY: env
