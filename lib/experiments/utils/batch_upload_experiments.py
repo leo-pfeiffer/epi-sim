@@ -1,7 +1,6 @@
-# Script to upload experiment results to data repo.
-#  Specify the directory that contains the experiment results (and only those)
-#  and upload all to the data repo. The path must be relative to the
-#  `experiments` folder. The default directory is `experiment_results`.
+# Script to upload experiment results to data repo. The script assumes that
+#  the experimental results are in the `lib/experiments/experiment_results`
+#  directory.
 #
 # This use case works in accordance to the files created in the
 #  2_network_creation.ipynb Notebook if the files are not directly uploaded
@@ -53,9 +52,4 @@ def main(path=DIR):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--path', type=str, help='Path relative to experiments folder', required=False)
-
-    args = parser.parse_args()
-    target_path = DIR if args.path == '' else DIR
-    main(target_path)
+    main()

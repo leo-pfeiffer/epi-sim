@@ -32,6 +32,18 @@ test:
 	pytest
 
 
+## LIB SCRIPTS ====================
+
+# Create data for web app from simulation results
+.PHONY: create_app_data
+create_app_data:
+	python -m lib.experiments.utils.create_app_data
+
+# batch upload experiment results
+.PHONY: batch_upload_experiments
+batch_upload_experiments:
+	python -m lib.experiments.utils.batch_upload_experiments
+
 ## WEB APP ========================
 
 # run without docker
@@ -108,6 +120,12 @@ SETUP ========================================
 TESTING ======================================
 
    make test            run unit tests
+
+==============================================
+LIB SCRIPTS ==================================
+
+   make batch_upload_experiments        Upload experiment results
+   make create_app_data                 Create web app data from simulation results
 
 ==============================================
 WEB APP ======================================
