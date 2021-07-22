@@ -46,10 +46,18 @@ DATA_REPO_SIMULATIONS_PATH: Final[str] = 'simulations'
 DATA_REPO_APP_DATA_PATH: Final[str] = 'app-data'
 
 MODEL_META = {
-    'SEIR': {'compartments': ['S', 'E', 'I', 'R'], 'stem': 'epydemic.SEIR.'},
-    'SEIR_Q': {'compartments': ['S', 'E', 'I', 'R'], 'stem': 'epydemic.SEIR.'},
-    'SEIVR': {'compartments': ['S', 'E', 'I', 'V', 'R'], 'stem': 'epydemic.SEIVR.'},
-    'SEIVR_Q': {'compartments': ['S', 'E', 'I', 'V', 'R'], 'stem': 'epydemic.SEIVR.'},
+    'SEIR': {
+        'compartments': ['S', 'E', 'I', 'R'], 'stem': 'epydemic.SEIR.'
+    },
+    'SEIR_Q': {
+        'compartments': ['S', 'E', 'I', 'R'], 'stem': 'epydemic.SEIR.'
+    },
+    'SEIVR': {
+        'compartments': ['S', 'E', 'I', 'V', 'R'], 'stem': 'epydemic.SEIVR.'
+    },
+    'SEIVR_Q': {
+        'compartments': ['S', 'E', 'I', 'V', 'R'], 'stem': 'epydemic.SEIVR.'
+    },
 }
 
 COLUMNS = ['experiment_id', 'time', 'compartment', 'value']
