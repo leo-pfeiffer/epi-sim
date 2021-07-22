@@ -1,4 +1,8 @@
-# todo .. duplicate to lib.utils.simulation_files
+# Contains information about the simulation files. This duplicates some of the
+# code defined in `lib`, however since `app` and `lib` are supposed to be usable
+# independently of each other, I could not think of an elegant way to avoid
+# this. Considering that one could use different data sets in `app` than were
+# produced in `lib`, this could come in handy, though.
 
 import sys
 from typing import List, Dict, Any
