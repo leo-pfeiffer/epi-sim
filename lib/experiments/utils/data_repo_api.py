@@ -7,6 +7,7 @@
 
 import pickle
 from urllib.request import urlopen
+import pandas as pd
 import requests
 import json
 import lzma
@@ -153,6 +154,15 @@ class DataRepoAPI:
             data = json.load(url)
 
         return data
+
+    @classmethod
+    def get_csv(cls, file_name):
+        """
+        Get a CSV file from the data repo and return it as a data frame.
+        :param file_name: Name of the file.
+        :return: The data frame.
+        """
+        return pd.read_csv(f"{DATA_REPO_URL_RAW}/{file_name}")
 
 
 if __name__ == '__main__':
