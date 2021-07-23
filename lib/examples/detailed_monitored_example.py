@@ -55,7 +55,7 @@ if __name__ == '__main__':
     # set the parameters the same as above
     params[SIR.P_INFECT] = pInfect = 0.02  # infection probability
     params[SIR.P_REMOVE] = pRemove = 0.002  # recovery probability
-    params[SIR.P_INFECTED] = pInfected = 0.01  # initial fraction infected
+    params[SIR.P_INFECTED] = pInfected = 0.0001  # initial fraction infected
 
     # capture every 10 timesteps
     params[Monitor.DELTA] = 10
