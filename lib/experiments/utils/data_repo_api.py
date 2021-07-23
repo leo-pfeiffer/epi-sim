@@ -9,6 +9,7 @@ import pickle
 from urllib.request import urlopen
 import requests
 import json
+import lzma
 import argparse
 import base64
 import os
@@ -126,6 +127,18 @@ class DataRepoAPI:
         """
         with urlopen(f"{DATA_REPO_URL_RAW}/{file_name}") as url:
             data = pickle.load(url)
+
+        return data
+
+    @classmethod
+    def get_lzma_file(cls, file_name):
+        """
+        Get a LZMA  compressed file from the data repo.
+        :param file_name: Name of the file.
+        :return: The file.
+        """
+        with lzma.open(urlopen(f"{DATA_REPO_URL_RAW}/{file_name}")) as file:
+            data = pickle.load(file)
 
         return data
 
