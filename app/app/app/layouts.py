@@ -13,7 +13,6 @@ fig_layout = dict(
         x=0.5
     ),
     hovermode="x unified",
-    transition_duration=500,
     autosize=True
 )
 
