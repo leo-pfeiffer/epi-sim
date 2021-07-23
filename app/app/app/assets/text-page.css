@@ -14,6 +14,7 @@
 #text-container {
     width: 100%;
     vertical-align: top;
+    margin-top: 20px;
 }
 
 #text-content {
@@ -26,4 +27,45 @@
     margin-top: 10px;
     color: black;
     background-color: rgba(255, 255, 255, 0.8)
+}
+
+#text-content a {
+    color: blue;
+    text-underline: blue;
+}
+
+/*
+Right aligned floating image
+Source: https://stackoverflow.com/a/39614958/12168211
+*/
+img[alt$=">"] {
+    float: right;
+    margin: 0px 15px 15px 0px;
+    width: 30%;
+    min-width: 50px;
+    max-width: 120px;
+}
+
+/*
+Left aligned floating image
+Source: https://stackoverflow.com/a/39614958/12168211
+*/
+img[alt$="<"] {
+    float: left;
+    margin: 0px 15px 15px 0px;
+    width: 30%;
+    min-width: 50px;
+    max-width: 120px;
+}
+
+/*
+Centered image
+Source: https://stackoverflow.com/a/39614958/12168211
+*/
+img[alt$="><"] {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: auto;
+    float: none!important;
 }
