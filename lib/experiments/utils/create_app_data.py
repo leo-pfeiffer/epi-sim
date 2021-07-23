@@ -64,7 +64,7 @@ MODEL_META = {
 COLUMNS = ['experiment_id', 'time', 'compartment', 'value']
 
 
-def _load_file(file: Dict):
+def _load_file(file: Dict, repo_path=DATA_REPO_SIMULATIONS_PATH):
     """
     Load JSON file from data repo inplace.
     :param file: Dict containing file info, crucially the `name`
@@ -72,7 +72,7 @@ def _load_file(file: Dict):
     """
     url = os.path.join(
         DATA_REPO_URL_RAW,
-        DATA_REPO_SIMULATIONS_PATH,
+        repo_path,
         file['name'] + '.json'
     )
 
@@ -145,19 +145,38 @@ def _pickle_file(file, df):
     print(f"%s pickled file {file['name']}" % dt.now())
 
 
-def _upload_file(file):
+def _upload_file(file, repo_path=DATA_REPO_APP_DATA_PATH):
     """
     Upload pickled files.
     """
 
     file_name = file['name'] + '.pkl'
-    repo_path = DATA_REPO_APP_DATA_PATH
     DataRepoAPI.update_or_create(
         file_name=file_name,
         file_path=TMP_DIR,
         repo_path=repo_path
     )
     print(f"%s uploaded file {file['name']}" % dt.now())
+
+
+def main_custom_files(files, repo_path):
+    """
+    Run the process.
+    """
+
+    # make temporary directory
+    os.mkdir(TMP_DIR)
+
+    try:
+        for file in files:
+            print(file)
+            df = _load_file(file, repo_path)
+            _pickle_file(file, df)
+            _upload_file(file, repo_path)
+
+    finally:
+        # remove temporary directory
+        shutil.rmtree(TMP_DIR)
 
 
 def main():
