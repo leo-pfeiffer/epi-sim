@@ -79,7 +79,7 @@ def make_waterfall(param, model, network, filters):
 def make_main_graph(df, grouped_df):
     fig_line = px.line(grouped_df, **main_graph_props)
     fig_scat = px.scatter(df, **main_graph_props, template=px_template)
-    fig_scat.update_traces(showlegend=False)
+    fig_scat.update_traces(showlegend=False, hoverinfo='none')
 
     fig = Figure(data=fig_line.data + fig_scat.data,
                  layout=Layout(template=px_template))

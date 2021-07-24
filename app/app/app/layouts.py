@@ -12,7 +12,7 @@ fig_layout = dict(
         xanchor="center",
         x=0.5
     ),
-    hovermode="x unified",
+    # hovermode="x unified",
     autosize=True
 )
 
