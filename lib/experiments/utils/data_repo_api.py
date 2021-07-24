@@ -120,6 +120,31 @@ class DataRepoAPI:
             raise requests.exceptions.HTTPError(res.text)
 
     @classmethod
+    def delete_file(cls, file_name, repo_path=''):
+        """
+        Perform HTTP Put to create or update the file.
+        :param file_name: File name
+        :param content: Base 64 encoded string.
+        :param repo_path: (optional) Path to the file in the repository.
+        :param sha: Blob SHA of the file (required if update)
+        """
+
+        sha = cls.get_sha(file_name=file_name, repo_path=repo_path)
+        data = {
+            "message": "delete file",
+            "sha": sha
+        }
+
+        url = os.path.join(DATA_REPO_URL_API, repo_path, file_name)
+        headers = {**cls.AUTH, 'Accept': cls.CONTENT_TYPE}
+
+        res = requests.delete(url, data=json.dumps(data), headers=headers)
+
+        if not res.ok:
+            print(res.text)
+            raise requests.exceptions.HTTPError(res.text)
+
+    @classmethod
     def get_pickle_file(cls, file_name):
         """
         Get a Pickle file from the data repo.
