@@ -10,7 +10,7 @@ from .simulation_files import PARAM_MAPPING
 from .pages.index import make_main_graph, make_detail_table, \
     make_heatmap, make_waterfall, filter_df
 
-from .calculations import df_group_mean
+from .data_processing import SimulationData
 
 # pages
 from .pages import *
@@ -70,7 +70,7 @@ def graph_callback(mod, net, sliders):
             filters[idx] = slider['value']
 
     df = filter_df(mod, net, filters)
-    grouped = df_group_mean(df)
+    grouped = SimulationData.df_group_mean(df)
     fig = make_main_graph(df, grouped)
 
     table = make_detail_table(grouped)

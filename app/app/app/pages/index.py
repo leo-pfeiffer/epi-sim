@@ -6,15 +6,11 @@ import pandas as pd
 import plotly.express as px
 from plotly.graph_objects import Figure, Heatmap, Layout
 
-from ..data_import import SimulationData
+from ..data_processing import SimulationData
 from ..static_elements import brand, footer
 from ..layouts import fig_layout, main_graph_props, px_template
 from ..simulation_files import NETWORKS, MODELS, ID_RRR, ID_P_VACC_INIT, \
     ID_P_VACC, ID_P_QUAR, VALS_MAPPING
-
-from ..calculations import epidemic_size_per_param, calc_perc_infected, \
-    calc_susceptible_remaining, calc_peak_time, calc_peak_infected, \
-    calc_effective_end
 
 
 # Load data set ==========
@@ -52,7 +48,8 @@ def make_heatmap(param, network, model_filters):
     # todo this is a bit slow....
     for m, f in model_filters.items():
         df = filter_df(m, network, f)
-        epi = epidemic_size_per_param(df, param).groupby(param).mean()
+        epi = SimulationData.epidemic_size_per_param(df, param)
+        epi = epi.groupby(param).mean()
         epi.sort_index(inplace=True)
         z.append(list(epi.epidemic_size.values))
 
@@ -70,7 +67,7 @@ def make_heatmap(param, network, model_filters):
 
 def make_waterfall(param, model, network, filters):
     df = filter_df(model, network, filters)
-    epidemic_size = epidemic_size_per_param(df, param)
+    epidemic_size = SimulationData.epidemic_size_per_param(df, param)
     fig = px.scatter(epidemic_size, x=param, y="epidemic_size", template=px_template)
     fig.update_layout(**fig_layout)
     return fig
@@ -98,11 +95,11 @@ def make_detail_table_df(df):
 
     last_time = df[df.time == max(df.time)]
 
-    out['total infected'] = calc_perc_infected(last_time)
-    out['susceptible remaining'] = calc_susceptible_remaining(last_time)
-    out['peak time'] = calc_peak_time(df)
-    out['peak infected'] = calc_peak_infected(df)
-    out['effective end'] = calc_effective_end(df)
+    out['total infected'] = SimulationData.calc_perc_infected(last_time)
+    out['susceptible remaining'] = SimulationData.calc_susceptible_remaining(last_time)
+    out['peak time'] = SimulationData.calc_peak_time(df)
+    out['peak infected'] = SimulationData.calc_peak_infected(df)
+    out['effective end'] = SimulationData.calc_effective_end(df)
 
     for k, v in out.items():
         out[k] = '%.4f' % v

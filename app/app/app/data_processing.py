@@ -1,5 +1,5 @@
 import sys
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 if sys.version_info >= (3, 8):
     from typing import Final
@@ -140,6 +140,123 @@ class SimulationData:
             arr = arr & (lambda x: np.isclose(x, v))(df[k].values)
 
         return df.loc[arr]
+
+    @staticmethod
+    def df_group_mean(df):
+        """
+        Calculate the mean value per time per compartment.
+        :param df: Simulation df.
+        :return: grouped data frame.
+        """
+        grouped = df.groupby(['time', 'compartment']).mean()
+        grouped.reset_index(inplace=True)
+        return grouped
+
+    @staticmethod
+    def epidemic_size_per_param(df, param):
+        """
+        For the variable parameter `param` calculate the epidemic size
+        for each setting and for each experiment in `df`. Return the result
+        as a data frame with the columns `param` and 'epidemic_size'
+        :param df: Simulation df
+        :param param: Target variable parameter
+        :return: data frame
+        """
+
+        time_max = df.groupby(['experiment_id', param]).agg(
+            time_max=pd.NamedAgg(column='time', aggfunc='max')
+        ).to_dict()['time_max']
+
+        filtered = df[df.apply(
+            lambda x: np.isclose(time_max[(x['experiment_id'], x[param])], x['time']) and
+                      x['compartment'] in ['R', 'E'], axis=1)]
+
+        epidemic_size = filtered.groupby(
+            ['experiment_id', param]
+        ).value.sum()
+
+        epidemic_size = epidemic_size.reset_index()
+        epidemic_size.rename(columns={'value': 'epidemic_size'}, inplace=True)
+
+        return epidemic_size[[param, 'epidemic_size']]
+
+    @staticmethod
+    def calc_perc_infected(df):
+        """
+        Calculate the percentage of infected individuals from a simulation data
+        frame with only one experiment.
+        :param df: Simulation data frame with only one experiment
+        :return: Percentage of infected individuals.
+        """
+        r = df[df.compartment == 'R'].iloc[0]['value']
+        e = df[df.compartment == 'E'].iloc[0]['value']
+        return r + e
+
+    @staticmethod
+    def calc_susceptible_remaining(df):
+        """
+        Calculate the percentage of infected individuals from a simulation data
+        frame with only one experiment.
+        :param df: Simulation data frame with only one experiment
+        :return: Percentage of susceptible individuals remaining
+        """
+        return df[df.compartment == 'S'].iloc[-1]['value']
+
+    @staticmethod
+    def calc_peak_time(df):
+        """
+        Calculate the time step of peak infection from a simulation data
+        frame with only one experiment.
+        :param df: Simulation data frame with only one experiment
+        :return: Time step of peak infection
+        """
+        return df.loc[df[df.compartment == 'I'].value.idxmax(), 'time']
+
+    @staticmethod
+    def calc_peak_infected(df):
+        """
+        Calculate the peak infection percentage from a simulation data
+        frame with only one experiment.
+        :param df: Simulation data frame with only one experiment
+        :return: Peak infection percentage
+        """
+        return df[df.compartment == 'I'].value.max()
+
+    @classmethod
+    def calc_effective_end(cls, df):
+        """
+        Calculate the effective end of the epidemic, i.e. when percentage of
+        infected individuals is below 1% for the first time from a simulation
+        data frame with only one experiment.
+        :param df: Simulation data frame with only one experiment
+        :return: Time step of effective end
+        """
+        # first time, infected is sub 1% again
+        infected = df[df.compartment == 'I']
+
+        idx = cls.find_sub_threshold_after_peak(infected.value.tolist(), 0.01)
+
+        if idx is None:
+            return None
+
+        return infected.time.values[idx]
+
+    @staticmethod
+    def find_sub_threshold_after_peak(ls: List, v: float):
+        """
+        Find the index of the value in a list that is below a threshold  for the
+        first time after a value above the peak. If the condition is not met for
+        any values, return 0 if the first value of the list is below the threshold
+        or None if the first value is above the threshold.
+        :param ls: List of values
+        :param v: Threshold value
+        :return: Index or None
+        """
+        for i in range(1, len(ls)):
+            if ls[i - 1] > v >= ls[i]:
+                return i
+
+        return 0 if ls[0] <= v else None
 
 
 if __name__ == '__main__':
