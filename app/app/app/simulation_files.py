@@ -43,7 +43,7 @@ ID_RRR: Final[str] = 'rrr'
 VALS_MAPPING = {
     ID_P_QUAR: {'min': 0, 'max': 1, 'step': 0.25},
     ID_P_VACC: {'min': 0.001, 'max': 0.01, 'step': 0.003},
-    ID_P_VACC_INIT: {'min': 0, 'max': 1, 'step': 0.2},
+    ID_P_VACC_INIT: {'min': 0, 'max': 0.8, 'step': 0.2},
     ID_RRR: {'min': 0.5, 'max': 0.95, 'step': 0.15},
 }
 
