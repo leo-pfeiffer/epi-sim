@@ -44,6 +44,8 @@ Depending on which model you selected, you can further set up to four parameters
    probability for vaccinated individuals is reduced to 
    `P_INFECT * (1 - RRR) = 0.2 * (1 - 0.5) = 0.1`.
    
+You can also download the simulation results as a CSV file by clicking the 
+button at the bottom of the control bar.
    
 ## Epidemic curves
 ![Help curves >](/assets/img/help-curves.png)

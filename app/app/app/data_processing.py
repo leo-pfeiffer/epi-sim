@@ -42,6 +42,24 @@ class SimulationData:
         # load file contents
         self._load_files()
 
+        # initialise filters
+        self._current_state = {}
+
+    @property
+    def current_state(self):
+        return self._current_state
+
+    @current_state.setter
+    def current_state(self, new_state):
+        assert isinstance(new_state, dict)
+        assert 'model' in new_state
+        assert 'network' in new_state
+        assert 'filters' in new_state
+        assert isinstance(new_state['model'], str)
+        assert isinstance(new_state['network'], str)
+        assert isinstance(new_state['filters'], dict)
+        self._current_state = new_state
+
     @property
     def models(self):
         return sorted(list(set([x[MODEL] for x in self.FILES])))

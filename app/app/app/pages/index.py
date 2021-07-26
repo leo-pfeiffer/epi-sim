@@ -147,13 +147,24 @@ rrr_slider = make_slider(ID_RRR, dict(
     id={'type': 'slider', 'index': ID_RRR},
     **VALS_MAPPING[ID_RRR], value=VALS_MAPPING[ID_RRR]['min']))
 
+download = html.Div(
+    [
+        dbc.Button(
+            "Download simulation results", id="btn_csv",
+            outline=True, color="primary"
+        ),
+        dcc.Download(id="download-dataframe-csv")
+    ]
+)
+
 controls = dbc.Card([
     model_dropdown,
     network_dropdown,
     quarantine_slider,
     vaccine_slider,
     vaccine_init_slider,
-    rrr_slider
+    rrr_slider,
+    download
 ], body=True, id='controls')
 
 main_graph = dbc.Card([

@@ -65,6 +65,13 @@ def graph_callback(mod, net, sliders):
         if PARAM_MAPPING[mod][idx]:
             filters[idx] = slider['value']
 
+    # save current selected state
+    index.simulation_data.current_state = {
+        'model': mod,
+        'network': net,
+        'filters': filters
+    }
+
     df = index.filter_df(mod, net, filters)
     grouped = SimulationData.df_group_mean(df)
     fig = index.make_main_graph(df, grouped)
@@ -166,6 +173,22 @@ def toggle_modal(n1, n2, is_open):
     if n1 or n2:
         return not is_open
     return is_open
+
+
+# Download data set
+@app.callback(
+    Output("download-dataframe-csv", "data"),
+    Input("btn_csv", "n_clicks"),
+    prevent_initial_call=True,
+)
+def func(n_clicks):
+    # get state
+    state = index.simulation_data.current_state
+
+    # apply filters
+    df = index.filter_df(state['model'], state['network'], state['filters'])
+
+    return dcc.send_data_frame(df.to_csv, "simulation_results.csv")
 
 
 # Client side callbacks ====
