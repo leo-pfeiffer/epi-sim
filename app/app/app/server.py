@@ -11,6 +11,11 @@ from .data_processing import SimulationData
 # pages
 from .pages import *
 
+# configure logging
+from .log_config import config_logger
+config_logger()
+
+
 FONT_AWESOME = 'https://pro.fontawesome.com/releases/v5.10.0/css/all.css'
 
 external_stylesheets = [
