@@ -37,13 +37,18 @@ class SimulationData:
 
     def __init__(self):
 
-        self.FILES = FILES
-
-        # load file contents
-        self._load_files()
+        # file info
+        self._files = FILES
 
         # initialise filters
         self._current_state = {}
+
+        # track if files have been loaded yet
+        self._files_loaded = False
+
+    @property
+    def files(self):
+        return self._files
 
     @property
     def current_state(self):
@@ -61,22 +66,28 @@ class SimulationData:
         self._current_state = new_state
 
     @property
+    def files_loaded(self):
+        return self._files_loaded
+
+    @property
     def models(self):
-        return sorted(list(set([x[MODEL] for x in self.FILES])))
+        return sorted(list(set([x[MODEL] for x in self._files])))
 
     @property
     def networks(self):
-        return sorted(list(set([x[NETWORK] for x in self.FILES])))
+        return sorted(list(set([x[NETWORK] for x in self._files])))
 
-    def _load_files(self):
+    def load_files(self):
         """
         Load all files from repo.
         :return: Updated files
         """
-        pbar = tqdm(self.FILES)
+        pbar = tqdm(self._files)
         for file in pbar:
             self.load_file(file)
             pbar.set_description_str("Loading file %s" % file['name'])
+
+        self._files_loaded = True
 
     @classmethod
     def load_file(cls, file: Dict) -> Dict:
@@ -124,9 +135,12 @@ class SimulationData:
         :return: The subset as a data frame.
         """
 
+        # make sure files are loaded ...
+        assert self._files_loaded
+
         df = pd.DataFrame()
         found = False
-        for file in self.FILES:
+        for file in self._files:
             if file[MODEL] == model and file[NETWORK] == network:
                 df = file['df']
                 found = True
@@ -136,7 +150,7 @@ class SimulationData:
             raise ValueError(f"Provided combination of `model={model}` and "
                              f"`network={network}` does not exist. "
                              f"The available combinations are "
-                             f"{[(x[MODEL], x[NETWORK]) for x in self.FILES]}.")
+                             f"{[(x[MODEL], x[NETWORK]) for x in self._files]}.")
 
         return self._apply_filters(df, filters)
 
@@ -281,7 +295,7 @@ class SimulationData:
             if ls[i - 1] > v >= ls[i]:
                 return i
 
-        return 0 if ls[0] <= v else None
+        return 0 if len(ls) > 0 and ls[0] <= v else None
 
 
 if __name__ == '__main__':

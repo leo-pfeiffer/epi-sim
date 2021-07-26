@@ -1,7 +1,51 @@
 from .factory import create_simulation_df
 from ..data_processing import SimulationData
+from ..simulation_files import FILES, MODELS, NETWORKS
+import pytest
 
 import pandas as pd
+
+
+def test_files_property():
+    simulation = SimulationData()
+    assert simulation.files == FILES
+
+
+def test_current_state_property():
+    simulation = SimulationData()
+    assert simulation.current_state == dict()
+
+    # can't set empty dict
+    with pytest.raises(AssertionError):
+        simulation.current_state = {}
+
+    # can't set filters as non-dict
+    with pytest.raises(AssertionError):
+        simulation.current_state = {'model': '', 'network': '', 'filters': ''}
+
+    # can't set wrong keys
+    with pytest.raises(AssertionError):
+        simulation.current_state = {'some_key': '', 'network': '', 'filters': {}}
+
+    # this should work
+    should = {'model': '', 'network': '', 'filters': {1: 2}}
+    simulation.current_state = should
+    assert simulation.current_state == should
+
+
+def test_files_loaded_property():
+    simulation = SimulationData()
+    assert not simulation.files_loaded
+
+
+def test_models_property():
+    simulation = SimulationData()
+    assert simulation.models == sorted(MODELS)
+
+
+def test_networks_property():
+    simulation = SimulationData()
+    assert simulation.networks == sorted(NETWORKS)
 
 
 def test_apply_filters():
@@ -66,6 +110,11 @@ def test_calc_peak_infected():
 def test_calc_effective_end():
     df = create_simulation_df('SEIR')
     assert SimulationData.calc_effective_end(df) == 8
+
+
+def test_calc_effective_end_none():
+    df = pd.DataFrame(columns=['compartment', 'value'])
+    assert SimulationData.calc_effective_end(df) is None
 
 
 def test_find_sub_threshold_after_peak():

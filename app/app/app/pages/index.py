@@ -15,6 +15,7 @@ from ..simulation_files import NETWORKS, MODELS, ID_RRR, ID_P_VACC_INIT, \
 
 # Load data set ==========
 simulation_data = SimulationData()
+simulation_data.load_files()
 
 
 # Factory and helper functions =====
