@@ -1,5 +1,7 @@
+import os
 import dash_html_components as html
 import dash_bootstrap_components as dbc
+import dash_core_components as dcc
 
 GITHUB = html.A(
     html.I(className="fab fa-github"),
@@ -11,7 +13,7 @@ brand = html.Div(
         dbc.Nav(
             [
                 dbc.NavLink([
-                    html.Img(src='assets/logo.png', id='logo'),
+                    html.Img(src='assets/img/logo.png', id='logo'),
                     html.Span("EpiSim")
                 ], href="/", active="exact"),
                 dbc.NavLink("Models", href="/model", active="exact"),
@@ -68,12 +70,19 @@ toast = html.Div(
     ]
 )
 
+
+# Modal ====
+path = os.path.dirname(os.path.abspath(__file__))
+
+with open(os.path.join(path, 'pages', 'markdown', 'help.md'), 'r') as f:
+    markdown = f.read()
+
 modal = html.Div(
     [
         dbc.Modal(
             [
-                dbc.ModalHeader("Header"),
-                dbc.ModalBody("This is the content of the modal"),
+                dbc.ModalHeader("Help"),
+                dbc.ModalBody([html.Div(dcc.Markdown(markdown))]),
                 dbc.ModalFooter(
                     dbc.Button(
                         "Close", id="close", className="ml-auto", n_clicks=0
@@ -83,6 +92,7 @@ modal = html.Div(
             id="help-modal",
             size='xl',
             is_open=False,
+            scrollable=True
         ),
     ]
 )

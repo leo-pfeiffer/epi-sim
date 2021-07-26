@@ -98,3 +98,39 @@
 .table td {
     padding: 5px;
 }
+
+/*
+Right aligned floating image
+Source: https://stackoverflow.com/a/39614958/12168211
+*/
+img[alt$=">"] {
+    float: right;
+    margin: 0px 15px 15px 0px;
+    width: 30%;
+    min-width: 50px;
+    max-width: 120px;
+}
+
+/*
+Left aligned floating image
+Source: https://stackoverflow.com/a/39614958/12168211
+*/
+img[alt$="<"] {
+    float: left;
+    margin: 0px 15px 15px 0px;
+    width: 30%;
+    min-width: 50px;
+    max-width: 120px;
+}
+
+/*
+Centered image
+Source: https://stackoverflow.com/a/39614958/12168211
+*/
+img[alt$="><"] {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: auto;
+    float: none!important;
+}
