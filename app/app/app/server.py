@@ -6,11 +6,6 @@ from dash.dependencies import Input, Output, MATCH, ALL, ClientsideFunction, \
     State
 
 from .simulation_files import PARAM_MAPPING
-
-# page utils
-from .pages.index import make_main_graph, make_detail_table, \
-    make_heatmap, make_waterfall, filter_df
-
 from .data_processing import SimulationData
 
 # pages
@@ -70,11 +65,11 @@ def graph_callback(mod, net, sliders):
         if PARAM_MAPPING[mod][idx]:
             filters[idx] = slider['value']
 
-    df = filter_df(mod, net, filters)
+    df = index.filter_df(mod, net, filters)
     grouped = SimulationData.df_group_mean(df)
-    fig = make_main_graph(df, grouped)
+    fig = index.make_main_graph(df, grouped)
 
-    table = make_detail_table(grouped)
+    table = index.make_detail_table(grouped)
 
     return fig, table, slider_disabled
 
@@ -110,7 +105,7 @@ def waterfall_tabs(active_tab, mod, net, slider_values):
         if PARAM_MAPPING[mod][idx] and idx != active_tab:
             filters[idx] = slider['value']
 
-    return make_waterfall(active_tab, mod, net, filters)
+    return index.make_waterfall(active_tab, mod, net, filters)
 
 
 @app.callback(
@@ -139,7 +134,7 @@ def heatmap_tabs(active_tab, network, slider_values):
             if PARAM_MAPPING[k][idx] and idx != active_tab:
                 model_filters[k][idx] = slider['value']
 
-    return make_heatmap(active_tab, network, model_filters)
+    return index.make_heatmap(active_tab, network, model_filters)
 
 
 # Update the index
@@ -172,17 +167,6 @@ def toggle_modal(n1, n2, is_open):
         return not is_open
     return is_open
 
-#
-# # Toggle toast
-# @app.callback(
-#     Output("positioned-toast", "is_open"),
-#     [Input("positioned-toast-toggle", "n_clicks")],
-# )
-# def open_toast(n):
-#     if n:
-#         return True
-#     return False
-#
 
 # Client side callbacks ====
 app.clientside_callback(
@@ -193,3 +177,4 @@ app.clientside_callback(
     Output('blank_output', 'style'),
     Input('url', 'pathname')
 )
+
