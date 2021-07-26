@@ -43,9 +43,14 @@ def test_calc_perc_infected():
     assert SimulationData.calc_perc_infected(df) == 0.01 + 0.01
 
 
-def test_calc_susceptible_remaining():
+def test_calc_susceptible_remaining_seir():
     df = create_simulation_df('SEIR')
     assert SimulationData.calc_susceptible_remaining(df) == 0.001
+
+
+def test_calc_susceptible_remaining_seivr():
+    df = create_simulation_df('SEIVR')
+    assert SimulationData.calc_susceptible_remaining(df) == 0.002
 
 
 def test_calc_peak_time():
