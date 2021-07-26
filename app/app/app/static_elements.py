@@ -18,6 +18,7 @@ brand = html.Div(
                 dbc.NavLink("Data", href="/data", active="exact"),
                 dbc.NavLink("About", href="/about", active="exact"),
                 dbc.NavLink(GITHUB),
+                dbc.Button("Help", id="help-button", n_clicks=0),
             ],
             vertical=False,
             pills=True,
@@ -51,4 +52,24 @@ footer = html.Div(
             ]
         )
     ], id='footer'
+)
+
+
+modal = html.Div(
+    [
+        dbc.Modal(
+            [
+                dbc.ModalHeader("Header"),
+                dbc.ModalBody("This is the content of the modal"),
+                dbc.ModalFooter(
+                    dbc.Button(
+                        "Close", id="close", className="ml-auto", n_clicks=0
+                    )
+                ),
+            ],
+            id="help-modal",
+            size='xl',
+            is_open=False,
+        ),
+    ]
 )

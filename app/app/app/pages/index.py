@@ -7,7 +7,7 @@ import plotly.express as px
 from plotly.graph_objects import Figure, Heatmap, Layout
 
 from ..data_processing import SimulationData
-from ..static_elements import brand, footer
+from ..static_elements import brand, footer, modal
 from ..layouts import fig_layout, main_graph_props, px_template
 from ..simulation_files import NETWORKS, MODELS, ID_RRR, ID_P_VACC_INIT, \
     ID_P_VACC, ID_P_QUAR, VALS_MAPPING
@@ -218,6 +218,7 @@ waterfall_tabs = dbc.Card(
 
 index_page = [
     brand,
+    modal,
     controls,
     footer,
     main_graph,

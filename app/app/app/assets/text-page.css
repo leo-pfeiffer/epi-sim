@@ -34,6 +34,11 @@
     text-underline: blue;
 }
 
+/* Don't show help button */
+#help-button {
+    display: none;
+}
+
 /*
 Right aligned floating image
 Source: https://stackoverflow.com/a/39614958/12168211
