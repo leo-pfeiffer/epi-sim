@@ -200,7 +200,14 @@ class SimulationData:
         :param df: Simulation data frame with only one experiment
         :return: Percentage of susceptible individuals remaining
         """
-        return df[df.compartment == 'S'].iloc[-1]['value']
+        susceptible = df[df.compartment == 'S'].iloc[-1]['value']
+
+        if 'V' in df.compartment.values:
+            vaccinated = df[df.compartment == 'V'].iloc[-1]['value']
+        else:
+            vaccinated = 0
+
+        return susceptible + vaccinated
 
     @staticmethod
     def calc_peak_time(df):
