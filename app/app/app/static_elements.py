@@ -54,6 +54,19 @@ footer = html.Div(
     ], id='footer'
 )
 
+toast = html.Div(
+    [
+        dbc.Toast(
+            "Click the help button in the top right corner to find out more... 😊",
+            id="help-toast",
+            header="Need any help?",
+            is_open=True,
+            dismissable=True,
+            duration=10000,
+            icon="info",
+        ),
+    ]
+)
 
 modal = html.Div(
     [

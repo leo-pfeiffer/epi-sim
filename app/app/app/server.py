@@ -160,7 +160,7 @@ def display_page(pathname):
         return not_found_page
 
 
-# Toogle modal
+# Toggle modal
 @app.callback(
     Output("help-modal", "is_open"),
     [Input("help-button", "n_clicks"),
@@ -172,6 +172,17 @@ def toggle_modal(n1, n2, is_open):
         return not is_open
     return is_open
 
+#
+# # Toggle toast
+# @app.callback(
+#     Output("positioned-toast", "is_open"),
+#     [Input("positioned-toast-toggle", "n_clicks")],
+# )
+# def open_toast(n):
+#     if n:
+#         return True
+#     return False
+#
 
 # Client side callbacks ====
 app.clientside_callback(
