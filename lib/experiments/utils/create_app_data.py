@@ -23,7 +23,7 @@ import json
 import pandas as pd
 from datetime import datetime as dt
 
-from lib.experiments.utils.simulation_files import FILES, SIZE_KEY, \
+from lib.experiments.utils.simulation_files import FILES, \
     ADD_COLUMN_MAPPING
 from lib.configuration import DATA_REPO_URL_RAW
 from lib.experiments.utils.data_repo_api import DataRepoAPI
@@ -91,7 +91,6 @@ def _load_file(file: Dict, repo_path=DATA_REPO_SIMULATIONS_PATH):
     for experiment in results:
 
         # Get parameters
-        N = experiment[PARAMETERS][SIZE_KEY[file['network']]]
         experiment_id = experiment[METADATA][EXPERIMENT_ID]
         times = experiment[RESULTS][OBSERVATIONS]
 
@@ -108,6 +107,12 @@ def _load_file(file: Dict, repo_path=DATA_REPO_SIMULATIONS_PATH):
 
         model = MODEL_META[file['model']]
         stem = model['stem']
+
+        # compute the real N (which might be slightly >= parameter N)...
+        N = 0
+        for comp in model['compartments']:
+            comp_key = TIMESERIES_STEM + '-' + stem + comp
+            N += experiment[RESULTS][comp_key][0]
 
         # Append the values for each compartment to the long form data frame
         for comp in model['compartments']:
