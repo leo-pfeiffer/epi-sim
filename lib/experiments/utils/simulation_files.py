@@ -62,16 +62,6 @@ ADD_COLUMN_MAPPING = {
     SEIVR_Q: SEIVR_Q_COLS
 }
 
-# Access parameter size
-SIZE_KEY = {
-    PLC_PRE: PLC.N,
-    PLC_POST: PLC.N,
-    MN_PRE: MN.N,
-    MN_POST: MN.N,
-    DIST_PRE: DN.N,
-    DIST_POST: DN.N
-}
-
 FILES: List[Dict[str, Any]] = [
     {MODEL: SEIR, NETWORK: MN_PRE, NAME: 'seir_mobility_pre'},
     {MODEL: SEIR, NETWORK: MN_POST, NAME: 'seir_mobility_post'},
