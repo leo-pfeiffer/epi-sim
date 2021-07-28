@@ -174,15 +174,18 @@ class SimulationData:
         return df.loc[arr]
 
     @staticmethod
-    def fill_experiment_length_gap(df):
+    def fill_experiment_length_gap(df, delta: int = 10):
         """
         If an experiment earlier than others, propagate (forward fill)
         the last row's results up until that time. This is necessary if we
         calculate the mean value per time step, since experiments that
         end early would mess with the calculations beyond that time step.
         :param df: Simulation data frame.
+        :param delta: (optional) Delta between time steps.
         :return: Data frame with propagated experiments.
         """
+
+        assert delta >= 1
 
         # lists that will hold the values that we need to fill in
         ls_experiment_id = []
@@ -204,7 +207,7 @@ class SimulationData:
                 continue
 
             # grid with length 10
-            fill_gap = [*range(int(last_time) + 10, max_time + 1, 10)]
+            fill_gap = [*range(int(last_time) + delta, max_time + 1, delta)]
 
             # get last value of each compartment
             values = []
@@ -230,8 +233,9 @@ class SimulationData:
         if fill_df.empty:
             return df
 
-        # concatenate everything, reset index, and we're done
+        # concatenate everything, fill params, reset index, and we're done
         df = pd.concat([fill_df, df])
+        df = df.fillna(method='ffill', axis=1).fillna(method='bfill', axis=1)
         df = df.reset_index(drop=True)
 
         return df

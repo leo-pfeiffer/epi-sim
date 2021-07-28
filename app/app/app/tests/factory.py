@@ -1,3 +1,5 @@
+from typing import List
+import numpy as np
 import pandas as pd
 
 
@@ -12,4 +14,21 @@ def create_simulation_df(model: str, has_param2: bool = False):
     }
     if has_param2:
         data['param2'] = [x / T for x in range(T)] * len(model)
+    return pd.DataFrame(data)
+
+
+def create_uneven_experiment_simulation_df(model: str, exp_lengths: List[int]):
+
+    ls_experiment_id = sum([[i] * l for i, l in enumerate(exp_lengths)], []) * len(model)
+    ls_time = sum([[*range(t)] for t in exp_lengths], []) * len(model)
+    ls_compartment = sum(sum([[[m] * j for j in exp_lengths] for m in model], []), [])
+    ls_value = [round(np.random.random(), 2) for _ in range(len(ls_time))]
+
+    data = {
+        'experiment_id': ls_experiment_id,
+        'time': ls_time,
+        'compartment': ls_compartment,
+        'value': ls_value,
+        'param': [0.2] * len(ls_value)
+    }
     return pd.DataFrame(data)
