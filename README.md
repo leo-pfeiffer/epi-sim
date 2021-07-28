@@ -1,5 +1,5 @@
 ![Build status](https://github.com/leo-pfeiffer/msc-thesis/actions/workflows/python-app.yml/badge.svg)
-![Online status](https://img.shields.io/website?down_message=offline&up_message=online&url=http%3A%2F%2F209.182.235.76%2F)
+![Online status](https://img.shields.io/website?down_message=offline&up_message=online&url=http%3A%2F%2Fepi-sim.live)
 ![codecov](https://codecov.io/gh/leo-pfeiffer/epi-sim/branch/main/graph/badge.svg?token=AK3O2NL82O)
 
 # EpiSim
