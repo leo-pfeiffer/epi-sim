@@ -67,8 +67,8 @@ def test_create_households():
             num_exceeds_std += 1
 
     # normal distribution should exceed std in only 32% of cases, ... but
-    #  with some levy it is allowed in 40% of cases
-    assert num_exceeds_std < 0.4 * len(households)
+    #  with some levy it is allowed in 45% of cases
+    assert num_exceeds_std < 0.45 * len(households)
 
     # todo test node proportion equals population proportion
 
