@@ -12,7 +12,7 @@ def read_markdown(file):
 
 GITHUB = html.A(
     html.I(className="fab fa-github"),
-    href="https://github.com/leo-pfeiffer/msc-thesis"
+    href="https://github.com/leo-pfeiffer/epi-sim"
 )
 
 brand = html.Div(
@@ -45,7 +45,7 @@ footer = html.Div(
                     html.Hr(),
                     html.Div([
                         "Created as part of my MSc dissertation ",
-                        html.Strong("A Compartmental Network Model for COVID-19"),
+                        html.Strong("A Web Application for Compartmental Network Models Illustrated Using COVID-19"),
                         "."
                     ]),
                     html.Div([
