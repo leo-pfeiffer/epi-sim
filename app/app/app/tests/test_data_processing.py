@@ -1,5 +1,3 @@
-import numpy as np
-
 from .factory import *
 from ..data_processing import SimulationData
 from ..simulation_files import FILES, MODELS, NETWORKS
@@ -164,7 +162,7 @@ def test_fill_experiment_length_gap():
             new_max_t = max(new_sub.time)
 
             # correct new max time
-            assert np.isclose(new_max_t, max(exp_lengths) - 1)
+            assert new_max_t == max(exp_lengths) - 1
 
             # "new" part of the data frame
             new_part = new_sub[new_sub.time > orig_max_t]
