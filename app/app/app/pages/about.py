@@ -1,12 +1,11 @@
 import dash_html_components as html
 import dash_core_components as dcc
-from ..static_elements import brand, footer
+from ..static_elements import brand, footer, read_markdown
 import os
 
 path = os.path.dirname(os.path.abspath(__file__))
-
-with open(os.path.join(path, 'markdown', 'about.md'), 'r') as f:
-    markdown = f.read()
+file = os.path.join(path, 'markdown', 'about.md')
+markdown = read_markdown(file)
 
 text = html.Div(
     html.Div(dcc.Markdown(markdown), id='text-content'),

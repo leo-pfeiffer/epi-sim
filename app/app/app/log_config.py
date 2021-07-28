@@ -9,7 +9,6 @@ def config_logger():
     This sets up a root logger with two handlers:
     - file: logs WARNING and higher to logs/app.log
     - console: logs INFO and higher to console
-    :return:
     """
     log_dir = f"{os.path.join(APP_DIR, 'logs', 'app.log')}"
 
@@ -36,7 +35,8 @@ def config_logger():
         },
         'loggers': {
             'root': {
-                'handlers': ['file', 'console']
+                'handlers': ['file', 'console'],
+                'level': 'INFO'
             },
         }
     })

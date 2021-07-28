@@ -3,6 +3,13 @@ import dash_html_components as html
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 
+
+def read_markdown(file):
+    with open(file, 'r') as f:
+        md = f.read()
+    return md
+
+
 GITHUB = html.A(
     html.I(className="fab fa-github"),
     href="https://github.com/leo-pfeiffer/msc-thesis"
@@ -16,6 +23,7 @@ brand = html.Div(
                     html.Img(src='assets/img/logo.png', id='logo'),
                     html.Span("EpiSim")
                 ], href="/", active="exact"),
+                dbc.NavLink("Validation", href="/validation", active="exact"),
                 dbc.NavLink("Models", href="/model", active="exact"),
                 dbc.NavLink("Data", href="/data", active="exact"),
                 dbc.NavLink("About", href="/about", active="exact"),
