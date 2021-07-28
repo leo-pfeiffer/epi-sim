@@ -2,6 +2,7 @@ from abc import ABC
 
 import dash_html_components as html
 import dash_core_components as dcc
+import dash_bootstrap_components as dbc
 import plotly.express as px
 import numpy as np
 from plotly.graph_objects import Figure
@@ -9,10 +10,11 @@ import pandas as pd
 import pickle
 from urllib.request import urlopen
 from urllib.error import HTTPError
+import os
 import logging
 
 from ..mixins import SimulationTransformerMixin
-from ..static_elements import brand, footer
+from ..static_elements import brand, footer, read_markdown
 from ..configuration import DATA_REPO_URL_RAW
 
 
@@ -211,10 +213,6 @@ class ModelledData(ValidationData, SimulationTransformerMixin):
                 return r
         return None
 
-    @property
-    def valid_names(self):
-        return [x['name'] for x in self.VALIDATION_FILES]
-
     def make_validation_data(self):
 
         logging.info('Compiling model results')
@@ -283,29 +281,57 @@ def make_total_case_plot(name):
     return fig
 
 
-total_cases_graph = dcc.Graph(id='total-cases-graph', responsive=True)
-new_cases_graph = dcc.Graph(id='new-cases-graph', responsive=True)
+def make_description_card(filename):
+    path = os.path.dirname(os.path.abspath(__file__))
+    file = os.path.join(path, 'markdown', filename)
+    return read_markdown(file)
 
-validation_dropdown = html.Div([
-    html.Label('validation'),
-    dcc.Dropdown(
-        id='validation-dropdown',
-        options=[{"label": m, "value": m} for m in modelled.valid_names],
-        value=modelled.valid_names[0],
-        clearable=False
-    ),
-]
-)
+
+total_cases = dbc.Card([
+    dbc.CardBody(
+        dcc.Graph(id='total-cases-graph', responsive=True)
+    )
+], id='total-cases')
+
+new_cases = dbc.Card([
+    dbc.CardBody(
+        dcc.Graph(id='new-cases-graph', responsive=True)
+    )
+], id='new-cases')
+
+description = dbc.Card([
+    dbc.CardBody(
+        dcc.Markdown(make_description_card('validation.md')),
+        style={'overflowY': 'auto', 'height': '100%'}
+    )
+], id='validation-description')
+
+validation_control = dbc.Card([
+    html.Div([
+        html.Label('Validation Setting'),
+        dcc.RadioItems(
+            id='validation-dropdown',
+            options=[
+                {"label": v['title'], "value": v['name']}
+                for v in modelled.VALIDATION_FILES
+            ],
+            value=modelled.VALIDATION_FILES[0]['name']
+        ),
+    ])
+], body=True, id='validation-controls')
 
 text = html.Div(
     html.Div([
-        validation_dropdown,
-        total_cases_graph,
-        new_cases_graph
+
     ], id='text-content'),
     id='text-container'
 )
 
 validation_page = [
-    brand, footer, text
+    brand,
+    footer,
+    validation_control,
+    total_cases,
+    new_cases,
+    description
 ]
