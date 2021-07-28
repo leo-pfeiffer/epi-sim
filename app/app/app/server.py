@@ -13,8 +13,8 @@ from .pages import *
 
 # configure logging
 from .log_config import config_logger
-config_logger()
 
+config_logger()
 
 FONT_AWESOME = 'https://pro.fontawesome.com/releases/v5.10.0/css/all.css'
 
@@ -51,10 +51,9 @@ app.layout = html.Div([
         Input('model-dropdown', 'value'),
         Input('network-dropdown', 'value'),
         Input({'type': 'slider', 'index': ALL}, 'value')
-     ],
+    ],
 )
 def graph_callback(mod, net, sliders):
-
     ctx = dash.callback_context
 
     sliders_out = [x['id']['index'] for x in ctx.outputs_list[2]]
@@ -105,7 +104,6 @@ def slider_callback(value):
     ]
 )
 def waterfall_tabs(active_tab, mod, net, slider_values):
-
     if not PARAM_MAPPING[mod][active_tab]:
         return {}
 
@@ -130,7 +128,6 @@ def waterfall_tabs(active_tab, mod, net, slider_values):
     ]
 )
 def heatmap_tabs(active_tab, network, slider_values):
-
     ctx = dash.callback_context
     sliders_states = ctx.inputs_list[2]
 
@@ -150,6 +147,18 @@ def heatmap_tabs(active_tab, network, slider_values):
     return index.make_heatmap(active_tab, network, model_filters)
 
 
+# Validation graphs
+@app.callback(
+    [Output('total-cases-graph', 'figure'),
+     Output('new-cases-graph', 'figure')],
+    Input('validation-dropdown', 'value')
+)
+def update_validation_graphs(name):
+    tc_fig = validation.make_total_case_plot(name)
+    nc_fig = validation.make_new_case_plot(name)
+    return tc_fig, nc_fig
+
+
 # Update the index
 @app.callback(
     Output('page', 'children'),
@@ -158,6 +167,8 @@ def heatmap_tabs(active_tab, network, slider_values):
 def display_page(pathname):
     if pathname == '/':
         return index_page
+    elif pathname == '/validation':
+        return validation_page
     elif pathname == '/model':
         return model_page
     elif pathname == '/data':
@@ -206,4 +217,3 @@ app.clientside_callback(
     Output('blank_output', 'style'),
     Input('url', 'pathname')
 )
-

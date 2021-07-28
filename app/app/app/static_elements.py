@@ -16,6 +16,7 @@ brand = html.Div(
                     html.Img(src='assets/img/logo.png', id='logo'),
                     html.Span("EpiSim")
                 ], href="/", active="exact"),
+                dbc.NavLink("Validation", href="/validation", active="exact"),
                 dbc.NavLink("Models", href="/model", active="exact"),
                 dbc.NavLink("Data", href="/data", active="exact"),
                 dbc.NavLink("About", href="/about", active="exact"),
