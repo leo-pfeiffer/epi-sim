@@ -46,7 +46,6 @@ def make_heatmap(param, network, model_filters):
     y = list(model_filters.keys())
     z = []
 
-    # todo this is a bit slow....
     for m, f in model_filters.items():
         df = filter_df(m, network, f)
         epi = SimulationData.epidemic_size_per_param(df, param)
