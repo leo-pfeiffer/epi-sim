@@ -174,6 +174,69 @@ class SimulationData:
         return df.loc[arr]
 
     @staticmethod
+    def fill_experiment_length_gap(df):
+        """
+        If an experiment earlier than others, propagate (forward fill)
+        the last row's results up until that time. This is necessary if we
+        calculate the mean value per time step, since experiments that
+        end early would mess with the calculations beyond that time step.
+        :param df: Simulation data frame.
+        :return: Data frame with propagated experiments.
+        """
+
+        # lists that will hold the values that we need to fill in
+        ls_experiment_id = []
+        ls_time = []
+        ls_compartment = []
+        ls_value = []
+
+        # duration of longest experiment
+        max_time = int(max(df.time.values))
+
+        # do for each experiment
+        for exp in df.experiment_id.unique():
+
+            exp_df = df[df.experiment_id == exp]
+            last_time = max(exp_df.time.values)
+
+            # don't need to do anything if there's no gap
+            if last_time >= max_time:
+                continue
+
+            # grid with length 10
+            fill_gap = [*range(int(last_time) + 10, max_time + 1, 10)]
+
+            # get last value of each compartment
+            values = []
+            compartments = exp_df.compartment.unique()
+            for c in compartments:
+                v = exp_df[(exp_df['time'] == last_time) & (exp_df['compartment'] == c)].iloc[0].at['value']
+                values.extend([v] * len(fill_gap))
+
+            # extend the lists
+            ls_experiment_id.extend([exp] * len(fill_gap) * len(compartments))
+            ls_time.extend(fill_gap * len(compartments))
+            ls_compartment.extend(sum([[c] * len(fill_gap) for c in compartments], []))
+            ls_value.extend(values)
+
+        # data frame with all gap values
+        fill_df = pd.DataFrame({
+            'experiment_id': ls_experiment_id,
+            'time': ls_time,
+            'compartment': ls_compartment,
+            'value': ls_value
+        })
+
+        if fill_df.empty:
+            return df
+
+        # concatenate everything, reset index, and we're done
+        df = pd.concat([fill_df, df])
+        df = df.reset_index(drop=True)
+
+        return df
+
+    @staticmethod
     def df_group_mean(df):
         """
         Calculate the mean value per time per compartment.

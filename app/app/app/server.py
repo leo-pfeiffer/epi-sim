@@ -78,6 +78,7 @@ def graph_callback(mod, net, sliders):
     }
 
     df = index.filter_df(mod, net, filters)
+    df = SimulationData.fill_experiment_length_gap(df)
     grouped = SimulationData.df_group_mean(df)
     fig = index.make_main_graph(df, grouped)
 
