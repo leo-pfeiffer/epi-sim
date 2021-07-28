@@ -1,4 +1,5 @@
 from abc import ABC
+from typing import Dict
 
 import dash_html_components as html
 import dash_core_components as dcc
@@ -19,40 +20,35 @@ from ..configuration import DATA_REPO_URL_RAW
 
 
 class ValidationData(ABC):
+    """
+    Abstract class for the validation data.
+    """
+
+    # validation period
     MAX_TIME = 120
 
     @staticmethod
-    def get_csv_from_repo(file):
+    def get_csv_from_repo(file) -> pd.DataFrame:
+        """
+        Download CSV file from data repo.
+        :param file: name of file (including path in repo)
+        :return: Data frame
+        """
         return pd.read_csv(f"{DATA_REPO_URL_RAW}/{file}")
 
     @staticmethod
     def get_pickle_from_repo(file):
-        url = DATA_REPO_URL_RAW + '/validation/' + file + '.pkl'
+        """
+        Read pickled file from data repo
+        :param file: name of file (including path in repo)
+        :return: Deserialized object
+        """
+        url = DATA_REPO_URL_RAW + '/' + file
 
         with urlopen(url) as f:
             obj = pickle.load(f)
 
         return obj
-
-    @staticmethod
-    def transform_covid(df):
-        # transform dates
-        df['date'] = pd.to_datetime(df['date'], format="%m/%d/%Y")
-        df = df.sort_values('date').reset_index(drop=True)
-
-        num_cols = ['tot_cases', 'new_cases']
-
-        col_transform = {c: 'float32' for c in num_cols if c in df.columns}
-
-        for c in col_transform:
-            df[c] = df[c].apply(lambda x: x.replace(',', '') if type(x) == str else x, 1)
-
-        df.replace('NaN', np.NaN, inplace=True)
-
-        # transform numbers
-        df = df.astype(col_transform)
-
-        return df
 
     @classmethod
     def get_data_after_date(cls, df, date: str):
@@ -81,58 +77,115 @@ class ValidationData(ABC):
 
 
 class EmpiricalData(ValidationData):
+    """
+    Manage empirical data set that contains the case counts for the US.
+    """
+
+    # repo URL of the US data set
     US_FILE = 'validation/case-data/us_covid_count_by_state.csv'
+
+    # repo URL of the population data set
     POP_FILE = 'validation/case-data/us_population_by_state.csv'
 
-    ALL_STATES_FILE_NAME = 'app-data/all_states'
+    # repo URL of the precomputed data set
+    ALL_STATES_FILE_NAME = 'validation/app-data/all_states.pkl'
 
     def __init__(self):
         super().__init__()
-        self._covid_us = self.get_csv_from_repo(self.US_FILE)
-        self._pop_map = self.make_state_population()
-        self._first_wave_map = self.make_first_wave_map()
 
+        # try getting the file from the data repo directly (a bit faster)
         try:
             self._states = self.get_pickle_from_repo(self.ALL_STATES_FILE_NAME)
             logging.info('Loaded states data from repo')
+
+        # if it doesn't exist, put it together manually
         except HTTPError:
+            self._covid_us = self.get_covid_us_data()
+            self._pop_map = self.make_state_population()
+            self._first_wave_map = self.make_first_wave_map()
             self._states = self.make_all_states()
 
     @property
-    def states(self):
+    def states(self) -> pd.DataFrame:
         return self._states
 
+    def get_covid_us_data(self) -> pd.DataFrame:
+        """
+        Extract and clean the raw covid data for the US.
+        :return: clean covid data for US
+        """
+        raw = self.get_csv_from_repo(self.US_FILE)
+        clean = self.transform_covid(raw)
+        return clean
+
+    @staticmethod
+    def transform_covid(df) -> pd.DataFrame:
+        """
+        Transform the raw data set rad from the repo.
+        :param df: Raw data frame
+        :return:
+        """
+        # transform dates
+        df['date'] = pd.to_datetime(df['date'], format="%m/%d/%Y")
+        df = df.sort_values('date').reset_index(drop=True)
+
+        # convert data types
+        num_cols = ['tot_cases', 'new_cases']
+
+        col_transform = {c: 'float32' for c in num_cols if c in df.columns}
+
+        # string formatting
+        for c in col_transform:
+            df[c] = df[c].apply(lambda x: x.replace(',', '') if type(x) == str else x, 1)
+
+        df.replace('NaN', np.NaN, inplace=True)
+
+        # transform numbers
+        df = df.astype(col_transform)
+
+        return df
+
     @classmethod
-    def make_state_population(cls):
+    def make_state_population(cls) -> Dict:
+        """
+        Create a dictionary containing the population for each state of the US.
+        Data is read from a csv file from the data repo
+        :return dictionary:
+        """
 
         logging.info('Calculating state population')
 
+        # read raw data
         df = cls.get_csv_from_repo(cls.POP_FILE)
 
+        # clean data
         df['population'] = df['population'].apply(
             lambda x: x.replace(',', '') if type(x) == str else x, 1)
 
         df = df.astype({'population': 'float32'})
 
+        # create correct dictionary format
         records = df.drop('state_name', 1).dropna().to_dict('records')
 
         return {x['state']: x['population'] for x in records}
 
-    def make_first_wave_map(self, threshold=0.001):
+    def make_first_wave_map(self, threshold=0.001) -> Dict:
         """
-        First date when tot_cases / population > 0.001 for each state.
+        Get first date when tot_cases / population > `threshold` for each state.
+        :param threshold: Threshold for start of epidemic.
+        :return dictionary:
         """
 
         logging.info('Compiling first wave map')
 
-        df = self.transform_covid(self._covid_us)
-
         first_wave_map = {}
 
-        for state in df.state.unique():
-            subset = df[df.state == state].sort_values('date')
+        for state in self._covid_us.state.unique():
+            subset = self._covid_us[self._covid_us.state == state].sort_values('date')
+
             if state not in self._pop_map:
                 continue
+
             threshold_cases = self._pop_map[state] * threshold
             date = subset[subset.tot_cases >= threshold_cases].iloc[0].date
             first_wave_map[state] = date.strftime("%Y-%m-%d")
@@ -140,46 +193,66 @@ class EmpiricalData(ValidationData):
         return first_wave_map
 
     @staticmethod
-    def extract_region(df, region_filter):
+    def extract_region(df, region_filter: Dict) -> pd.DataFrame:
+        """
+        Extract a single region from the full CDC data frame.
+        :param df: Full data frame
+        :param region_filter: dictionary containing the `column` in which to
+            filter for the `value`
+        :return: Data frame of region
+        """
         region_col = region_filter['column']
         region_val = region_filter['value']
         df_out = df[df[region_col] == region_val].copy()
         df_out.reset_index(drop=True, inplace=True)
         return df_out
 
-    def make_state_covid(self, state):
+    def make_state_covid(self, state: str) -> pd.DataFrame:
+        """
+        Make the validation data frame for a single `state`.
+        :param state: Target state
+        :return: Data frame
+        """
 
+        # get the start of the epidemic
         start_date = self._first_wave_map[state]
 
-        df = self.transform_covid(self._covid_us)
-
+        # filter the full data set for the current state
         state_filter = {'column': 'state', 'value': state}
-        df_state = self.extract_region(df, state_filter)
+        df_state = self.extract_region(self._covid_us, state_filter)
 
+        # Keep only the data within the validation period
         df_state = self.get_data_after_date(df_state, start_date)
 
+        # make case counts relative to population
         pop = self._pop_map[state]
         df_state = self.make_counts_relative(df_state, pop)
 
         return df_state
 
-    def make_all_states(self):
+    def make_all_states(self) -> pd.DataFrame:
+        """
+        Make the empirical data set for all states by concatenating
+        the data sets for each state.
+        :return: data frame
+        """
 
         logging.info('Compiling state validation data')
 
         dfs = []
 
         for state in self._pop_map:
-            if state == 'NYC':
-                continue
-            else:
-                dfs.append(self.make_state_covid(state))
+            dfs.append(self.make_state_covid(state))
 
         return pd.concat(dfs)
 
 
 class ModelledData(ValidationData, SimulationTransformerMixin):
+    """
+    Manage data set containing the simulation results for validation.
+    """
 
+    # Available validation files
     VALIDATION_FILES = [
         {'name': 'v_seir_mobility_pre', 'title': 'SEIR, M (Pre)'},
         {'name': 'v_seirq_25_mobility_pre', 'title': 'SEIR_Q (p=0.25), M (Pre)'},
@@ -191,15 +264,20 @@ class ModelledData(ValidationData, SimulationTransformerMixin):
         {'name': 'v_seirq_75_mobility_post', 'title': 'SEIR_Q (p=0.75), M (Post)'},
     ]
 
-    RESULTS_FILE_NAME = 'app-data/results'
+    # repo URL of pre computed results
+    RESULTS_FILE_NAME = 'validation/app-data/results.pkl'
 
     def __init__(self):
         super().__init__()
+
         self._results = []
-        self.make_validation_data()
+
+        # get the pre-computed data from data repo (much faster)
         try:
             self._results = self.get_pickle_from_repo(self.RESULTS_FILE_NAME)
             logging.info('Loaded results data from repo')
+
+        # alternatively, compute manually
         except HTTPError:
             self.make_validation_data()
 
@@ -208,39 +286,56 @@ class ModelledData(ValidationData, SimulationTransformerMixin):
         return self._results
 
     def get_result(self, name):
-        for r in self.results:
+        """
+        Return the result of the simulation name with the provided name
+        :param name: Name of the simulation run
+        :return: Data set of simulation run
+        """
+        for r in self._results:
             if r['name'] == name:
                 return r
         return None
 
     def make_validation_data(self):
+        """
+        Manually compile the validation data sets, that is bring them in the
+        correct format for use in the application.
+        :return: List with validation data sets
+        """
 
         logging.info('Compiling model results')
 
         for v in self.VALIDATION_FILES:
             r = v.copy()
-            r['data'] = self._get_wide(v['name'], self.MAX_TIME)
+
+            # convert to wide format and clean
+            r['data'] = self._get_wide(v['name'])
             self._results.append(r)
 
     @classmethod
-    def _get_wide(cls, name, max_time):
+    def _get_wide(cls, name):
+        """
+        Convert the raw simulation results into wide format after cleaning.
+        :param name: Name of the file (in the repo)
+        :return: Wide format simulation result
+        """
         # get data frame
-        df = cls.get_pickle_from_repo(name)
+        file = '/validation/' + name + '.pkl'
+        df = cls.get_pickle_from_repo(file)
 
-        # transform
-        df = df[df.time <= max_time]
+        # keep only within simulation time frame
+        df = df[df.time <= cls.MAX_TIME]
 
+        # fill gaps in case of unevenly long experiments
         df = cls.fill_experiment_length_gap(df, delta=1)
 
+        # calculate the mean values
         grouped = cls.df_group_mean(df)
         wide = grouped.pivot(index=['time'], columns=['compartment'], values='value')
         wide.reset_index(inplace=True)
 
         # calc new cases
-        first_val = 0
-        new_cases = (wide['S'].diff().fillna(first_val) * (-1)).values.tolist()
-        new_cases = [int(x) if np.isclose(x, 0) else x for x in new_cases]
-        wide['new_cases'] = new_cases
+        wide['new_cases'] = (wide['S'].diff().fillna(0) * (-1)).values.tolist()
 
         # calc total cases
         wide['tot_cases'] = wide['E'] + wide['I'] + wide['R']
@@ -248,6 +343,7 @@ class ModelledData(ValidationData, SimulationTransformerMixin):
         return wide
 
 
+# instantiate the validation data
 modelled = ModelledData()
 empirical = EmpiricalData()
 
