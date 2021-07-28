@@ -82,11 +82,6 @@ numeric results of the simulation.
 
 - `effective end` is the time step in which the number of infected individuals 
   falls below `1%` after an initial surge over that threshold
-  
-> ℹ️ `total infected` + `susceptible remaining` should some up to `1`. However, 
-there might be a very small discrepancy that results from how the networks 
-are created. Don't worry, the deviance should be very small and the values 
-are still proportionate to the correct value.
 
 
 ## Scatter plot

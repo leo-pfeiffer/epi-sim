@@ -8,6 +8,7 @@ from plotly.graph_objects import Figure
 import pandas as pd
 import pickle
 from urllib.request import urlopen
+import logging
 
 from ..mixins import SimulationTransformerMixin
 from ..static_elements import brand, footer
@@ -89,6 +90,9 @@ class EmpiricalData(ValidationData):
 
     @classmethod
     def make_state_population(cls):
+
+        logging.root.info('Calculating state population')
+
         df = cls.get_csv_from_repo(cls.POP_FILE)
 
         df['population'] = df['population'].apply(
@@ -104,6 +108,9 @@ class EmpiricalData(ValidationData):
         """
         First date when tot_cases / population > 0.001 for each state.
         """
+
+        logging.info('Compiling first wave map')
+
         df = self.transform_covid(self.covid_us)
 
         first_wave_map = {}
@@ -143,6 +150,9 @@ class EmpiricalData(ValidationData):
         return df_state
 
     def make_all_states(self):
+
+        logging.info('Compiling state validation data')
+
         dfs = []
 
         for state in self.pop_map:
@@ -183,6 +193,9 @@ class ModelledData(ValidationData, SimulationTransformerMixin):
         return [x['name'] for x in self.VALIDATION_FILES]
 
     def make_validation_data(self):
+
+        logging.info('Compiling model results')
+
         for v in self.VALIDATION_FILES:
             r = v.copy()
             r['data'] = self._get_wide(v['name'], self.MAX_TIME)
@@ -218,27 +231,33 @@ modelled = ModelledData()
 empirical = EmpiricalData()
 
 
-def make_validation_graph(name, y):
+def make_validation_graph(name, y, title):
+
     fig1 = px.line(empirical.all_states, x='date', y=y, color='state')
-    fig1.update_traces(opacity=0.2, showlegend=False)
+    fig1.update_traces(opacity=0.2, showlegend=True)
 
     model_result = modelled.get_result(name)
     model_df = model_result['data']
     fig2 = px.line(model_df, x='time', y=y)
-    fig2.update_traces(line=dict(color="blue", width=3))
+    fig2.update_traces(line=dict(color="blue", width=3), showlegend=True, name='Model')
 
-    fig = Figure(data=fig1.data + fig2.data)
+    fig = Figure(data=fig2.data + fig1.data)
+    fig.update_layout(
+        title=title,
+        xaxis_title="Days since start of epidemic",
+        yaxis_title="Fraction of population",
+    )
 
     return fig
 
 
 def make_new_case_plot(name):
-    fig = make_validation_graph(name, 'new_cases')
+    fig = make_validation_graph(name, 'new_cases', 'New cases per day')
     return fig
 
 
 def make_total_case_plot(name):
-    fig = make_validation_graph(name, 'tot_cases')
+    fig = make_validation_graph(name, 'tot_cases', 'Total cumulative cases')
     return fig
 
 
@@ -250,7 +269,8 @@ validation_dropdown = html.Div([
         dcc.Dropdown(
             id='validation-dropdown',
             options=[{"label": m, "value": m} for m in modelled.valid_names],
-            value=modelled.valid_names[0]
+            value=modelled.valid_names[0],
+            clearable=False
         ),
     ]
 )
