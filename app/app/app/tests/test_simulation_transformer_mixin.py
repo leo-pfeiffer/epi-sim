@@ -55,7 +55,9 @@ def test_fill_experiment_length_gap():
             orig_max_t = max(orig_sub.time)
             max_val = orig_sub[orig_sub.time == orig_max_t].iloc[0].at['value']
 
-            new_sub = filled[(filled.experiment_id == e) & (filled.compartment == c)]
+            new_sub = filled[
+                (filled.experiment_id == e) & (filled.compartment == c)
+            ]
             new_max_t = max(new_sub.time)
 
             # correct new max time

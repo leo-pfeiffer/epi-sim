@@ -11,7 +11,8 @@ from lib.model.compartmental_model.mixins import QuarantineMixin
 
 class SEIRWithQuarantine(SEIR, QuarantineMixin):
 
-    P_QUARANTINE: Final[str] = 'epydemic.SEIRWithQuarantine.p_quarantine'  #: Parameter for probability of quarantine
+    # Parameter for probability of quarantine
+    P_QUARANTINE: Final[str] = 'epydemic.SEIRWithQuarantine.p_quarantine'
 
     def __init__(self):
         super(SEIRWithQuarantine, self).__init__()

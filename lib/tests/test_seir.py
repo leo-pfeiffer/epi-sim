@@ -66,5 +66,3 @@ def test_monitored_seir_with_quarantine():
         N_is += rc[NetworkExperiment.RESULTS][c]
 
     assert N_is == N
-
-

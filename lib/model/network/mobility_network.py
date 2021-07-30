@@ -3,7 +3,6 @@ from typing import Any, Callable, Optional, Dict, List, Tuple
 if sys.version_info >= (3, 8):
     from typing import Final
 else:
-    # backwards compatibility with Python35, Python36, and Python37
     from typing_extensions import Final
 
 import numpy as np
@@ -52,7 +51,7 @@ class MobilityNetwork:
         if self.multiplier:
             try:
                 assert hasattr(self.network_data, 'trip_count_change')
-            except AssertionError as ae:
+            except AssertionError:
                 raise ValueError('When multiplier=True, the trip_count_change '
                                  'attribute of the network_data object must '
                                  'be set. Hint: Run the calc_trip_count_change '
@@ -110,15 +109,20 @@ class MobilityNetwork:
                 house_net = nx.complete_graph(size)
 
                 # add unique labels
-                nx.relabel_nodes(house_net, lambda l: total_node_ct + l,
-                                 copy=False)
+                nx.relabel_nodes(
+                    house_net, lambda l: total_node_ct + l, copy=False
+                )
 
                 # add nodes and edges of the household to the main network
-                self.g.add_nodes_from(house_net.nodes, household=household_id,
-                                      household_size=size, cbg=cbg)
+                self.g.add_nodes_from(
+                    house_net.nodes, household=household_id,
+                    household_size=size, cbg=cbg
+                )
 
-                self.g.add_edges_from(house_net.edges, household=household_id,
-                                      household_size=size, cbg=cbg)
+                self.g.add_edges_from(
+                    house_net.edges, household=household_id,
+                    household_size=size, cbg=cbg
+                )
 
                 households.append(house_net)
 
@@ -151,8 +155,9 @@ class MobilityNetwork:
 
             for node in nodes:
                 # draw random degree
-                degree = discrete_rejection_sample(p=self.degree_dist,
-                                                   a=1, b=self.max_deg)
+                degree = discrete_rejection_sample(
+                    p=self.degree_dist, a=1, b=self.max_deg
+                )
 
                 if self.multiplier:
                     m = self.network_data.trip_count_change[cbg]

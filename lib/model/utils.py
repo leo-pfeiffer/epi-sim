@@ -5,8 +5,9 @@ import numpy as np
 from lib.model.types import RANDOM_SEED
 
 
-def discrete_rejection_sample(p: Callable[[int], Union[float, int]], a: int,
-                              b: int, seed: Optional[RANDOM_SEED] = None) -> int:
+def discrete_rejection_sample(p: Callable[[int], Union[float, int]],
+                              a: int, b: int,
+                              seed: Optional[RANDOM_SEED] = None) -> int:
     """
     Perform rejection sampling for a using the provided discrete probability
     distribution function `p`.

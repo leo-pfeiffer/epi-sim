@@ -15,15 +15,22 @@ class NetworkData:
     Collection of mobility data required for building a MobilityNetwork.
     """
 
-    demographics: DEMOGRAPHICS  # Demographics data
-    comb_counts: COMB_COUNTS    # Count of trips between combinations of CBGs
-    trip_counts: TRIP_COUNTS    # Total count of trips leaving one CBG
+    # Demographics data
+    demographics: DEMOGRAPHICS
+    # Count of trips between combinations of CBGs
+    comb_counts: COMB_COUNTS
+    # Total count of trips leaving one CBG
+    trip_counts: TRIP_COUNTS
 
     # not initialised in dataclass
-    ordered_cbgs: List[str] = field(init=False)  # CBGs in order
-    adjacency_list: ADJACENCY_LIST = field(init=False)  # Adjacency list of CBGs
-    cum_prob: CUM_PROB = field(init=False)  # Cumulative transition prob.
-    trip_count_change: TRIP_COUNT_CHANGE = field(init=False)  # Trip ct change
+    # CBGs in order
+    ordered_cbgs: List[str] = field(init=False)
+    # Adjacency list of CBGs
+    adjacency_list: ADJACENCY_LIST = field(init=False)
+    # Cumulative transition prob.
+    cum_prob: CUM_PROB = field(init=False)
+    # Trip ct change
+    trip_count_change: TRIP_COUNT_CHANGE = field(init=False)
 
     def __post_init__(self):
         self.ordered_cbgs = sorted(self.demographics.keys())
@@ -91,8 +98,7 @@ class NetworkData:
                 change = self.trip_counts[cbg] / pre_data.trip_counts[cbg]
 
             # special case: CBG not present post -> decrease by 100%
-            elif cbg in pre_data.trip_counts and \
-                    cbg not in self.trip_counts:
+            elif cbg in pre_data.trip_counts and cbg not in self.trip_counts:
                 change = 0
 
             # special case: CBG not present pre -> increase by 100%

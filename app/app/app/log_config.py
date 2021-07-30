@@ -16,7 +16,7 @@ def config_logger():
         'version': 1,
         'formatters': {
             'default': {
-                'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+                'format': '[%(asctime)s] %(levelname)s: %(module)s: %(message)s'
             }
         },
         'handlers': {

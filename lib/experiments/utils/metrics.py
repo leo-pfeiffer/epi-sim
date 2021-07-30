@@ -1,7 +1,6 @@
 # This file defines a class for an epyc MetricExperiment to calculate
 #  network metrics for a given network.
 
-
 import sys
 from typing import Union, List
 if sys.version_info >= (3, 8):

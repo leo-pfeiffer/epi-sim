@@ -1,6 +1,6 @@
 import pytest
 from lib.model.distributions import discrete_trunc_normal, \
-    discrete_trunc_exponential, draw_cbg, num_contact_dist, PowerLawCutoffDist
+    discrete_trunc_exponential, draw_cbg, num_contact_dist
 from lib.tests.factory import *
 import numpy as np
 from mpmath import polylog

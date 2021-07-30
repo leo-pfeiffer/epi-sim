@@ -14,7 +14,6 @@
 #  and are uploaded to the NETWORK_DIR folder in the repo.
 
 import os
-import argparse
 from lib.experiments.utils.data_repo_api import DataRepoAPI
 from lib.configuration import EXPERIMENTS_DIR
 
@@ -35,16 +34,21 @@ def main(path=DIR):
 
         # Skip non-files
         if not os.path.isfile(os.path.join(DIR, file_name)):
-            print(f"{i + 1} / {len(files)} : Skipped {file_name} as this is not a file.")
+            print(f"{i + 1} / {len(files)} : "
+                  f"Skipped {file_name} as this is not a file.")
             continue
 
         # Upload model experiment results
         if file_name.startswith('seir') or file_name.startswith('seivr'):
-            DataRepoAPI.update_or_create(file_name=file_name, file_path=DIR, repo_path=MODEL_DIR)
+            DataRepoAPI.update_or_create(
+                file_name=file_name, file_path=DIR, repo_path=MODEL_DIR
+            )
 
         # Upload network metrics
         else:
-            DataRepoAPI.update_or_create(file_name=file_name, file_path=DIR, repo_path=NETWORK_DIR)
+            DataRepoAPI.update_or_create(
+                file_name=file_name, file_path=DIR, repo_path=NETWORK_DIR
+            )
 
         print(f"{i + 1} / {len(files)} : Uploaded file {file_name}")
 

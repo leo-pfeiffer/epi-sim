@@ -124,9 +124,7 @@ class DataRepoAPI:
         """
         Perform HTTP Put to create or update the file.
         :param file_name: File name
-        :param content: Base 64 encoded string.
         :param repo_path: (optional) Path to the file in the repository.
-        :param sha: Blob SHA of the file (required if update)
         """
 
         sha = cls.get_sha(file_name=file_name, repo_path=repo_path)
@@ -193,9 +191,15 @@ class DataRepoAPI:
 if __name__ == '__main__':
     # if called from command line
     parser = argparse.ArgumentParser()
-    parser.add_argument('--file_name', type=str, help='file name', required=True)
-    parser.add_argument('--file_path', type=str, help='file path', required=False)
-    parser.add_argument('--repo_path', type=str, help='repo path', required=False)
+    parser.add_argument(
+        '--file_name', type=str, help='file name', required=True
+    )
+    parser.add_argument(
+        '--file_path', type=str, help='file path', required=False
+    )
+    parser.add_argument(
+        '--repo_path', type=str, help='repo path', required=False
+    )
 
     args = parser.parse_args()
     name = args.file_name

@@ -66,13 +66,19 @@ class SimulationTransformerMixin:
             values = []
             compartments = exp_df.compartment.unique()
             for c in compartments:
-                v = exp_df[(exp_df['time'] == last_time) & (exp_df['compartment'] == c)].iloc[0].at['value']
+                v = exp_df[(exp_df['time'] == last_time) &
+                           (exp_df['compartment'] == c)].iloc[0].at['value']
                 values.extend([v] * len(fill_gap))
 
             # extend the lists
             ls_experiment_id.extend([exp] * len(fill_gap) * len(compartments))
+
             ls_time.extend(fill_gap * len(compartments))
-            ls_compartment.extend(sum([[c] * len(fill_gap) for c in compartments], []))
+
+            ls_compartment.extend(
+                sum([[c] * len(fill_gap) for c in compartments], [])
+            )
+
             ls_value.extend(values)
 
         # data frame with all gap values

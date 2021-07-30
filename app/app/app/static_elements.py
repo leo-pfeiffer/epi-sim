@@ -5,8 +5,8 @@ import dash_core_components as dcc
 
 
 def read_markdown(file):
-    with open(file, 'r') as f:
-        md = f.read()
+    with open(file, 'r') as fi:
+        md = fi.read()
     return md
 
 
@@ -45,13 +45,23 @@ footer = html.Div(
                     html.Hr(),
                     html.Div([
                         "Created as part of my MSc dissertation ",
-                        html.Strong("A Web Application for Compartmental Network Models Illustrated Using COVID-19"),
+                        html.Strong(
+                            "A Web Application for Compartmental Network "
+                            "Models Illustrated Using COVID-19"),
                         "."
                     ]),
                     html.Div([
-                        html.A("Leopold Pfeiffer", href="https://leopold.page"), " | ",
-                        html.A("University of St Andrews", href="https://www.st-andrews.ac.uk"), " | ",
-                        html.A("School of Computer Science", href="https://www.st-andrews.ac.uk/computer-science/")
+                        html.A(
+                            "Leopold Pfeiffer", href="https://leopold.page"
+                        ), " | ",
+                        html.A(
+                            "University of St Andrews",
+                            href="https://www.st-andrews.ac.uk"
+                        ), " | ",
+                        html.A(
+                            "School of Computer Science",
+                            href="https://www.st-andrews.ac.uk/computer-science"
+                        )
                     ]),
                     html.Hr(),
                     html.A([
@@ -67,7 +77,7 @@ footer = html.Div(
 toast = html.Div(
     [
         dbc.Toast(
-            "Click the help button in the top right corner to find out more... 😊",
+            "Click the help button in the top right corner to find out more 😊",
             id="help-toast",
             header="Need any help?",
             is_open=True,

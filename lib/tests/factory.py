@@ -1,5 +1,6 @@
 from lib.model.network.mobility_network import MobilityNetwork
 from lib.model.network.network_data import NetworkData
+from model.distributions import PowerLawCutoffDist
 
 
 def create_cbgs():
@@ -54,14 +55,16 @@ def create_network_data(post: bool = False):
 
 
 def create_network_graph():
-    BASELINE = 3
-    N = 1000
-    SEED = 1
-    PRE = create_network_data()
+    exponent = 2
+    cutoff = 10
+    n = 1000
+    pre = create_network_data()
 
-    PRE.create_adjacency_list()
-    PRE.create_cum_prob()
+    pre.create_adjacency_list()
+    pre.create_cum_prob()
 
-    network = MobilityNetwork(PRE, N, BASELINE, False, SEED)
+    degree_dist = PowerLawCutoffDist(exponent, cutoff).p
+
+    network = MobilityNetwork(pre, degree_dist, n, False)
     network.create()
     return network.g

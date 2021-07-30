@@ -24,7 +24,11 @@ def make_validation_graph(name, y, title):
     if model_result['model'] in ['SEIVR', 'SEIVR_Q']:
         xaxis_title = "Days since 2021-01-01"
         fig1 = px.line(empirical.vac_state, x='date', y=y)
-        fig1.update_traces(line=dict(color="magenta", width=3), showlegend=True, name="Connecticut")
+        fig1.update_traces(
+            line=dict(color="magenta", width=3),
+            showlegend=True,
+            name="Connecticut"
+        )
 
     else:
         fig1 = px.line(empirical.states, x='date', y=y, color='state')
@@ -33,7 +37,11 @@ def make_validation_graph(name, y, title):
 
     model_df = model_result['data']
     fig2 = px.line(model_df, x='time', y=y)
-    fig2.update_traces(line=dict(color="blue", width=3), showlegend=True, name='Model')
+    fig2.update_traces(
+        line=dict(color="blue", width=3),
+        showlegend=True,
+        name='Model'
+    )
 
     fig = Figure(data=fig2.data + fig1.data)
     fig.update_layout(

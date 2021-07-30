@@ -4,11 +4,16 @@ from ..static_elements import brand, footer
 not_found_content = html.Div(
     [
         html.H1('404', id="h1-404"),
-        html.H3("Either this page got eaten by the dog or it doesn't exist...", id='h3-404')],
+        html.H3(
+            "Either this page got eaten by the dog or it doesn't exist...",
+            id='h3-404'
+        )
+    ],
     id='text-container',
     style={
         'text-align': 'center',
-        'background-image': 'url("assets/img/dog.jpeg")',  # source: https://pixabay.com/photos/820014/
+        # source: https://pixabay.com/photos/820014/
+        'background-image': 'url("assets/img/dog.jpeg")',
         'background-size': '100%',
         'background-repeat': 'no-repeat',
     })

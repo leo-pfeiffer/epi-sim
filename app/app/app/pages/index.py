@@ -68,7 +68,9 @@ def make_heatmap(param, network, disease, model_filters):
 def make_waterfall(param, model, network, disease, filters):
     df = filter_df(disease, model, network, filters)
     epidemic_size = SimulationData.epidemic_size_per_param(df, param)
-    fig = px.scatter(epidemic_size, x=param, y="epidemic_size", template=px_template)
+    fig = px.scatter(
+        epidemic_size, x=param, y="epidemic_size", template=px_template
+    )
     fig.update_layout(**fig_layout)
     return fig
 
@@ -93,10 +95,10 @@ def filter_df(disease, model, network, filters):
 def make_detail_table_df(df):
     out = {}
 
-    last_time = df[df.time == max(df.time)]
+    lt = df[df.time == max(df.time)]
 
-    out['total infected'] = SimulationData.calc_perc_infected(last_time)
-    out['susceptible remaining'] = SimulationData.calc_susceptible_remaining(last_time)
+    out['total infected'] = SimulationData.calc_perc_infected(lt)
+    out['susceptible remaining'] = SimulationData.calc_susceptible_remaining(lt)
     out['peak time'] = SimulationData.calc_peak_time(df)
     out['peak infected'] = SimulationData.calc_peak_infected(df)
     out['effective end'] = SimulationData.calc_effective_end(df)

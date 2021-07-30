@@ -6,10 +6,6 @@ if sys.version_info >= (3, 8):
 else:
     from typing_extensions import Final
 
-from epydemic import PLCNetwork as PLC
-from lib.model.network.mobility_network import MNGeneratorFromNetworkData as MN
-from lib.model.network.distanced_network import DNGenerator as DN
-
 from lib.model.compartmental_model.seir import SEIRWithQuarantine
 from lib.model.compartmental_model.seivr import SEIVR as SEIVRModel
 from lib.model.compartmental_model.seivr import SEIVRWithQuarantine

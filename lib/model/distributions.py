@@ -41,8 +41,9 @@ class PowerLawCutoffDist:
     @property
     def p(self) -> Callable[[int], mpf]:
         """
-        Probability distribution function of the power law with cutoff distribution. The distribution
-        is discrete and only defined for whole numbers greater or equal one.
+        Probability distribution function of the power law with cutoff
+        distribution. The distribution is discrete and only defined for whole
+        numbers greater or equal one.
         :return: Probability distribution function.
         """
 

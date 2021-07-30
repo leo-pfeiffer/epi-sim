@@ -31,10 +31,18 @@ class SimulationData(SimulationTransformerMixin):
     DATA_REPO_APP_DATA_PATH: Final[str] = 'app-data'
 
     MODEL_META = {
-        'SEIR': {'compartments': ['S', 'E', 'I', 'R'], 'stem': 'epydemic.SEIR.'},
-        'SEIR_Q': {'compartments': ['S', 'E', 'I', 'R'], 'stem': 'epydemic.SEIR.'},
-        'SEIVR': {'compartments': ['S', 'E', 'I', 'V', 'R'], 'stem': 'epydemic.SEIVR.'},
-        'SEIVR_Q': {'compartments': ['S', 'E', 'I', 'V', 'R'], 'stem': 'epydemic.SEIVR.'},
+        'SEIR': {
+            'compartments': ['S', 'E', 'I', 'R'], 'stem': 'epydemic.SEIR.'
+        },
+        'SEIR_Q': {
+            'compartments': ['S', 'E', 'I', 'R'], 'stem': 'epydemic.SEIR.'
+        },
+        'SEIVR': {
+            'compartments': ['S', 'E', 'I', 'V', 'R'], 'stem': 'epydemic.SEIVR.'
+        },
+        'SEIVR_Q': {
+            'compartments': ['S', 'E', 'I', 'V', 'R'], 'stem': 'epydemic.SEIVR.'
+        },
     }
 
     COLUMNS = ['experiment_id', 'time', 'compartment', 'value']
@@ -176,9 +184,11 @@ class SimulationData(SimulationTransformerMixin):
             time_max=pd.NamedAgg(column='time', aggfunc='max')
         ).to_dict()['time_max']
 
-        filtered = df[df.apply(
-            lambda x: np.isclose(time_max[(x['experiment_id'], x[param])], x['time']) and
-                      x['compartment'] in ['R', 'E'], axis=1)]
+        f = df.apply(lambda x: np.isclose(
+            time_max[(x['experiment_id'], x[param])],
+            x['time']) and x['compartment'] in ['R', 'E'], axis=1)
+
+        filtered = df[f]
 
         epidemic_size = filtered.groupby(
             ['experiment_id', param]
@@ -262,8 +272,8 @@ class SimulationData(SimulationTransformerMixin):
         """
         Find the index of the value in a list that is below a threshold  for the
         first time after a value above the peak. If the condition is not met for
-        any values, return 0 if the first value of the list is below the threshold
-        or None if the first value is above the threshold.
+        any values, return 0 if the first value of the list is below the
+        threshold or None if the first value is above the threshold.
         :param ls: List of values
         :param v: Threshold value
         :return: Index or None
@@ -327,8 +337,15 @@ class EmpiricalData(ValidationData):
 
         # try getting the file from the data repo directly (a bit faster)
         try:
-            self._states = self.get_pickle_from_repo(self.ALL_STATES_FILE_NAME)
-            self._vac_state = self.get_pickle_from_repo(self.VAC_STATE_FILE_NAME)
+
+            self._states = self.get_pickle_from_repo(
+                self.ALL_STATES_FILE_NAME
+            )
+
+            self._vac_state = self.get_pickle_from_repo(
+                self.VAC_STATE_FILE_NAME
+            )
+
             logging.info('Loaded states data from repo')
 
         # if it doesn't exist, put it together manually
@@ -377,7 +394,9 @@ class EmpiricalData(ValidationData):
 
         # string formatting
         for c in col_transform:
-            df[c] = df[c].apply(lambda x: x.replace(',', '') if type(x) == str else x, 1)
+            df[c] = df[c].apply(
+                lambda x: x.replace(',', '') if type(x) == str else x, 1
+            )
 
         df.replace('NaN', np.NaN, inplace=True)
 
@@ -424,7 +443,8 @@ class EmpiricalData(ValidationData):
         first_wave_map = {}
 
         for state in self._covid_us.state.unique():
-            subset = self._covid_us[self._covid_us.state == state].sort_values('date')
+            subset = self._covid_us[self._covid_us.state == state].\
+                sort_values('date')
 
             if state not in self._pop_map:
                 continue
@@ -479,8 +499,14 @@ class EmpiricalData(ValidationData):
 
         # todo unit tests
 
-        df['new_cases'] = [c / population for c in df['new_cases'].values.tolist()]
-        df['tot_cases'] = [c / population for c in df['tot_cases'].values.tolist()]
+        df['new_cases'] = [
+            c / population for c in df['new_cases'].values.tolist()
+        ]
+
+        df['tot_cases'] = [
+            c / population for c in df['tot_cases'].values.tolist()
+        ]
+
         return df
 
     def make_state_covid(self, state: str, custom_start=None) -> pd.DataFrame:
@@ -534,25 +560,89 @@ class ModelledData(ValidationData, SimulationTransformerMixin):
 
     # Available validation files
     VALIDATION_FILES = [
-        {'name': 'v_seir_mobility_pre', 'title': 'SEIR, M (Pre)', 'model': 'SEIR'},
-        {'name': 'v_seirq_25_mobility_pre', 'title': 'SEIR_Q (p=0.25), M (Pre)', 'model': 'SEIR_Q'},
-        {'name': 'v_seirq_50_mobility_pre', 'title': 'SEIR_Q (p=0.5), M (Pre)', 'model': 'SEIR_Q'},
-        {'name': 'v_seirq_75_mobility_pre', 'title': 'SEIR_Q (p=0.75), M (Pre)', 'model': 'SEIR_Q'},
+        {
+            'name': 'v_seir_mobility_pre',
+            'title': 'SEIR, M (Pre)',
+            'model': 'SEIR'
+        },
+        {
+            'name': 'v_seirq_25_mobility_pre',
+            'title': 'SEIR_Q (p=0.25), M (Pre)',
+            'model': 'SEIR_Q'
+        },
+        {
+            'name': 'v_seirq_50_mobility_pre',
+            'title': 'SEIR_Q (p=0.5), M (Pre)',
+            'model': 'SEIR_Q'
+        },
+        {
+            'name': 'v_seirq_75_mobility_pre',
+            'title': 'SEIR_Q (p=0.75), M (Pre)',
+            'model': 'SEIR_Q'
+        },
 
-        {'name': 'v_seir_mobility_post', 'title': 'SEIR, M (Post)', 'model': 'SEIR'},
-        {'name': 'v_seirq_25_mobility_post', 'title': 'SEIR_Q (p=0.25), M (Post)', 'model': 'SEIR_Q'},
-        {'name': 'v_seirq_50_mobility_post', 'title': 'SEIR_Q (p=0.5), M (Post)', 'model': 'SEIR_Q'},
-        {'name': 'v_seirq_75_mobility_post', 'title': 'SEIR_Q (p=0.75), M (Post)', 'model': 'SEIR_Q'},
+        {
+            'name': 'v_seir_mobility_post',
+            'title': 'SEIR, M (Post)',
+            'model': 'SEIR'
+        },
+        {
+            'name': 'v_seirq_25_mobility_post',
+            'title': 'SEIR_Q (p=0.25), M (Post)',
+            'model': 'SEIR_Q'
+        },
+        {
+            'name': 'v_seirq_50_mobility_post',
+            'title': 'SEIR_Q (p=0.5), M (Post)',
+            'model': 'SEIR_Q'
+        },
+        {
+            'name': 'v_seirq_75_mobility_post',
+            'title': 'SEIR_Q (p=0.75), M (Post)',
+            'model': 'SEIR_Q'
+        },
 
-        {'name': 'v_seivr_mobility_pre', 'title': 'SEIVR, M (Pre)', 'model': 'SEIVR'},
-        {'name': 'v_seivrq_25_mobility_pre', 'title': 'SEIVR_Q (p=0.25), M (Pre)', 'model': 'SEIVR_Q'},
-        {'name': 'v_seivrq_50_mobility_pre', 'title': 'SEIVR_Q (p=0.5), M (Pre)', 'model': 'SEIVR_Q'},
-        {'name': 'v_seivrq_75_mobility_pre', 'title': 'SEIVR_Q (p=0.75), M (Pre)', 'model': 'SEIVR_Q'},
+        {
+            'name': 'v_seivr_mobility_pre',
+            'title': 'SEIVR, M (Pre)',
+            'model': 'SEIVR'
+        },
+        {
+            'name': 'v_seivrq_25_mobility_pre',
+            'title': 'SEIVR_Q (p=0.25), M (Pre)',
+            'model': 'SEIVR_Q'
+        },
+        {
+            'name': 'v_seivrq_50_mobility_pre',
+            'title': 'SEIVR_Q (p=0.5), M (Pre)',
+            'model': 'SEIVR_Q'
+        },
+        {
+            'name': 'v_seivrq_75_mobility_pre',
+            'title': 'SEIVR_Q (p=0.75), M (Pre)',
+            'model': 'SEIVR_Q'
+        },
 
-        {'name': 'v_seivr_mobility_post', 'title': 'SEIVR, M (Post)', 'model': 'SEIVR'},
-        {'name': 'v_seivrq_25_mobility_post', 'title': 'SEIVR_Q (p=0.25), M (Post)', 'model': 'SEIVR_Q'},
-        {'name': 'v_seivrq_50_mobility_post', 'title': 'SEIVR_Q (p=0.5), M (Post)', 'model': 'SEIVR_Q'},
-        {'name': 'v_seivrq_75_mobility_post', 'title': 'SEIVR_Q (p=0.75), M (Post)', 'model': 'SEIVR_Q'},
+        {
+            'name': 'v_seivr_mobility_post',
+            'title': 'SEIVR, M (Post)',
+            'model': 'SEIVR'
+        },
+        {
+            'name': 'v_seivrq_25_mobility_post',
+            'title': 'SEIVR_Q (p=0.25), M (Post)',
+            'model': 'SEIVR_Q'
+        },
+        {
+            'name': 'v_seivrq_50_mobility_post',
+            'title': 'SEIVR_Q (p=0.5), M (Post)',
+            'model': 'SEIVR_Q'
+        },
+        {
+            'name': 'v_seivrq_75_mobility_post',
+            'title': 'SEIVR_Q (p=0.75), M (Post)',
+            'model': 'SEIVR_Q'
+        },
     ]
 
     # repo URL of pre computed results
@@ -622,7 +712,9 @@ class ModelledData(ValidationData, SimulationTransformerMixin):
 
         # calculate the mean values
         grouped = cls.df_group_mean(df)
-        wide = grouped.pivot(index=['time'], columns=['compartment'], values='value')
+        wide = grouped.pivot(
+            index=['time'], columns=['compartment'], values='value'
+        )
         wide.reset_index(inplace=True)
 
         # calc new cases

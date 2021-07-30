@@ -168,16 +168,22 @@ class DNGenerator(NetworkGenerator):
     def _generate(self, params: Dict[str, Any]) -> nx.Graph:
         # Set the distribution functions (could also have been set at
         #  initialisation).
-        self._household_size_dist = params.get(self.HOUSEHOLD_SIZE_DIST) \
-                                    or self._household_size_dist
+        self._household_size_dist = params.get(
+            self.HOUSEHOLD_SIZE_DIST, self._household_size_dist
+        )
+
         assert self._household_size_dist is not None
 
-        self._num_contact_dist = params.get(self.NUM_CONTACT_DIST) \
-                                 or self._num_contact_dist
+        self._num_contact_dist = params.get(
+            self.NUM_CONTACT_DIST, self._num_contact_dist
+        )
+
         assert self._num_contact_dist is not None
 
-        self._num_outside_edge_dist = params.get(self.NUM_OUTSIDE_EDGE_DIST) \
-                                      or self._num_outside_edge_dist
+        self._num_outside_edge_dist = params.get(
+            self.NUM_OUTSIDE_EDGE_DIST, self._num_outside_edge_dist
+        )
+
         assert self._num_outside_edge_dist is not None
 
         N = params[self.N]
