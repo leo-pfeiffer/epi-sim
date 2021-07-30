@@ -60,12 +60,28 @@ def available_networks(disease, network):
     return options, value
 
 
+@app.callback(
+    Output({'type': 'slider', 'index': ALL}, 'disabled'),
+    Input('model-dropdown', 'value'),
+)
+def available_sliders(mod):
+    ctx = dash.callback_context
+
+    # based on model selection, enable or disable sliders
+    sliders_out = [x['id']['index'] for x in ctx.outputs_list]
+
+    slider_disabled = [
+        not PARAM_MAPPING[mod][slider] for slider in sliders_out
+    ]
+
+    return slider_disabled
+
+
 # creates the main figures from the control bar selection
 @app.callback(
     [
         Output('epidemic-curve-graph', 'figure'),
         Output('table-card-body', 'children'),
-        Output({'type': 'slider', 'index': ALL}, 'disabled'),
     ],
     [
         Input('disease-dropdown', 'value'),
@@ -76,12 +92,6 @@ def available_networks(disease, network):
 )
 def main_graph_callback(disease, mod, net, sliders):
     ctx = dash.callback_context
-
-    # based on model selection, enable or disable sliders
-    sliders_out = [x['id']['index'] for x in ctx.outputs_list[2]]
-    slider_disabled = [
-        not PARAM_MAPPING[mod][slider] for slider in sliders_out
-    ]
 
     sliders_states = ctx.inputs_list[3]
 
@@ -107,7 +117,7 @@ def main_graph_callback(disease, mod, net, sliders):
 
     table = index.make_detail_table(grouped)
 
-    return fig, table, slider_disabled
+    return fig, table
 
 
 @app.callback(
