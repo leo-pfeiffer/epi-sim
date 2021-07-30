@@ -21,14 +21,20 @@ def test_current_state_property():
 
     # can't set filters as non-dict
     with pytest.raises(AssertionError):
-        simulation.current_state = {'model': '', 'network': '', 'filters': ''}
+        simulation.current_state = {
+            'model': '', 'network': '', 'filters': '', 'disease': ''
+        }
 
     # can't set wrong keys
     with pytest.raises(AssertionError):
-        simulation.current_state = {'some_key': '', 'network': '', 'filters': {}}
+        simulation.current_state = {
+            'some_key': '', 'network': '', 'filters': {}
+        }
 
     # this should work
-    should = {'model': '', 'network': '', 'filters': {1: 2}}
+    should = {
+        'model': '', 'network': '', 'filters': {1: 2}, 'disease': ''
+    }
     simulation.current_state = should
     assert simulation.current_state == should
 

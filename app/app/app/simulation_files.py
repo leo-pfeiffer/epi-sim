@@ -1,8 +1,4 @@
-# Contains information about the simulation files. This duplicates some of the
-# code defined in `lib`, however since `app` and `lib` are supposed to be usable
-# independently of each other, I could not think of an elegant way to avoid
-# this. Considering that one could use different data sets in `app` than were
-# produced in `lib`, this could come in handy, though.
+# Contains information about the simulation files.
 
 import sys
 from typing import List, Dict, Any
@@ -38,8 +34,6 @@ DISEASE: Final[str] = 'disease'
 D_COVID = 'COVID-19'
 D_INFLUENZA = 'Influenza'
 
-DISEASES = [D_COVID, D_INFLUENZA]
-
 # Parameter mapping
 ID_P_QUAR: Final[str] = 'p_quarantine'
 ID_P_VACC: Final[str] = 'p_vaccinated'
@@ -68,6 +62,7 @@ NETWORK_MAPPING = {
 
 MODELS: List[str] = [SEIR, SEIR_Q, SEIVR, SEIVR_Q]
 NETWORKS: List[str] = [MN_PRE, MN_POST, PLC_PRE, PLC_POST, DIST_PRE, DIST_POST]
+DISEASES = [D_COVID, D_INFLUENZA]
 
 FILES: List[Dict[str, Any]] = [
     {DISEASE: D_COVID, MODEL: SEIR, NETWORK: MN_PRE, NAME: 'seir_mobility_pre'},
