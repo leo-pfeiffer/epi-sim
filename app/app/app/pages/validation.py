@@ -11,14 +11,26 @@ from ..data_processing import ModelledData, EmpiricalData
 
 # instantiate the validation data
 modelled = ModelledData()
-empirical = EmpiricalData()
+empirical = EmpiricalData(vac_state='CT', vac_start='2021-01-01')
 
 
 def make_validation_graph(name, y, title):
-    fig1 = px.line(empirical.states, x='date', y=y, color='state')
-    fig1.update_traces(opacity=0.2, showlegend=True)
-
     model_result = modelled.get_result(name)
+
+    # SEIVR and SEIVR_Q don't have new_case graph
+    if model_result['model'] in ['SEIVR', 'SEIVR_Q'] and y == 'new_cases':
+        return {}
+
+    if model_result['model'] in ['SEIVR', 'SEIVR_Q']:
+        xaxis_title = "Days since 2021-01-01"
+        fig1 = px.line(empirical.vac_state, x='date', y=y)
+        fig1.update_traces(line=dict(color="magenta", width=3), showlegend=True, name="Connecticut")
+
+    else:
+        fig1 = px.line(empirical.states, x='date', y=y, color='state')
+        fig1.update_traces(opacity=0.2, showlegend=True)
+        xaxis_title = "Days since start of epidemic"
+
     model_df = model_result['data']
     fig2 = px.line(model_df, x='time', y=y)
     fig2.update_traces(line=dict(color="blue", width=3), showlegend=True, name='Model')
@@ -26,7 +38,7 @@ def make_validation_graph(name, y, title):
     fig = Figure(data=fig2.data + fig1.data)
     fig.update_layout(
         title=title,
-        xaxis_title="Days since start of epidemic",
+        xaxis_title=xaxis_title,
         yaxis_title="Fraction of population",
     )
 

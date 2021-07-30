@@ -317,13 +317,15 @@ class EmpiricalData(ValidationData):
 
     # repo URL of the precomputed data set
     ALL_STATES_FILE_NAME = 'validation/app-data/all_states.pkl'
+    VAC_STATE_FILE_NAME = 'validation/app-data/vac_state.pkl'
 
-    def __init__(self):
+    def __init__(self, vac_state, vac_start):
         super().__init__()
 
         # try getting the file from the data repo directly (a bit faster)
         try:
             self._states = self.get_pickle_from_repo(self.ALL_STATES_FILE_NAME)
+            self._vac_state = self.get_pickle_from_repo(self.VAC_STATE_FILE_NAME)
             logging.info('Loaded states data from repo')
 
         # if it doesn't exist, put it together manually
@@ -332,10 +334,15 @@ class EmpiricalData(ValidationData):
             self._pop_map = self.make_state_population()
             self._first_wave_map = self.make_first_wave_map()
             self._states = self.make_all_states()
+            self._vac_state = self.make_state_covid(vac_state, vac_start)
 
     @property
     def states(self) -> pd.DataFrame:
         return self._states
+
+    @property
+    def vac_state(self) -> pd.DataFrame:
+        return self._vac_state
 
     def get_covid_us_data(self) -> pd.DataFrame:
         """
@@ -473,15 +480,19 @@ class EmpiricalData(ValidationData):
         df['tot_cases'] = [c / population for c in df['tot_cases'].values.tolist()]
         return df
 
-    def make_state_covid(self, state: str) -> pd.DataFrame:
+    def make_state_covid(self, state: str, custom_start=None) -> pd.DataFrame:
         """
         Make the validation data frame for a single `state`.
         :param state: Target state
+        :param custom_start: custom start date not from first wave map
         :return: Data frame
         """
 
         # get the start of the epidemic
-        start_date = self._first_wave_map[state]
+        if custom_start:
+            start_date = custom_start
+        else:
+            start_date = self._first_wave_map[state]
 
         # filter the full data set for the current state
         state_filter = {'column': 'state', 'value': state}
@@ -520,14 +531,25 @@ class ModelledData(ValidationData, SimulationTransformerMixin):
 
     # Available validation files
     VALIDATION_FILES = [
-        {'name': 'v_seir_mobility_pre', 'title': 'SEIR, M (Pre)'},
-        {'name': 'v_seirq_25_mobility_pre', 'title': 'SEIR_Q (p=0.25), M (Pre)'},
-        {'name': 'v_seirq_50_mobility_pre', 'title': 'SEIR_Q (p=0.5), M (Pre)'},
-        {'name': 'v_seirq_75_mobility_pre', 'title': 'SEIR_Q (p=0.75), M (Pre)'},
-        {'name': 'v_seir_mobility_post', 'title': 'SEIR, M (Post)'},
-        {'name': 'v_seirq_25_mobility_post', 'title': 'SEIR_Q (p=0.25), M (Post)'},
-        {'name': 'v_seirq_50_mobility_post', 'title': 'SEIR_Q (p=0.5), M (Post)'},
-        {'name': 'v_seirq_75_mobility_post', 'title': 'SEIR_Q (p=0.75), M (Post)'},
+        {'name': 'v_seir_mobility_pre', 'title': 'SEIR, M (Pre)', 'model': 'SEIR'},
+        {'name': 'v_seirq_25_mobility_pre', 'title': 'SEIR_Q (p=0.25), M (Pre)', 'model': 'SEIR_Q'},
+        {'name': 'v_seirq_50_mobility_pre', 'title': 'SEIR_Q (p=0.5), M (Pre)', 'model': 'SEIR_Q'},
+        {'name': 'v_seirq_75_mobility_pre', 'title': 'SEIR_Q (p=0.75), M (Pre)', 'model': 'SEIR_Q'},
+
+        {'name': 'v_seir_mobility_post', 'title': 'SEIR, M (Post)', 'model': 'SEIR'},
+        {'name': 'v_seirq_25_mobility_post', 'title': 'SEIR_Q (p=0.25), M (Post)', 'model': 'SEIR_Q'},
+        {'name': 'v_seirq_50_mobility_post', 'title': 'SEIR_Q (p=0.5), M (Post)', 'model': 'SEIR_Q'},
+        {'name': 'v_seirq_75_mobility_post', 'title': 'SEIR_Q (p=0.75), M (Post)', 'model': 'SEIR_Q'},
+
+        {'name': 'v_seivr_mobility_pre', 'title': 'SEIVR, M (Pre)', 'model': 'SEIVR'},
+        {'name': 'v_seivrq_25_mobility_pre', 'title': 'SEIVR_Q (p=0.25), M (Pre)', 'model': 'SEIVR_Q'},
+        {'name': 'v_seivrq_50_mobility_pre', 'title': 'SEIVR_Q (p=0.5), M (Pre)', 'model': 'SEIVR_Q'},
+        {'name': 'v_seivrq_75_mobility_pre', 'title': 'SEIVR_Q (p=0.75), M (Pre)', 'model': 'SEIVR_Q'},
+
+        {'name': 'v_seivr_mobility_post', 'title': 'SEIVR, M (Post)', 'model': 'SEIVR'},
+        {'name': 'v_seivrq_25_mobility_post', 'title': 'SEIVR_Q (p=0.25), M (Post)', 'model': 'SEIVR_Q'},
+        {'name': 'v_seivrq_50_mobility_post', 'title': 'SEIVR_Q (p=0.5), M (Post)', 'model': 'SEIVR_Q'},
+        {'name': 'v_seivrq_75_mobility_post', 'title': 'SEIVR_Q (p=0.75), M (Post)', 'model': 'SEIVR_Q'},
     ]
 
     # repo URL of pre computed results
@@ -575,11 +597,11 @@ class ModelledData(ValidationData, SimulationTransformerMixin):
             r = v.copy()
 
             # convert to wide format and clean
-            r['data'] = self._get_wide(v['name'])
+            r['data'] = self._get_wide(v['name'], v['model'])
             self._results.append(r)
 
     @classmethod
-    def _get_wide(cls, name):
+    def _get_wide(cls, name, model):
         """
         Convert the raw simulation results into wide format after cleaning.
         :param name: Name of the file (in the repo)
@@ -601,7 +623,13 @@ class ModelledData(ValidationData, SimulationTransformerMixin):
         wide.reset_index(inplace=True)
 
         # calc new cases
-        wide['new_cases'] = (wide['S'].diff().fillna(0) * (-1)).values.tolist()
+        if model in ['SEIR', 'SEIR_Q']:
+            new_cases = (wide['S'].diff().fillna(0) * (-1)).values.tolist()
+
+            # back-fill first day
+            if len(new_cases) > 1:
+                new_cases[0] = new_cases[1]
+            wide['new_cases'] = new_cases
 
         # calc total cases
         wide['tot_cases'] = wide['E'] + wide['I'] + wide['R']
