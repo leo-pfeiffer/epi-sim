@@ -32,6 +32,10 @@ class SEIVR(CompartmentedModel):
     P_VACCINATED: Final[str] = f'{_PREFIX}.p_vac'  # Being vaccinated
     VACCINE_RRR: Final[str] = f'{_PREFIX}.vac_rrr'  # Relative Risk Reduction of vaccine
 
+    # todo describe these
+    P_REMOVED_INITIAL: Final[str] = f'{_PREFIX}.p_removed_init'  # Being initially removed
+    P_INFECTED_INITIAL: Final[str] = f'{_PREFIX}.p_infected_init'  # Being initially infected
+
     # loci of the dynamics
     SE: Final[str] = f'{_PREFIX}.SE'  # Transmission from exposed to susceptible
     SI: Final[str] = f'{_PREFIX}.SI'  # Transmission from infected to susceptible
@@ -57,12 +61,24 @@ class SEIVR(CompartmentedModel):
         p_vac = params[self.P_VACCINATED]
         vac_rrr = params[self.VACCINE_RRR]
 
+        # these are optional, in case we have nodes that have already been
+        #  removed at start of the simulation or infected from the start
+        p_remove_init = params.get(self.P_REMOVED_INITIAL, 0.0)
+        p_infected_init = params.get(self.P_INFECTED_INITIAL, 0.0)
+
+        # make sure initial occupancy doesn't exceed one
+        if p_exposed + p_vac_init + p_remove_init + p_infected_init > 1.0:
+            raise ValueError('Initial occupancy parameters must not exceed 1.')
+
         # add compartments
-        self.addCompartment(self.SUSCEPTIBLE, 1.0 - p_exposed - p_vac_init)
+        self.addCompartment(
+            self.SUSCEPTIBLE,
+            1.0 - p_exposed - p_vac_init - p_remove_init - p_infected_init
+        )
         self.addCompartment(self.EXPOSED, p_exposed)
-        self.addCompartment(self.INFECTED)
+        self.addCompartment(self.INFECTED, p_infected_init)
         self.addCompartment(self.VACCINATED, p_vac_init)
-        self.addCompartment(self.REMOVED, 0.0)
+        self.addCompartment(self.REMOVED, p_remove_init)
 
         # track edges
         self.trackEdgesBetweenCompartments(self.SUSCEPTIBLE, self.EXPOSED, name=self.SE)

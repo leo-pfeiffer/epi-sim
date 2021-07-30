@@ -1,3 +1,4 @@
+import pytest
 from lib.model.compartmental_model.seivr import SEIVRWithQuarantine, SEIVR, \
     MonitoredSEIVR, MonitoredSEIVRWithQuarantine
 from epydemic import ERNetwork, StochasticDynamics, NetworkExperiment, Monitor
@@ -34,6 +35,76 @@ def test_seivr():
         N_is += rc[NetworkExperiment.RESULTS][c]
 
     assert N_is == N
+
+    # try adding to many initial occupants
+    with pytest.raises(ValueError):
+        params = PARAMS.copy()
+
+        # make initial occupancy exceed 1
+        params[SEIVRWithQuarantine.P_EXPOSED] = 0.4
+        params[SEIVRWithQuarantine.P_VACCINATED_INITIAL] = 0.4
+        params[SEIVR.P_REMOVED_INITIAL] = 0.15
+        params[SEIVR.P_INFECTED_INITIAL] = 0.15
+
+        e = StochasticDynamics(SEIVR(), g=ERNetwork())
+        e.set(params=params)
+
+        # this should raise an error
+        e.run(fatal=True)
+
+
+def test_seivr_p_removed_initial():
+
+    removed_ts_key = Monitor.TIMESERIES_STEM + '-' + SEIVR.REMOVED
+
+    # without p_remove_init:
+    e = StochasticDynamics(MonitoredSEIVR(), g=ERNetwork())
+    e.set(params=PARAMS)
+    e.process().setMaximumTime(10)
+    rc = e.run(fatal=True)
+
+    # removed should be empty initially
+    assert rc[NetworkExperiment.RESULTS][removed_ts_key][0] == 0
+
+    # with 50% p_remove_init
+    params = PARAMS.copy()
+    params[SEIVR.P_REMOVED_INITIAL] = 0.5
+    e = StochasticDynamics(MonitoredSEIVR(), g=ERNetwork())
+    e.set(params=params)
+    e.process().setMaximumTime(10)
+    rc = e.run(fatal=True)
+
+    # removed should be not empty initially
+    init_r = rc[NetworkExperiment.RESULTS][removed_ts_key][0]
+
+    assert abs(1 - (init_r / (N / 2))) < 0.1
+
+
+def test_seivr_p_infected_initial():
+
+    ts_key = Monitor.TIMESERIES_STEM + '-' + SEIVR.INFECTED
+
+    # without p_remove_init:
+    e = StochasticDynamics(MonitoredSEIVR(), g=ERNetwork())
+    e.set(params=PARAMS)
+    e.process().setMaximumTime(10)
+    rc = e.run(fatal=True)
+
+    # infected should be empty
+    assert rc[NetworkExperiment.RESULTS][ts_key][0] == 0
+
+    # with 50% p_remove_init
+    params = PARAMS.copy()
+    params[SEIVR.P_INFECTED_INITIAL] = 0.5
+    e = StochasticDynamics(MonitoredSEIVR(), g=ERNetwork())
+    e.set(params=params)
+    e.process().setMaximumTime(10)
+    rc = e.run(fatal=True)
+
+    # infected should not be empty
+    init_r = rc[NetworkExperiment.RESULTS][ts_key][0]
+
+    assert abs(1 - (init_r / (N / 2))) < 0.1
 
 
 def test_seivr_with_quarantine():
