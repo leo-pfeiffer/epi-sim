@@ -157,7 +157,7 @@ rrr_slider = make_slider(ID_RRR, dict(
 download = html.Div(
     [
         dbc.Button(
-            "Download simulation results", id="btn_csv",
+            "Download selected simulation results", id="btn_csv",
             outline=True, color="primary"
         ),
         dcc.Download(id="download-dataframe-csv")
