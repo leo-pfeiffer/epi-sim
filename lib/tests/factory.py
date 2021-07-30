@@ -1,6 +1,6 @@
 from lib.model.network.mobility_network import MobilityNetwork
 from lib.model.network.network_data import NetworkData
-from model.distributions import PowerLawCutoffDist
+from lib.model.distributions import PowerLawCutoffDist
 
 
 def create_cbgs():

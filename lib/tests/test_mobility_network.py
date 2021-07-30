@@ -3,7 +3,7 @@ import pytest
 from lib.model.distributions import PowerLawCutoffDist
 from lib.model.network.mobility_network import MobilityNetwork, \
     MNGeneratorFromFile, MNGeneratorFromNetworkData
-from lib.tests.factory import *
+from lib.tests.factory import create_network_data
 
 EXPONENT = 2
 CUTOFF = 10
