@@ -5,7 +5,7 @@ import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, MATCH, ALL, ClientsideFunction, \
     State
 
-from .simulation_files import PARAM_MAPPING
+from .simulation_files import PARAM_MAPPING, NETWORK_MAPPING
 from .data_processing import SimulationData
 
 # pages
@@ -41,6 +41,26 @@ app.layout = html.Div([
 
 
 # CALLBACKS ====
+
+# show only networks available for selected disease
+@app.callback(
+    [
+        Output('network-dropdown', 'options'),
+        Output('network-dropdown', 'value'),
+    ],
+    [Input('disease-dropdown', 'value')],
+    [State('network-dropdown', 'value')]
+)
+def available_networks(disease, network):
+
+    available = NETWORK_MAPPING[disease]
+    options = [{'label': x, 'value': x} for x in available]
+    value = network if network in available else available[0]
+
+    return options, value
+
+
+# creates the main figures from the control bar selection
 @app.callback(
     [
         Output('epidemic-curve-graph', 'figure'),
@@ -48,21 +68,24 @@ app.layout = html.Div([
         Output({'type': 'slider', 'index': ALL}, 'disabled'),
     ],
     [
+        Input('disease-dropdown', 'value'),
         Input('model-dropdown', 'value'),
         Input('network-dropdown', 'value'),
         Input({'type': 'slider', 'index': ALL}, 'value')
     ],
 )
-def graph_callback(mod, net, sliders):
+def main_graph_callback(disease, mod, net, sliders):
     ctx = dash.callback_context
 
+    # based on model selection, enable or disable sliders
     sliders_out = [x['id']['index'] for x in ctx.outputs_list[2]]
     slider_disabled = [
         not PARAM_MAPPING[mod][slider] for slider in sliders_out
     ]
 
-    sliders_states = ctx.inputs_list[2]
+    sliders_states = ctx.inputs_list[3]
 
+    # get the slider settings and use them as filters
     filters = {}
     for slider in sliders_states:
         idx = slider['id']['index']
@@ -71,12 +94,13 @@ def graph_callback(mod, net, sliders):
 
     # save current selected state
     index.simulation_data.current_state = {
+        'disease': disease,
         'model': mod,
         'network': net,
         'filters': filters
     }
 
-    df = index.filter_df(mod, net, filters)
+    df = index.filter_df(disease, mod, net, filters)
     df = SimulationData.fill_experiment_length_gap(df)
     grouped = SimulationData.df_group_mean(df)
     fig = index.make_main_graph(df, grouped)
@@ -94,21 +118,23 @@ def slider_callback(value):
     return value
 
 
+# create the scatter plot
 @app.callback(
     Output("waterfall-graph", "figure"),
     [
         Input("waterfall-card-tabs", "active_tab"),
         Input('model-dropdown', 'value'),
         Input('network-dropdown', 'value'),
+        Input('disease-dropdown', 'value'),
         Input({'type': 'slider', 'index': ALL}, 'value')
     ]
 )
-def waterfall_tabs(active_tab, mod, net, slider_values):
+def waterfall_tabs(active_tab, mod, net, disease, slider_values):
     if not PARAM_MAPPING[mod][active_tab]:
         return {}
 
     ctx = dash.callback_context
-    sliders_states = ctx.inputs_list[3]
+    sliders_states = ctx.inputs_list[4]
 
     filters = {}
     for slider in sliders_states:
@@ -116,20 +142,22 @@ def waterfall_tabs(active_tab, mod, net, slider_values):
         if PARAM_MAPPING[mod][idx] and idx != active_tab:
             filters[idx] = slider['value']
 
-    return index.make_waterfall(active_tab, mod, net, filters)
+    return index.make_waterfall(active_tab, mod, net, disease, filters)
 
 
+# create the heatmap figure
 @app.callback(
     Output("heatmap-graph", "figure"),
     [
         Input("heatmap-card-tabs", "active_tab"),
         Input('network-dropdown', 'value'),
+        Input('disease-dropdown', 'value'),
         Input({'type': 'slider', 'index': ALL}, 'value')
     ]
 )
-def heatmap_tabs(active_tab, network, slider_values):
+def heatmap_tabs(active_tab, network, disease, slider_values):
     ctx = dash.callback_context
-    sliders_states = ctx.inputs_list[2]
+    sliders_states = ctx.inputs_list[3]
 
     # models to include in heatmap
     model_filters = {}
@@ -144,7 +172,7 @@ def heatmap_tabs(active_tab, network, slider_values):
             if PARAM_MAPPING[k][idx] and idx != active_tab:
                 model_filters[k][idx] = slider['value']
 
-    return index.make_heatmap(active_tab, network, model_filters)
+    return index.make_heatmap(active_tab, network, disease, model_filters)
 
 
 # Validation graphs
@@ -203,7 +231,9 @@ def func(n_clicks):
     state = index.simulation_data.current_state
 
     # apply filters
-    df = index.filter_df(state['model'], state['network'], state['filters'])
+    df = index.filter_df(
+        state['disease'], state['model'], state['network'], state['filters']
+    )
 
     return dcc.send_data_frame(df.to_csv, "simulation_results.csv")
 

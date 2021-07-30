@@ -17,7 +17,7 @@ from urllib.request import urlopen
 from urllib.error import HTTPError
 
 from .configuration import DATA_REPO_URL_RAW, DATA_DIR
-from .simulation_files import FILES, MODEL, NETWORK
+from .simulation_files import FILES, MODEL, NETWORK, DISEASE
 from .mixins import SimulationTransformerMixin
 
 
@@ -61,9 +61,11 @@ class SimulationData(SimulationTransformerMixin):
     @current_state.setter
     def current_state(self, new_state):
         assert isinstance(new_state, dict)
+        assert 'disease' in new_state
         assert 'model' in new_state
         assert 'network' in new_state
         assert 'filters' in new_state
+        assert isinstance(new_state['disease'], str)
         assert isinstance(new_state['model'], str)
         assert isinstance(new_state['network'], str)
         assert isinstance(new_state['filters'], dict)
@@ -127,11 +129,12 @@ class SimulationData(SimulationTransformerMixin):
 
         return file
 
-    def subset_data(self, model: str, network: str,
+    def subset_data(self, disease: str, model: str, network: str,
                     filters: Dict) -> pd.DataFrame:
         """
         Return a subset of the data for a `model`, a `network`, and potentially
         filtered by the values specified in `filters`.
+        :param disease: Disease of the subset.
         :param model: Model of the subset.
         :param network: Network of the subset.
         :param filters: Dictionary containing columns as keys and filter values
@@ -145,16 +148,16 @@ class SimulationData(SimulationTransformerMixin):
         df = pd.DataFrame()
         found = False
         for file in self._files:
-            if file[MODEL] == model and file[NETWORK] == network:
+            if file[DISEASE] == disease and file[MODEL] == model and \
+                    file[NETWORK] == network:
+
                 df = file['df']
                 found = True
                 break
 
         if not found:
             raise ValueError(f"Provided combination of `model={model}` and "
-                             f"`network={network}` does not exist. "
-                             f"The available combinations are "
-                             f"{[(x[MODEL], x[NETWORK]) for x in self._files]}.")
+                             f"`network={network}` does not exist.")
 
         return self._apply_filters(df, filters)
 

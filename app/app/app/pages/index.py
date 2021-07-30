@@ -10,7 +10,7 @@ from ..data_processing import SimulationData
 from ..static_elements import brand, footer, modal, toast
 from ..layouts import fig_layout, main_graph_props, px_template
 from ..simulation_files import NETWORKS, MODELS, ID_RRR, ID_P_VACC_INIT, \
-    ID_P_VACC, ID_P_QUAR, VALS_MAPPING
+    ID_P_VACC, ID_P_QUAR, VALS_MAPPING, DISEASES
 
 
 # Load data set ==========
@@ -39,7 +39,7 @@ def make_slider(label, slider_options):
     ])
 
 
-def make_heatmap(param, network, model_filters):
+def make_heatmap(param, network, disease, model_filters):
     vm = VALS_MAPPING[param]
     x = np.arange(vm['min'], vm['max'], vm['step'])
 
@@ -47,7 +47,7 @@ def make_heatmap(param, network, model_filters):
     z = []
 
     for m, f in model_filters.items():
-        df = filter_df(m, network, f)
+        df = filter_df(disease, m, network, f)
         epi = SimulationData.epidemic_size_per_param(df, param)
         epi = epi.groupby(param).mean()
         epi.sort_index(inplace=True)
@@ -65,8 +65,8 @@ def make_heatmap(param, network, model_filters):
     return fig
 
 
-def make_waterfall(param, model, network, filters):
-    df = filter_df(model, network, filters)
+def make_waterfall(param, model, network, disease, filters):
+    df = filter_df(disease, model, network, filters)
     epidemic_size = SimulationData.epidemic_size_per_param(df, param)
     fig = px.scatter(epidemic_size, x=param, y="epidemic_size", template=px_template)
     fig.update_layout(**fig_layout)
@@ -86,8 +86,8 @@ def make_main_graph(df, grouped_df):
     return fig
 
 
-def filter_df(model, network, filters):
-    return simulation_data.subset_data(model, network, filters)
+def filter_df(disease, model, network, filters):
+    return simulation_data.subset_data(disease, model, network, filters)
 
 
 def make_detail_table_df(df):
@@ -119,6 +119,13 @@ def make_detail_table(df):
 
 
 # Create elements =====
+disease_dropdown = make_dropdown('Disease', dict(
+    id='disease-dropdown',
+    options=[{"label": d, "value": d} for d in DISEASES],
+    value=DISEASES[0],
+))
+
+
 model_dropdown = make_dropdown('Model', dict(
     id='model-dropdown',
     options=[{"label": m, "value": m} for m in MODELS],
@@ -158,6 +165,7 @@ download = html.Div(
 )
 
 controls = dbc.Card([
+    disease_dropdown,
     model_dropdown,
     network_dropdown,
     quarantine_slider,
