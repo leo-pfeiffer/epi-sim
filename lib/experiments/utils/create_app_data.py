@@ -164,7 +164,7 @@ def _upload_file(file, repo_path=DATA_REPO_APP_DATA_PATH):
     print(f"%s uploaded file {file['name']}" % dt.now())
 
 
-def main_custom_files(files, repo_path):
+def main_custom_files(files, repo_path_in, repo_path_out):
     """
     Run the process.
     """
@@ -175,9 +175,9 @@ def main_custom_files(files, repo_path):
     try:
         for file in files:
             print(file)
-            df = _load_file(file, repo_path)
+            df = _load_file(file, repo_path_in)
             _pickle_file(file, df)
-            _upload_file(file, repo_path)
+            _upload_file(file, repo_path_out)
 
     finally:
         # remove temporary directory
