@@ -52,12 +52,17 @@ class NetworkData:
             for j in self.ordered_cbgs:
                 # count of trips between
                 comb = (i, j)
-                trips_between = 0 if comb not in self.comb_counts else \
-                    self.comb_counts[comb]
+
+                if comb in self.comb_counts:
+                    trips_between = 0
+                else:
+                    trips_between = self.comb_counts[comb]
 
                 # ratio of all trips from i
-                p = 0 if i not in self.trip_counts else \
-                    trips_between / self.trip_counts[i]
+                if i not in self.trip_counts:
+                    p = 0
+                else:
+                    p = trips_between / self.trip_counts[i]
 
                 self.adjacency_list[i].append(p)
 
