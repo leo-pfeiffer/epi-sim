@@ -9,8 +9,8 @@ might present a threshold.
 EpiSim is built on top of the Python library [epydemic](!https://github.com/simoninireland/epydemic), 
 which is a great tool to model all kinds of epidemic processes using network simulations.
 
-To learn about how the models are designed and implemented, go [here](/model).
+To learn about how the models are designed and implemented, go [here](/models).
 For information on how the different human contact networks of the simulations
-were conceived, take a look at [this](/data). If you would like to find out
+were conceived, take a look at [this](/networks). If you would like to find out
 more about the project, the source code is available on [GitHub](https://github.com/leo-pfeiffer/epi-sim).
 You can also read my thesis [here](/).
