@@ -233,6 +233,20 @@ def test_make_first_wave_map():
     assert first_wave['FL'] == '2021-03-01'
 
 
+def test_validation_files():
+
+    for k in ModelledData.VALIDATION_FILES:
+        assert 'title' in k
+        assert 'name' in k
+        assert 'model' in k
+
+
+def test_model_meta():
+    for _, v in SimulationData.MODEL_META.items():
+        assert 'compartments' in v
+        assert 'stem' in v
+
+
 def test_calc_cases():
 
     new_case_diff = [40, 40, 20, 10]
