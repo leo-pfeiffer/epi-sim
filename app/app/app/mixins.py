@@ -4,8 +4,9 @@ import pandas as pd
 
 
 class SimulationTransformerMixin:
-
-    # todo comments
+    """
+    Transformer Mixin that contains methods to transform simulation data.
+    """
 
     @staticmethod
     def _apply_filters(df, filters: Dict[str, Any]):
