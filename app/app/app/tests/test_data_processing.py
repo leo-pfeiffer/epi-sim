@@ -235,6 +235,9 @@ def test_make_first_wave_map():
 
 def test_validation_files():
 
+    # this is a fairly long list so we wanna make sure they have the
+    #  correct format
+
     for k in ModelledData.VALIDATION_FILES:
         assert 'title' in k
         assert 'name' in k
@@ -242,6 +245,10 @@ def test_validation_files():
 
 
 def test_model_meta():
+
+    # this is a fairly long dictionary so we wanna make sure they have the
+    #  correct format
+
     for _, v in SimulationData.MODEL_META.items():
         assert 'compartments' in v
         assert 'stem' in v
