@@ -1,5 +1,5 @@
 from .factory import *
-from ..data_processing import SimulationData, EmpiricalData
+from ..data_processing import SimulationData, EmpiricalData, ModelledData
 from ..simulation_files import FILES, MODELS, NETWORKS
 import pytest
 
@@ -231,3 +231,45 @@ def test_make_first_wave_map():
     assert first_wave['CT'] == '2021-01-01'
     assert first_wave['CA'] == '2021-02-01'
     assert first_wave['FL'] == '2021-03-01'
+
+
+def test_calc_cases():
+
+    new_case_diff = [40, 40, 20, 10]
+    tot_cases = [19, 20, 21, 22]
+
+    data = {
+        'S': [80, 40, 20, 10],
+        'E': [5, 5, 5, 5],
+        'I': [6, 6, 6, 6],
+        'V': [7, 7, 7, 7],
+        'R': [8, 9, 10, 11],
+    }
+
+    seir = ModelledData.calc_cases(pd.DataFrame(data), 'seir')
+    seirq = ModelledData.calc_cases(pd.DataFrame(data), 'seir_q')
+
+    assert 'new_cases' in seir.columns
+    assert 'tot_cases' in seir.columns
+
+    assert 'new_cases' in seirq.columns
+    assert 'tot_cases' in seirq.columns
+
+    for i in range(len(seir)):
+        assert seir.new_cases.values[i] == new_case_diff[i]
+        assert seir.tot_cases.values[i] == tot_cases[i]
+        assert seirq.new_cases.values[i] == new_case_diff[i]
+        assert seirq.tot_cases.values[i] == tot_cases[i]
+
+    seivr = ModelledData.calc_cases(pd.DataFrame(data), 'seivr')
+    seivrq = ModelledData.calc_cases(pd.DataFrame(data), 'seivr_q')
+
+    assert 'new_cases' not in seivr.columns
+    assert 'tot_cases' in seivr.columns
+
+    assert 'new_cases' not in seivrq.columns
+    assert 'tot_cases' in seivrq.columns
+
+    for i in range(len(seir)):
+        assert seivr.tot_cases.values[i] == tot_cases[i]
+        assert seivrq.tot_cases.values[i] == tot_cases[i]

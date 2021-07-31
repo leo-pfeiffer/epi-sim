@@ -724,16 +724,35 @@ class ModelledData(ValidationData, SimulationTransformerMixin):
         )
         wide.reset_index(inplace=True)
 
-        # calc new cases
-        if model in ['SEIR', 'SEIR_Q']:
-            new_cases = (wide['S'].diff().fillna(0) * (-1)).values.tolist()
+        # calculate tot_cases (and new_cases for SEIR, SEIR_Q)
+        wide = cls.calc_cases(wide, model)
+
+        return wide
+
+    @staticmethod
+    def calc_cases(df, model: str):
+        """
+        Calculate total (and new) cases for a `wide` simulation result
+        data frame.
+        For SEIR, SEIR_Q new_cases and tot_cases are calculated.
+        For other models only tot_cases are calculated
+        :param df: simulation result data frame
+        :param model: name of the epidemic model
+        :return: data frame with added columns `tot_cases` (and `new_cases`)
+        """
+
+        # in case of inconsistent capitalisation
+        model = model.lower()
+
+        if model in ['seir', 'seir_q']:
+            new_cases = (df['S'].diff().fillna(0) * (-1)).values.tolist()
 
             # back-fill first day
             if len(new_cases) > 1:
                 new_cases[0] = new_cases[1]
-            wide['new_cases'] = new_cases
+            df['new_cases'] = new_cases
 
         # calc total cases
-        wide['tot_cases'] = wide['E'] + wide['I'] + wide['R']
+        df['tot_cases'] = df['E'] + df['I'] + df['R']
 
-        return wide
+        return df
