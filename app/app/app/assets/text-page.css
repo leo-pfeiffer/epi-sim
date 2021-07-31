@@ -45,8 +45,7 @@ https://community.plotly.com/t/tables-in-markdown/15823/8
 */
 table {
     border-collapse: collapse;
-    margin-left: auto;
-    margin-right: auto;
+    margin-bottom: 1rem;
 }
 
 th:not(.CalendarDay), td:not(.CalendarDay) {
