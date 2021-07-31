@@ -169,6 +169,26 @@ def test_extract_region():
     assert extracted.state.unique()[0] == 'CT'
     assert len(extracted) == 1
 
+
+def test_get_data_after_date():
+
+    dates = [
+        np.datetime64('2021-01-20'),
+        np.datetime64('2021-01-25'),
+        np.datetime64('2021-02-01')
+    ]
+
+    df = pd.DataFrame({'my_date': dates, 'col': [1, 2, 3]})
+
+    after = EmpiricalData.get_data_after_date(
+        df, '2021-01-25', date_col='my_date'
+    )
+
+    assert len(after) == 2
+    assert np.datetime64('2021-01-20') not in after.my_date.values
+
+
+
     # dates = ['01/25/2021', '01/20/2021', '01/26/2021']
     # tot_c = [1, 3, 6]
     # new_c = [1, 2, 3]

@@ -472,17 +472,23 @@ class EmpiricalData(ValidationData):
         return df_out
 
     @classmethod
-    def get_data_after_date(cls, df, date: str):
+    def get_data_after_date(cls, df, date: str, date_col: str = 'date'):
+        """
+        Return all rows of a data frame where the dates in the `date_col` are
+        greater or equal `date`.
+        :param df: data frame to filter
+        :param date: start date, format YYYY-MM-DD
+        :param date_col: column containing the date
+        :return: filtered df
+        """
 
-        # todo unit tests
-
-        df = df[df['date'] >= np.datetime64(date)].copy()
+        df = df[df[date_col] >= np.datetime64(date)].copy()
         df.reset_index(drop=True, inplace=True)
 
-        start_date = df.loc[0, 'date'].date()
-        df['date'] = df['date'].apply(lambda x: (x.date() - start_date).days)
+        start_date = df.loc[0, date_col].date()
+        df[date_col] = df[date_col].apply(lambda x: (x.date() - start_date).days)
 
-        df = df.loc[df['date'] <= cls.MAX_TIME, :].copy()
+        df = df.loc[df[date_col] <= cls.MAX_TIME, :].copy()
 
         return df
 
