@@ -15,16 +15,21 @@ HOUSEHOLDS = List[nx.Graph]
 STUBS = List[int]
 
 
-# todo comments, docstrings, unit tests
+# todo unit tests
 
 class DistancedNetwork:
     """
     Implementation of the distanced network presented in
         Dobson 2020 - Epidemic Modelling, pp. 157
+
+    A network that imitates social bubbles (households) with some dedicated
+    nodes per household with connections to the outside.
     """
 
-    def __init__(self, N: int, household_size_dist: Callable,
-                 num_contact_dist: Callable, num_outside_edge_dist: Callable):
+    def __init__(self, N: int,
+                 household_size_dist: Callable,
+                 num_contact_dist: Callable,
+                 num_outside_edge_dist: Callable):
         """
         Create a DistancedNetwork.
         :param N: Order of the network.
@@ -53,21 +58,35 @@ class DistancedNetwork:
         self._connect_stubs(stubs)
 
     def _create_households(self) -> HOUSEHOLDS:
+        """
+        Create the households as complete graphs.
+        :return: List of graphs
+        """
+
+        # initialise some values
         household_id = 1
         households = []
         n = 0
 
         while n < self.N:
+
+            # draw the household size and build a graph of that size
             size = self.household_size_dist()
             house = nx.complete_graph(size)
+
+            # add a unique label to each node
             nx.relabel_nodes(house, lambda l: n + l, copy=False)
 
-            self.g.add_nodes_from(house.nodes, household=household_id,
-                                  household_size=size)
+            # add nodes and edges to the main graph
+            self.g.add_nodes_from(
+                house.nodes, household=household_id, household_size=size
+            )
 
-            self.g.add_edges_from(house.edges, household=household_id,
-                                  household_size=size)
+            self.g.add_edges_from(
+                house.edges, household=household_id, household_size=size
+            )
 
+            # store the household in a list
             households.append(house)
 
             n += size
@@ -76,8 +95,18 @@ class DistancedNetwork:
         return households
 
     def _create_stubs(self, households: HOUSEHOLDS) -> STUBS:
+        """
+        Create stubs as the nodes in each household that has outside
+        connections.
+        :param households: list of households
+        :return: Stubs
+        """
+
         contacts = []
+
         for house in households:
+
+            # draw the number of nodes connected to the outside...
             size = house.order()
             n_contacts = self.num_contact_dist(size)
             contacts.append(n_contacts)
@@ -88,29 +117,48 @@ class DistancedNetwork:
 
             house = households[i]
 
-            nodes = list(house.nodes())[:contacts[i]]
+            # get the nodes with outside connections
+            outside_nodes = list(house.nodes())[:contacts[i]]
 
-            for node in nodes:
+            for node in outside_nodes:
+                # draw number of connections...
                 num_copies = self.num_outside_edge_dist()
+                # ... and copy the node as many times
                 stubs.extend([node] * num_copies)
 
+        # append one more random stub if the number of stubs is uneven
         if len(stubs) % 2 > 0:
             unique_stubs = list(set(stubs))
             j = self._rng.integers(len(unique_stubs))
             stubs.append(unique_stubs[j])
 
+        # randomise order of stubs
         self._rng.shuffle(stubs)
 
         return stubs
 
     def _break_up_pairs(self, stubs: STUBS) -> STUBS:
+        """
+        Break up adjacent stubs if they are of the same household
+        :param stubs: list of stubs
+        :return: stubs without intra-household paris
+        """
         swaps = 1
 
+        # do until all pairs are broken up
         while swaps != 0:
+
             swaps = 0
+
+            # iterate in pairs
             for i in range(0, len(stubs), 2):
-                if self.g.nodes[stubs[i]]['household'] == \
-                        self.g.nodes[stubs[i + 1]]['household']:
+
+                # get the two households
+                h1 = self.g.nodes[stubs[i]]['household']
+                h2 = self.g.nodes[stubs[i + 1]]['household']
+
+                # if they are the same, break them up
+                if h1 == h2:
                     j = self._rng.integers(len(stubs))
                     stubs[i + 1], stubs[j] = stubs[j], stubs[i + 1]
 
@@ -120,15 +168,17 @@ class DistancedNetwork:
 
     def _connect_stubs(self, stubs: STUBS) -> None:
         """
-        Part of the creation process to connect the stubs.
+        Connect the stub pairs.
         :param stubs: List of stubs
         """
 
-        # connect pairs of stubs
+        # iterate in pairs
         for i in range(0, len(stubs), 2):
+
             # label inter-household edges as household 0 of size 0
-            self.g.add_edge(stubs[i], stubs[i + 1], household=0,
-                            household_size=0)
+            self.g.add_edge(
+                stubs[i], stubs[i + 1], household=0, household_size=0
+            )
 
 
 class DNGenerator(NetworkGenerator):
