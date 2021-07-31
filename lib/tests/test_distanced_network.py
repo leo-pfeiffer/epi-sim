@@ -23,7 +23,7 @@ def test_create_network():
 
     network.create()
     assert isinstance(network.g, Graph)
-    assert N <= network.g.order() <= N * 1.1
+    assert N * 0.9 <= network.g.order() <= N * 1.1
 
 
 def test_create_households():

@@ -31,7 +31,7 @@ def test_network_create_pre():
     network = MobilityNetwork(PRE, DEGREE_DIST, N, False)
     network.create()
     assert isinstance(network.g, Graph)
-    assert N <= network.g.order() <= N * 1.1
+    assert 0.9 * N <= network.g.order() <= N * 1.1
 
 
 def test_network_create_post():
