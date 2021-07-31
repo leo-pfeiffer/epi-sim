@@ -112,6 +112,18 @@ img[alt$=">"] {
 }
 
 /*
+Right aligned floating image (wide)
+Source: https://stackoverflow.com/a/39614958/12168211
+*/
+img[alt$=">w"] {
+    float: right;
+    margin: 0 15px 15px 0;
+    width: 30%;
+    min-width: 50px;
+    max-width: 180px;
+}
+
+/*
 Left aligned floating image
 Source: https://stackoverflow.com/a/39614958/12168211
 */
@@ -122,6 +134,19 @@ img[alt$="<"] {
     min-width: 50px;
     max-width: 120px;
 }
+
+/*
+Left aligned floating image (wide)
+Source: https://stackoverflow.com/a/39614958/12168211
+*/
+img[alt$="<w"] {
+    float: left;
+    margin: 0 15px 15px 0;
+    width: 30%;
+    min-width: 50px;
+    max-width: 180px;
+}
+
 
 /*
 Centered image

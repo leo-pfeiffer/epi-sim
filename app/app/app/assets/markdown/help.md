@@ -6,7 +6,7 @@ use it.
 ---
 
 ## Control bar
-![Help control >](/assets/img/help-control.png)
+![Help control >w](/assets/img/help-control.png)
 The control bar on the left side of the page is where you can select the 
 disease, model, and network you want to simulate, and set the appropriate 
 parameters.
@@ -48,7 +48,7 @@ button at the bottom of the control bar.
 ---
 
 ## Epidemic curves
-![Help curves >](/assets/img/help-curves.png)
+![Help curves >w](/assets/img/help-curves.png)
 The main graph next to the control bar is the main graph of the application.
 It depicts the fraction of individuals per compartment over the course of the 
 epidemic. 
@@ -65,7 +65,7 @@ compartments from the graph by clicking on the respective label in the legend.
 ---
 
 ## Data table
-![Help table >](/assets/img/help-table.png)
+![Help table >w](/assets/img/help-table.png)
 Below the epidemic curves graph, you can find a table containing some
 numeric results of the simulation.
 
@@ -87,7 +87,7 @@ numeric results of the simulation.
 ---
 
 ## Scatter plot
-![Help scatter >](/assets/img/help-scatter.png)
+![Help scatter >w](/assets/img/help-scatter.png)
 In the top right quadrant of the dashboard you can find a scatter plot that
 depicts how the epidemic size changes when a parameter changes.
 Of course, the scatter plots are only available if the currently selected model 
@@ -101,7 +101,7 @@ measure of uncertainty.
 ---
 
 ## Heatmap
-![Help heatmap >](/assets/img/help-heatmap.png)
+![Help heatmap >w](/assets/img/help-heatmap.png)
 The heatmap in the bottom right quadrant of the dashboard is fairly similar to
 the scatter plot above in that it compares the epidemic size of the 
 models for different parameter settings. However, it allows you to compare the
