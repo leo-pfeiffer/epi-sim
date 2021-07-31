@@ -223,9 +223,12 @@ class MobilityNetwork:
             swaps = 0
             for i in range(0, len(stubs), 2):
 
+                # get the two households
+                h1 = self.g.nodes[stubs[i]]['household']
+                h2 = self.g.nodes[stubs[i + 1]]['household']
+
                 # break up if successive stubs are of same household
-                if self.g.nodes[stubs[i]]['household'] == \
-                        self.g.nodes[stubs[i + 1]]['household']:
+                if h1 == h2:
                     # swap with random other stub
                     j = self._rng.integers(len(stubs))
                     stubs[i + 1], stubs[j] = stubs[j], stubs[i + 1]
@@ -349,10 +352,12 @@ class MNGeneratorFromNetworkData(MNGenerator):
 
         degree_dist = PowerLawCutoffDist(exponent, cutoff).p
 
-        mobility_network = MobilityNetwork(network_data=self._network_data,
-                                           degree_dist=degree_dist,
-                                           N=n,
-                                           multiplier=multiplier)
+        mobility_network = MobilityNetwork(
+            network_data=self._network_data,
+            degree_dist=degree_dist,
+            N=n,
+            multiplier=multiplier
+        )
 
         mobility_network.create()
 
