@@ -381,8 +381,6 @@ class EmpiricalData(ValidationData):
         :return: transformed data frame
         """
 
-        # todo unit tests
-
         # transform dates
         df['date'] = pd.to_datetime(df['date'], format="%m/%d/%Y")
         df = df.sort_values('date').reset_index(drop=True)

@@ -1,9 +1,10 @@
 from .factory import *
-from ..data_processing import SimulationData
+from ..data_processing import SimulationData, EmpiricalData
 from ..simulation_files import FILES, MODELS, NETWORKS
 import pytest
 
 import pandas as pd
+import numpy as np
 
 
 def test_files_property():
@@ -109,3 +110,34 @@ def test_find_sub_threshold_after_peak():
     assert SimulationData.find_sub_threshold_after_peak(l3, t) == 0
     assert SimulationData.find_sub_threshold_after_peak(l4, t) is None
     assert SimulationData.find_sub_threshold_after_peak(l5, t) == 2
+
+
+def test_transform_covid():
+    dates = ['01/25/2021', '01/20/2021', '01/26/2021']
+    tot_c = ['10,000.0', '10,005.0', '10,010.0']
+    new_c = ['10,000.0', '5', '5.0']
+
+    df = pd.DataFrame({'date': dates, 'tot_cases': tot_c, 'new_cases': new_c})
+
+    transformed = EmpiricalData.transform_covid(df)
+
+    # date types ?
+    assert pd.api.types.is_datetime64_dtype(transformed.date.dtype)
+    assert pd.api.types.is_float_dtype(transformed.tot_cases.dtype)
+    assert pd.api.types.is_float_dtype(transformed.new_cases.dtype)
+
+    # sorted ?
+    for i, v in enumerate(sorted(transformed.date.values.tolist())):
+        assert v == int(transformed.date.values[i])
+
+    # dates = ['01/25/2021', '01/20/2021', '01/26/2021']
+    # tot_c = [1, 3, 6]
+    # new_c = [1, 2, 3]
+    # pop = ['10,000.0', '10,000.0', '10,000.0']
+    #
+    # df = pd.DataFrame({
+    #     'date': dates,
+    #     'total_cases': tot_c,
+    #     'new_cases': new_c,
+    #     'population': pop
+    # })
