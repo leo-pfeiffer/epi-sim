@@ -13,7 +13,9 @@ not_found_content = html.Div(
     style={
         'text-align': 'center',
         # source: https://pixabay.com/photos/820014/
-        'background-image': 'url("assets/img/dog.jpeg")',
+        'background-image': 'url("assets/img/dog.jpeg"), '
+                            'url("https://cdn.pixabay.com/'
+                            'photo/2015/06/24/13/32/dog-820014_960_720.jpg")',
         'background-size': '100%',
         'background-repeat': 'no-repeat',
     })
