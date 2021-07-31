@@ -130,6 +130,25 @@ def test_transform_covid():
     for i, v in enumerate(sorted(transformed.date.values.tolist())):
         assert v == int(transformed.date.values[i])
 
+
+def test_make_state_population():
+
+    states = ['CT', 'CA', 'FL']
+    state_names = ['Connecticut', 'California', 'Florida']
+    pop = ['10,000.0', '20,000.0', '30,000.0']
+
+    df = pd.DataFrame({
+        'state_name': state_names,
+        'population': pop,
+        'state': states
+    })
+
+    pop_map = EmpiricalData.make_state_population(df)
+
+    assert pop_map['CT'] == 10000
+    assert pop_map['CA'] == 20000
+    assert pop_map['FL'] == 30000
+
     # dates = ['01/25/2021', '01/20/2021', '01/26/2021']
     # tot_c = [1, 3, 6]
     # new_c = [1, 2, 3]

@@ -350,10 +350,16 @@ class EmpiricalData(ValidationData):
 
         # if it doesn't exist, put it together manually
         except HTTPError:
+
             self._covid_us = self.get_covid_us_data()
-            self._pop_map = self.make_state_population()
+
+            pop_df = self.get_csv_from_repo(self.POP_FILE)
+            self._pop_map = self.make_state_population(pop_df)
+
             self._first_wave_map = self.make_first_wave_map()
+
             self._states = self.make_all_states()
+
             self._vac_state = self.make_state_covid(vac_state, vac_start)
 
     @property
@@ -404,19 +410,15 @@ class EmpiricalData(ValidationData):
         return df
 
     @classmethod
-    def make_state_population(cls) -> Dict:
+    def make_state_population(cls, df) -> Dict:
         """
         Create a dictionary containing the population for each state of the US.
         Data is read from a csv file from the data repo
+        :param df: raw population data frame
         :return: dictionary
         """
 
-        # todo unit tests
-
         logging.info('Calculating state population')
-
-        # read raw data
-        df = cls.get_csv_from_repo(cls.POP_FILE)
 
         # clean data
         df['population'] = df['population'].apply(
