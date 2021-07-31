@@ -14,6 +14,10 @@ const addStyleSheet = function(url) {
     head.appendChild(link)
 }
 
+const switchStylesheet = function (url) {
+
+}
+
 
 window.dash_clientside = Object.assign({}, window.dash_clientside, {
     clientside: {
@@ -21,77 +25,63 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
         /**
          * Switch between stylesheet when rerouting occurs.
          * */
-        switchStylesheet: function(url) {
+        switchStylesheetCallback: function(url) {
 
             const INDEX_SELECTOR = 'link[rel=stylesheet][href^="/assets/index-page.css"]'
             const TEXT_SELECTOR = 'link[rel=stylesheet][href^="/assets/text-page.css"]'
-            const VALID_SELECTOR = 'link[rel=stylesheet][href^="/assets/validation-page.css"]'
+            const VALIDATION_SELECTOR = 'link[rel=stylesheet][href^="/assets/validation-page.css"]'
 
             const INDEX_CSS = '/assets/index-page.css'
             const TEXT_CSS = '/assets/text-page.css'
-            const VALID_CSS = '/assets/validation-page.css'
+            const VALIDATION_CSS = '/assets/validation-page.css'
 
             const INDEX_NODE = document.querySelector(INDEX_SELECTOR)
             const TEXT_NODE = document.querySelector(TEXT_SELECTOR)
-            const VALID_NODE = document.querySelector(VALID_SELECTOR)
+            const VALIDATION_NODE = document.querySelector(VALIDATION_SELECTOR)
 
 
-            // text pages
-            if (url !== '/' && url !== '/validation') {
-
-                // add text page CSS if it doesn't exist
-                if (TEXT_NODE === null) {
-                    addStyleSheet(TEXT_CSS)
-                }
-
-                // remove index page CSS if it exists
-                if (INDEX_NODE !== null) {
-                    INDEX_NODE.remove()
-                }
-
-                // remove validation page CSS if it exists
-                if (VALID_NODE !== null) {
-                    VALID_NODE.remove()
+            const STYLESHEETS = {
+                '/': {
+                    selector: INDEX_SELECTOR,
+                    css: INDEX_CSS
+                },
+                '/models': {
+                    selector: TEXT_SELECTOR,
+                    css: TEXT_CSS
+                },
+                '/networks': {
+                    selector: TEXT_SELECTOR,
+                    css: TEXT_CSS
+                },
+                '/about': {
+                    selector: TEXT_SELECTOR,
+                    css: TEXT_CSS
+                },
+                '/validation': {
+                    selector: VALIDATION_SELECTOR,
+                    css: VALIDATION_CSS
                 }
             }
 
-            // validation page
-            else if (url === '/validation') {
-
-                // add validation page CSS if it doesn't exist
-                if (VALID_NODE === null) {
-                    addStyleSheet(VALID_CSS)
-                }
-
-                // remove index page CSS if it exists
-                if (INDEX_NODE !== null) {
-                    INDEX_NODE.remove()
-                }
-
-                // remove text page CSS if it exists
-                if (TEXT_NODE !== null) {
-                    TEXT_NODE.remove()
-                }
-
-
-
+            // in case the url doesn't exist, use the index sheet
+            if (!STYLESHEETS.hasOwnProperty(url)) {
+                url = '/'
             }
 
-            // index page
-            else {
-                // add index page CSS if it doesn't exist
-                if (INDEX_NODE === null) {
-                    addStyleSheet(INDEX_CSS)
-                }
+            //
+            const node = document.querySelector(STYLESHEETS[url]['selector']);
 
-                // remove text page CSS if it exists
-                if (TEXT_NODE !== null) {
-                    TEXT_NODE.remove()
-                }
+            if (node === null) {
+                addStyleSheet(STYLESHEETS[url]['css'])
+            }
 
-                // remove validation page CSS if it exists
-                if (VALID_NODE !== null) {
-                    VALID_NODE.remove()
+            for (let u of Object.keys(STYLESHEETS)) {
+                const sheet = STYLESHEETS[u]
+                if (u !== url && sheet['css'] !== STYLESHEETS[url]['css']) {
+                    const n = document.querySelector(sheet['selector'])
+                    if (n !== null) {
+                        n.remove()
+                    }
                 }
             }
         }

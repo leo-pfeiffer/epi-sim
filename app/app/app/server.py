@@ -20,7 +20,6 @@ FONT_AWESOME = 'https://pro.fontawesome.com/releases/v5.10.0/css/all.css'
 
 external_stylesheets = [
     dbc.themes.LUX,
-    dbc.themes.LUX,
     FONT_AWESOME,
 ]
 
@@ -252,7 +251,7 @@ def func(n_clicks):
 app.clientside_callback(
     ClientsideFunction(
         namespace='clientside',
-        function_name='switchStylesheet'
+        function_name='switchStylesheetCallback'
     ),
     Output('blank_output', 'style'),
     Input('url', 'pathname')
