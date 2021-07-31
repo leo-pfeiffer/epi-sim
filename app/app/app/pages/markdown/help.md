@@ -17,7 +17,7 @@ dropdown list. To find out more about the different models, have a look at the
 You can also select a different human contact network from the `Network` dropdown.
 These models don't give you access to more parameters but they make different
 assumptions about how individuals in the epidemic simulation interact with each other.
-Again, you can find out more details on the [models page](/models).
+Again, you can find out more details on the [network page](/networks).
 
 Depending on which model you selected, you can further set up to four parameters.
 

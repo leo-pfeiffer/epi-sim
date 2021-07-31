@@ -4,13 +4,13 @@ from ..static_elements import brand, footer, read_markdown
 import os
 
 path = os.path.dirname(os.path.abspath(__file__))
-file = os.path.join(path, 'markdown', 'model.md')
+file = os.path.join(path, 'markdown', 'models.md')
 markdown = read_markdown(file)
 
 text = html.Div(
     html.Div(dcc.Markdown(markdown), id='text-content'),
     id='text-container'
 )
-model_page = [
+models_page = [
     brand, footer, text
 ]

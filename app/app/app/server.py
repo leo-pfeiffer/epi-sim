@@ -207,10 +207,10 @@ def display_page(pathname):
         return index_page
     elif pathname == '/validation':
         return validation_page
-    elif pathname == '/model':
-        return model_page
-    elif pathname == '/data':
-        return data_page
+    elif pathname == '/models':
+        return models_page
+    elif pathname == '/networks':
+        return networks_page
     elif pathname == '/about':
         return about_page
     else:

@@ -4,7 +4,7 @@ from ..static_elements import brand, footer, read_markdown
 import os
 
 path = os.path.dirname(os.path.abspath(__file__))
-file = os.path.join(path, 'markdown', 'data.md')
+file = os.path.join(path, 'markdown', 'networks.md')
 markdown = read_markdown(file)
 
 text = html.Div(
@@ -12,6 +12,6 @@ text = html.Div(
     id='text-container'
 )
 
-data_page = [
+networks_page = [
     brand, footer, text
 ]

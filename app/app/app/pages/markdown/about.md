@@ -1,4 +1,4 @@
-# A Compartmental Network Model for COVID-19
+# A Web Application for Compartmental Network Models Illustrated Using COVID-19
 [![Crest of the Universiy of St Andrews >](/assets/img/stacrest.png)](https://www.st-andrews.ac.uk/)
 EpiSim is the web application I built as part of my MSc dissertation at the 
 [University of St Andrews, UK](https://www.st-andrews.ac.uk/). It was built

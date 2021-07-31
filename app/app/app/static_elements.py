@@ -24,8 +24,8 @@ brand = html.Div(
                     html.Span("EpiSim")
                 ], href="/", active="exact"),
                 dbc.NavLink("Validation", href="/validation", active="exact"),
-                dbc.NavLink("Models", href="/model", active="exact"),
-                dbc.NavLink("Data", href="/data", active="exact"),
+                dbc.NavLink("Models", href="/models", active="exact"),
+                dbc.NavLink("Networks", href="/networks", active="exact"),
                 dbc.NavLink("About", href="/about", active="exact"),
                 dbc.NavLink(GITHUB),
                 dbc.Button("Help", id="help-button", n_clicks=0),
