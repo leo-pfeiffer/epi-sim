@@ -501,8 +501,6 @@ class EmpiricalData(ValidationData):
         :return: data frame
         """
 
-        # todo unit tests
-
         df['new_cases'] = [
             c / population for c in df['new_cases'].values.tolist()
         ]

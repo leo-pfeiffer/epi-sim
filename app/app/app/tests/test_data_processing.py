@@ -188,6 +188,20 @@ def test_get_data_after_date():
     assert np.datetime64('2021-01-20') not in after.my_date.values
 
 
+def test_make_counts_relative():
+
+    tot_c = [100, 200, 300]
+    new_c = [10, 20, 30]
+    p = 100
+
+    df = pd.DataFrame({'tot_cases': tot_c, 'new_cases': new_c})
+
+    relative = EmpiricalData.make_counts_relative(df, p)
+
+    for i in range(len(relative)):
+        assert relative.tot_cases.values[i] == pytest.approx(tot_c[i] / p)
+        assert relative.new_cases.values[i] == pytest.approx(new_c[i] / p)
+
 
     # dates = ['01/25/2021', '01/20/2021', '01/26/2021']
     # tot_c = [1, 3, 6]
