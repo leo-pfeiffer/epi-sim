@@ -149,6 +149,26 @@ def test_make_state_population():
     assert pop_map['CA'] == 20000
     assert pop_map['FL'] == 30000
 
+
+def test_extract_region():
+
+    states = ['CT', 'CA', 'FL']
+    state_names = ['Connecticut', 'California', 'Florida']
+    pop = ['10,000.0', '20,000.0', '30,000.0']
+
+    df = pd.DataFrame({
+        'state_name': state_names,
+        'population': pop,
+        'state': states
+    })
+
+    extracted = EmpiricalData.extract_region(
+        df, {'column': 'state', 'value': 'CT'}
+    )
+
+    assert extracted.state.unique()[0] == 'CT'
+    assert len(extracted) == 1
+
     # dates = ['01/25/2021', '01/20/2021', '01/26/2021']
     # tot_c = [1, 3, 6]
     # new_c = [1, 2, 3]

@@ -465,8 +465,6 @@ class EmpiricalData(ValidationData):
         :return: Data frame of region
         """
 
-        # todo unit tests
-
         region_col = region_filter['column']
         region_val = region_filter['value']
         df_out = df[df[region_col] == region_val].copy()
