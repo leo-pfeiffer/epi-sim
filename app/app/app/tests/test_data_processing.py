@@ -203,14 +203,31 @@ def test_make_counts_relative():
         assert relative.new_cases.values[i] == pytest.approx(new_c[i] / p)
 
 
-    # dates = ['01/25/2021', '01/20/2021', '01/26/2021']
-    # tot_c = [1, 3, 6]
-    # new_c = [1, 2, 3]
-    # pop = ['10,000.0', '10,000.0', '10,000.0']
-    #
-    # df = pd.DataFrame({
-    #     'date': dates,
-    #     'total_cases': tot_c,
-    #     'new_cases': new_c,
-    #     'population': pop
-    # })
+def test_make_first_wave_map():
+    dates = ['01/01/2021', '02/01/2021', '03/01/2021'] * 3
+    tot_c = ['10,000.0', '20,000.0', '30,000.0'] * 3
+    new_c = ['5'] * 9
+    states = ['CT'] * 3 + ['CA'] * 3 + ['FL'] * 3
+
+    covid_df = EmpiricalData.transform_covid(pd.DataFrame({
+        'date': dates,
+        'tot_cases': tot_c,
+        'new_cases': new_c,
+        'state': states
+    }))
+
+    pop_map = EmpiricalData.make_state_population(
+        pd.DataFrame({
+            'state_name': ['Connecticut', 'California', 'Florida'],
+            'population': ['20,000.0', '40,000.0', '60,000.0'],
+            'state': ['CT', 'CA', 'FL']
+        })
+    )
+
+    first_wave = EmpiricalData.make_first_wave_map(
+        covid_df, pop_map, 0.5
+    )
+
+    assert first_wave['CT'] == '2021-01-01'
+    assert first_wave['CA'] == '2021-02-01'
+    assert first_wave['FL'] == '2021-03-01'

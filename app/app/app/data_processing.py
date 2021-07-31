@@ -356,7 +356,9 @@ class EmpiricalData(ValidationData):
             pop_df = self.get_csv_from_repo(self.POP_FILE)
             self._pop_map = self.make_state_population(pop_df)
 
-            self._first_wave_map = self.make_first_wave_map()
+            self._first_wave_map = self.make_first_wave_map(
+                self._covid_us, self._pop_map
+            )
 
             self._states = self.make_all_states()
 
@@ -431,9 +433,12 @@ class EmpiricalData(ValidationData):
 
         return {x['state']: x['population'] for x in records}
 
-    def make_first_wave_map(self, threshold=0.001) -> Dict:
+    @staticmethod
+    def make_first_wave_map(covid_df, pop_map, threshold=0.001) -> Dict:
         """
         Get first date when tot_cases / population > `threshold` for each state.
+        :param covid_df: data frame with case data; result of get_covid_us_data
+        :param pop_map: population map; result of make_state_population
         :param threshold: Threshold for start of epidemic.
         :return dictionary:
         """
@@ -442,14 +447,14 @@ class EmpiricalData(ValidationData):
 
         first_wave_map = {}
 
-        for state in self._covid_us.state.unique():
-            subset = self._covid_us[self._covid_us.state == state].\
+        for state in covid_df.state.unique():
+            subset = covid_df[covid_df.state == state].\
                 sort_values('date')
 
-            if state not in self._pop_map:
+            if state not in pop_map:
                 continue
 
-            threshold_cases = self._pop_map[state] * threshold
+            threshold_cases = pop_map[state] * threshold
             date = subset[subset.tot_cases >= threshold_cases].iloc[0].date
             first_wave_map[state] = date.strftime("%Y-%m-%d")
 
