@@ -242,9 +242,11 @@ class MobilityNetwork:
 
         # connect pairs of stubs
         for i in range(0, len(stubs), 2):
+
             # label inter-household edges as household 0 of size 0
-            self.g.add_edge(stubs[i], stubs[i + 1], household=0,
-                            household_size=0)
+            self.g.add_edge(
+                stubs[i], stubs[i + 1], household=0, household_size=0
+            )
 
 
 class MNGenerator(NetworkGenerator):

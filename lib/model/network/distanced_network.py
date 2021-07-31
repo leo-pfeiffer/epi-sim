@@ -15,8 +15,6 @@ HOUSEHOLDS = List[nx.Graph]
 STUBS = List[int]
 
 
-# todo unit tests
-
 class DistancedNetwork:
     """
     Implementation of the distanced network presented in

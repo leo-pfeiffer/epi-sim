@@ -1,6 +1,6 @@
 from networkx import Graph
 import pytest
-from lib.model.distributions import PowerLawCutoffDist
+from lib.model.distributions import PowerLawCutoffDist, discrete_trunc_normal
 from lib.model.network.mobility_network import MobilityNetwork, \
     MNGeneratorFromFile, MNGeneratorFromNetworkData
 from lib.tests.factory import create_network_data
@@ -30,8 +30,8 @@ def test_create_network_instance():
 def test_network_create_pre():
     network = MobilityNetwork(PRE, DEGREE_DIST, N, False)
     network.create()
-    g = network.g
-    assert isinstance(g, Graph)
+    assert isinstance(network.g, Graph)
+    assert N <= network.g.order() <= N * 1.1
 
 
 def test_network_create_post():
@@ -53,7 +53,8 @@ def test_create_households():
     # test
     households = network._create_households()
 
-    assert abs(len(network.g.nodes) - N) < N / 10
+    # number of nodes
+    assert len(network.g.nodes) < N * 1.1
 
     num_exceeds_std = 0
     for household in households:
@@ -70,8 +71,6 @@ def test_create_households():
     #  with some levy it is allowed in 45% of cases
     assert num_exceeds_std < 0.45 * len(households)
 
-    # todo test node proportion equals population proportion
-
 
 def test_create_stubs():
     # setup
@@ -83,7 +82,6 @@ def test_create_stubs():
 
     # number of stubs
     assert len(stubs) % 2 == 0
-    # todo add some more useful tests
 
 
 def test_create_stub_pairs():
@@ -95,7 +93,6 @@ def test_create_stub_pairs():
     stubs = network._create_stub_pairs(stubs, cbg_degree_map)
 
     assert len(stubs) % 2 == 0
-    # todo add some more useful tests
 
 
 def test_break_up_pairs():
