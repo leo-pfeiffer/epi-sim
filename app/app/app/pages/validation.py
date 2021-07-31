@@ -7,6 +7,7 @@ import os
 
 from ..static_elements import brand, footer, read_markdown
 from ..data_processing import ModelledData, EmpiricalData
+from ..configuration import ASSETS_DIR
 
 
 # instantiate the validation data
@@ -64,8 +65,7 @@ def make_total_case_plot(name):
 
 
 def make_description_card(filename):
-    path = os.path.dirname(os.path.abspath(__file__))
-    file = os.path.join(path, 'markdown', filename)
+    file = os.path.join(ASSETS_DIR, 'markdown', filename)
     return read_markdown(file)
 
 

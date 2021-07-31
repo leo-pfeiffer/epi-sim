@@ -6,7 +6,7 @@ with the goal of providing an easy to use interface to epidemic simulations
 that otherwise often require practitioners to be familiar with programming, which
 might present a threshold.
 
-EpiSim is built on top of the Python library [epydemic](!https://github.com/simoninireland/epydemic), 
+EpiSim is built on top of the Python library [epydemic](https://github.com/simoninireland/epydemic), 
 which is a great tool to model all kinds of epidemic processes using network simulations.
 
 To learn about how the models are designed and implemented, go [here](/models).

@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
+ASSETS_DIR = os.path.join(APP_DIR, 'assets')
 
 PARENT_DIR = os.path.abspath(os.path.join(
     os.path.dirname(__file__), os.pardir, os.pardir)

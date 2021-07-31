@@ -3,6 +3,8 @@ import dash_html_components as html
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 
+from .configuration import ASSETS_DIR
+
 
 def read_markdown(file):
     with open(file, 'r') as fi:
@@ -90,9 +92,8 @@ toast = html.Div(
 
 
 # Modal ====
-path = os.path.dirname(os.path.abspath(__file__))
 
-with open(os.path.join(path, 'pages', 'markdown', 'help.md'), 'r') as f:
+with open(os.path.join(ASSETS_DIR, 'markdown', 'help.md'), 'r') as f:
     markdown = f.read()
 
 modal = html.Div(
