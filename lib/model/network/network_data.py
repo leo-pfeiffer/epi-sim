@@ -54,15 +54,15 @@ class NetworkData:
                 comb = (i, j)
 
                 if comb in self.comb_counts:
-                    trips_between = 0
-                else:
                     trips_between = self.comb_counts[comb]
+                else:
+                    trips_between = 0
 
                 # ratio of all trips from i
-                if i not in self.trip_counts:
-                    p = 0
-                else:
+                if i in self.trip_counts:
                     p = trips_between / self.trip_counts[i]
+                else:
+                    p = 0
 
                 self.adjacency_list[i].append(p)
 
