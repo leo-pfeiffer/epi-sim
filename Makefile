@@ -5,20 +5,20 @@ CLEAR_DATA = ./app/app/app/data/clear_data.py
 
 ## SETUP ========================
 
-# install pip requirements
 .PHONY: requirements
+# Install pip requirements
 requirements:
 	pip install --upgrade pip
 	pip install -U setuptools wheel
 	pip install -U -r lib/requirements.txt -r app/app/requirements.txt
 
-# generate .env files
 .PHONY: env
+# Generate .env files
 env:
 	sh ./setup/generate_dotenv.sh
 
-# full setup
 .PHONY: setup
+# Full setup of lib
 setup:
 	make env
 	make requirements
@@ -26,63 +26,64 @@ setup:
 
 ## TESTING ========================
 
-# run unit tests
 .PHONY: test
+# Run unit tests
 test:
 	pytest
 
 
 ## LIB SCRIPTS ====================
 
-# Create data for web app from simulation results
 .PHONY: create_app_data
+# Create data for web app from simulation results
 create_app_data:
 	python -m lib.experiments.utils.create_app_data
 
-# batch upload experiment results
 .PHONY: batch_upload_experiments
+# Upload experiment results
 batch_upload_experiments:
 	python -m lib.experiments.utils.batch_upload_experiments
 
+
 ## WEB APP ========================
 
-# run without docker
 .PHONY: run
+# Run web app with Flask dev server (dev only)
 run:
 	make env
 	python app/app/run.py
 
-# build with docker-compose -f $(DOCK_COMP)
 .PHONY: build
+# Build web app with docker-compose
 build:
 	make env
 	docker-compose -f $(DOCK_COMP) up --build -d
 	docker-compose -f $(DOCK_COMP) ps
 
-# start existing container
 .PHONY: up
+# Start existing container 
 up:
 	docker-compose -f $(DOCK_COMP) up -d
 	docker-compose -f $(DOCK_COMP) ps
 
-# stop running container
 .PHONY: down
+# Stop running container 
 down:
 	docker-compose -f $(DOCK_COMP) down
 	docker-compose -f $(DOCK_COMP) ps
 
-# show docker compose logs
 .PHONY: logs
+# Attach docker compose logs 
 logs:
 	docker-compose -f $(DOCK_COMP) logs --follow
 
-# start bash session inside container
 .PHONY: bash
+# Start bash inside container 
 bash:
 	docker-compose -f $(DOCK_COMP) run --rm app bash
 
-# shut down containers, remove volumes, remove images - DESTRUCTIVE !
 .PHONY: destroy
+# Shut down containers, remove volumes, remove images
 destroy:
 	docker-compose -f $(DOCK_COMP) down --volumes
 	if [ ! -z "$(shell docker images -a -q)" ]; then \
@@ -90,64 +91,27 @@ destroy:
 	fi
 	docker-compose -f $(DOCK_COMP) ps
 
-# restart container
 .PHONY: restart
+# Restart container 
 restart:
 	docker-compose -f $(DOCK_COMP) restart
 	docker-compose -f $(DOCK_COMP) ps
 
-# clear data repo
 .PHONY: clear-data
+# Clear downloaded app data
 clear-data:
 	python $(CLEAR_DATA)
 
 
 # ----- Usage -----
 
-define HELP
-==============================================
-
-    make help           Print available commands
-
-==============================================
-SETUP ========================================
-
-   make requirements    install pip requirements
-   make env             generate .env files
-   make setup           make a full setup
-
-==============================================
-TESTING ======================================
-
-   make test            run unit tests
-
-==============================================
-LIB SCRIPTS ==================================
-
-   make batch_upload_experiments        Upload experiment results
-   make create_app_data                 Create web app data from simulation results
-
-==============================================
-WEB APP ======================================
-
-   FLASK (dev only)
-      make run             (dev only) run app with Flask
-
-   DOCKER (defaults to prod, for dev specify ENV=dev with the command)
-      make build           build app with docker-compose
-      make up              start existing container
-      make down            stop running container
-      make logs            attach docker-compose logs
-      make bash            enter running container and start bash session
-      make destroy         shut down and destroy container (remove volumes & images)
-      make restart         restart container
-
-   OTHER UTILS
-      make clear-data      Clear the data directory
-
-==============================================
-endef
-export HELP
-
+.PHONY: help
+# Found here: https://stackoverflow.com/a/35730928/12168211
+# Print available commands
 help:
-	@echo "$$HELP"
+	@echo "=============================================================="
+	@echo "Available Make commands ======================================"
+	@echo "=============================================================="
+	@echo "For Docker commands: default is ENV=prod; for dev set ENV=dev)"
+	@echo "=============================================================="
+	@awk '/^#/{c=substr($$0,3);next}c&&/^[[:alpha:]][[:alnum:]_-]+:/{print substr($$1,1,index($$1,":")),c}1{c=0}' $(MAKEFILE_LIST) | column -s: -t
