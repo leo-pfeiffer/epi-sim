@@ -13,7 +13,7 @@ fi
 # check if ./lib/.env exists
 if [ ! -f ./lib/.env ] ; then
   echo "  >> [add] ./lib/.env"
-  cat ./setup/github.env > ./lib/.env
+  cat ./setup/remote.env > ./lib/.env
 else
   echo "  >> [exists] ./lib/.env"
 fi
@@ -23,7 +23,7 @@ if [ ! -f ./app/.env ] ; then
   echo "  >> [add] ./app/.env"
   cat ./setup/docker.env > ./app/.env
   echo >> ./app/.env
-  cat ./setup/github.env >> ./app/.env
+  cat ./setup/remote.env >> ./app/.env
 else
   echo "  >> [exists] ./app/.env"
 fi

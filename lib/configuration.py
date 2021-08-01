@@ -10,8 +10,7 @@ load_dotenv(dotenv_path=os.path.join(LIB_DIR, '.env'))
 
 # Paths...
 EXPERIMENTS_DIR = os.path.join(LIB_DIR, 'experiments')
-DATA = os.path.join(LIB_DIR, 'data_processing', 'data')
-REMOTE_RAW = 'http://209.182.235.76/data/msc/'
+REMOTE_RAW = os.getenv('REMOTE_RAW')
 RAW = None
 
 # Github data repo
