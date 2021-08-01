@@ -8,7 +8,9 @@ WORKDIR /app
 ADD . /app
 
 # Install requirements
-RUN pip install -r requirements.txt
+RUN pip install --upgrade pip
+RUN pip install -U setuptools wheel
+RUN pip install -U -r requirements.txt
 
 # run the command to start uWSGI
 CMD ["uwsgi", "app.ini"]
