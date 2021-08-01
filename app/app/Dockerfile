@@ -7,10 +7,10 @@ WORKDIR /app
 # Copy current directory contents into container at /app
 ADD . /app
 
-# Install requirements
+# Install pip requirements
 RUN pip install --upgrade pip
 RUN pip install -U setuptools wheel
 RUN pip install -U -r requirements.txt
 
-# run the command to start uWSGI
+# start uWSGI
 CMD ["uwsgi", "app.ini"]

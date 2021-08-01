@@ -90,7 +90,8 @@ run:
 # Build web app with docker-compose
 build:
 	make env
-	docker-compose -f $(DOCK_COMP) up --build -d
+	docker-compose -f $(DOCK_COMP) up --force-recreate --build -d
+	docker image prune -f
 	docker-compose -f $(DOCK_COMP) ps
 
 .PHONY: up
