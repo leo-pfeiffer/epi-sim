@@ -1,0 +1,27 @@
+name: app build
+
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+
+jobs:
+  docker:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Start containers
+      # run: docker-compose -f "docker-compose.yml" up -d --build
+      run: make build
+
+    - name: Stop containers
+      if: always()
+      # run: docker-compose -f "docker-compose.yml" down
+      run: make down
