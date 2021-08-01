@@ -164,4 +164,4 @@ todo
 However, the data source can be changed to any URL via the .env variable ....
 
 
-[img-project-structure]: https://github.com/leo-pfeiffer/epi-sim/blob/main/.github/images/project-structure.jpeg
+[img-project-structure]: https://github.com/leo-pfeiffer/epi-sim/blob/main/.github/images/project-structure.png
