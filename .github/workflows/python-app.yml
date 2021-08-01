@@ -2,7 +2,7 @@
 #  single version of Python. It will also create a coverage report and upload
 #  it to CodeCov.
 
-name: epi-sim
+name: tests
 
 on:
   push:
