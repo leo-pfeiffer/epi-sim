@@ -5,12 +5,23 @@ CLEAR_DATA = ./app/app/app/data/clear_data.py
 
 ## SETUP ========================
 
+.PHONY: requirements_lib
+# Install pip requirements for lib only
+requirements_lib:
+	pip install -U -r lib/requirements.txt
+
+.PHONY: requirements_app
+# Install pip requirements for app only
+requirements_app:
+	pip install -U -r app/app/requirements.txt
+
 .PHONY: requirements
-# Install pip requirements
+# Install all pip requirements
 requirements:
 	pip install --upgrade pip
 	pip install -U setuptools wheel
-	pip install -U -r lib/requirements.txt -r app/app/requirements.txt
+	make requirements_lib
+	make requirements_app
 
 .PHONY: env
 # Generate .env files
@@ -18,19 +29,40 @@ env:
 	sh ./setup/generate_dotenv.sh
 
 .PHONY: setup
-# Full setup of lib
+# Full setup of the project
 setup:
 	make env
 	make requirements
+
+.PHONY: setup_lib
+# Setup of lib only
+setup_lib:
+	make env
+	make requirements_lib
+
+.PHONY: setup_app
+# Setup of the project
+setup_app:
+	make env
+	make requirements_app
 
 
 ## TESTING ========================
 
 .PHONY: test
-# Run unit tests
+# Run all unit tests
 test:
 	pytest
 
+.PHONY: test
+# Run unit tests for app
+test_app:
+	pytest app/app/app/tests
+
+.PHONY: test_lib
+# Run unit tests for lib
+test_lib:
+	pytest lib/tests
 
 ## LIB SCRIPTS ====================
 
