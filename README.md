@@ -1,4 +1,5 @@
-![Build status](https://github.com/leo-pfeiffer/msc-thesis/actions/workflows/python-app.yml/badge.svg)
+![Test status](https://github.com/leo-pfeiffer/msc-thesis/actions/workflows/tests.yml/badge.svg)
+![Build status](https://github.com/leo-pfeiffer/msc-thesis/actions/workflows/app-build.yml/badge.svg)
 ![Online status](https://img.shields.io/website?label=app&up_message=online&url=http%3A%2F%2Fepi-sim.live)
 ![codecov](https://codecov.io/gh/leo-pfeiffer/epi-sim/branch/main/graph/badge.svg?token=AK3O2NL82O)
 ![Python version](https://img.shields.io/badge/Python-3.6%2B-blue)
