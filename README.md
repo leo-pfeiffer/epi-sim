@@ -1,9 +1,10 @@
 ![Build status](https://github.com/leo-pfeiffer/msc-thesis/actions/workflows/python-app.yml/badge.svg)
-![Online status](https://img.shields.io/website?down_message=offline&up_message=online&url=http%3A%2F%2Fepi-sim.live)
+![Online status](https://img.shields.io/website?label=app&up_message=online&url=http%3A%2F%2Fepi-sim.live)
 ![codecov](https://codecov.io/gh/leo-pfeiffer/epi-sim/branch/main/graph/badge.svg?token=AK3O2NL82O)
+![Python version](https://img.shields.io/badge/Python-3.6%2B-blue)
 
 # EpiSim
-Repository for my MSc Thesis `A compartmented network model for COVID-19'
+Repository for my MSc Thesis *A Web Application for Compartmental Network Models Illustrated Using COVID-19*
 
 ---
 + [:rocket: Quickstart](#quickstart)
@@ -87,13 +88,13 @@ experiments run with these models.
 - `lib/model`: Contains epidemic models and networks
 
 #### `setup` (green in the diagram)
-Contains setup scripts and .env file templates used in the setup.
+Contains setup scripts and `.env` file templates used in the setup.
 
-![Project Structure][img-project-structure]
+<img src="https://github.com/leo-pfeiffer/epi-sim/blob/main/.github/images/project-structure.png" width="600" alt="Project structure diagram">
 
 
 ## Requirements
-We developed the project using Python 3.9, and recommend using this version. 
+We developed the project using **Python 3.9**, and recommend using this version. 
 However, the project is backward compatible for Python versions 3.6+.
 
 Since the `app` and the `lib` can be used independently of each other, 
@@ -136,43 +137,33 @@ make test_app
 ## Lib
 
 ### Setup
-For the setup of the modelling environment, create a virtual environment in the 
-project directory, activate it and call `make setup`.
+For setting up the modelling environment, do:
 
 ```shell
+# assuming you're in the project root and don't have a virtualenv there yet.
 python -m venv venv
-source venv/bin/acitvate
+source venv/bin/activate
 
-make setup
+make setup_lib
 ```
 
-This will install all requirements in your virtual environment and generates
-the required .env files.
+This will install all requirements in your virtual environment and generate the required .env files.
 
 ### Data Repo API
 The Data Repo API is a simple client for the GitHub API to upload and retrieve
 simulation results. The default repo URLs are automatically included in the
 .env file when you run `make env`. 
 
-Retrieval is open to anyone (since it's a public repo), however, 
-to upload data to a repo, you need to add your own repository URLs.
-
-Both for uploading and downloading files from any repo, you need to add a
-GitHub Personal Access token as the DATA_REPO_TOKEN to your .env file.
-Learn [here](https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token)
-how to create such a token.
+Reading from the (public) repository is possible without authentication.
+However, any write operations require you to set your own repository in the 'lib/.env' file
+and add your own [GitHub Personal Access Token](https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token).
 
 ### Analysis
 
 todo....
 
 ## Web Application `EpiSim`
-The web application can be run independently of the model. You can either 
-build it using docker compose (recommended for production), or the built-in
-Flask server (recommended for development).
-
-The application is deployed under the following URL:
-todo
+The web application can be run independently of `lib`. You can either build it using docker compose (recommended for production), or the built-in Werkzeug server that comes with Flask (recommended for development).
 
 ### Build web app with docker compose (prod / dev)
 The web application can be built using docker compose using Nginx as the HTTP server 
@@ -181,25 +172,27 @@ and uWSGI as the application server.
 To build the application, run
 
 ```shell
+# from project root
 make build
 ```
 
-This also generates the required env files (if they don't exist yet).
-By default, this builds the production environment (`ENV=prod`). If you want
+This also generates the required `.env` files (if they don't exist yet). By default, this builds the production environment (`ENV=prod`). If you want
 to build the dev environment instead, call
 
 ```shell
+# from project root
 make build ENV=dev
 ```
 
-The application starts at whichever port is specified in `./app/.env` as an environment
+The application starts at whichever port is specified in `app/.env` as an environment
 variable for `PORT` (default 80) and `DEV_PORT` (default 4401).
 
 ### Run web app with Flask only (dev)
-Alternatively, you can also run the web app using the builtin server, which is 
+Alternatively, you can also run the web app using the built-in Werkzeug server of Flask, which is 
 not suitable for production but much simpler for development and test purposes.
 
 ```shell
+# from project root
 make run
 ```
 
@@ -213,6 +206,3 @@ the data is stored in a [public data git repository hosted on GitHub](https://gi
 
 todo
 However, the data source can be changed to any URL via the .env variable ....
-
-
-[img-project-structure]: https://github.com/leo-pfeiffer/epi-sim/blob/main/.github/images/project-structure.png
