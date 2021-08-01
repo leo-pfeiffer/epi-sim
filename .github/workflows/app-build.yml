@@ -23,8 +23,8 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Start containers
-      run: make build ENV={{matrix.environment}}
+      run: make build ENV=${{ matrix.environment }}
 
     - name: Stop containers
       if: always()
-      run: make down ENV={{matrix.environment}}
+      run: make down ENV=${{ matrix.environment }}
