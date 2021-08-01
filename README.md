@@ -151,12 +151,12 @@ source venv/bin/activate
 make setup_lib
 ```
 
-This will install all requirements in your virtual environment and generate the required .env files.
+This will install all requirements in your virtual environment and generate the required `.env` files.
 
 ### Data Repo API
 The Data Repo API is a simple client for the GitHub API to upload and retrieve
 simulation results. The default repo URLs are automatically included in the
-.env file when you run `make env`. 
+`.env` file when you run `make env`. 
 
 Reading from the (public) repository is possible without authentication.
 However, any write operations require you to set your own repository in the 'lib/.env' file
@@ -200,7 +200,7 @@ not suitable for production but much simpler for development and test purposes.
 make run
 ```
 
-This also generates the required env files (if they don't exist yet).
+This also generates the required `.env` files (if they don't exist yet).
 Since this is meant for development only, the `DEV_PORT` specified in `./app/.env`
 as an environment variable is used.
 
@@ -209,4 +209,4 @@ For easy access and updating of the simulation data underlying the application,
 the data is stored in a [public data git repository hosted on GitHub](https://github.com/leo-pfeiffer/epi-sim-data).
 
 todo
-However, the data source can be changed to any URL via the .env variable ....
+However, the data source can be changed to any URL via the `.env` variable ....
