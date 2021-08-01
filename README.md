@@ -6,9 +6,11 @@
 Repository for my MSc Thesis `A compartmented network model for COVID-19'
 
 ---
++ [:rocket: Quickstart](#quickstart)
 + [:gear: Make](#make)
 + [:card_index_dividers: Project Structure](#project-structure)
 + [:safety_pin: Requirements](#requirements)
++ [:stethoscope: Testing](#testing)
 + [:chart_with_upwards_trend: Lib](#lib)
   - [Setup](#setup)
   - [Analysis](#analysis)
@@ -18,58 +20,87 @@ Repository for my MSc Thesis `A compartmented network model for COVID-19'
   - [Data sources](#data-source-of-the-application)
 ---
 
+## Quickstart
+
+Execute the following steps for the basic setup of the project.
+
+```shell
+git clone https://github.com/leo-pfeiffer/epi-sim.git
+cd epi-sim
+python -m venv venv
+source venv/bin/activate
+make setup
+```
+
+For the setup of only the `lib`, see [here](#lib).  
+For the setup/build of only the `app`, see [here](#web-application-episim)
+
 ## Make
 We provide a Makefile with the following commands:
 
 ```text
-==============================================
-    
-    make help           Print available commands
-
-==============================================
-SETUP ========================================
-
-   make requirements    install pip requirements
-   make env             generate .env files
-   make setup           make a full setup
-
-==============================================
-TESTING ======================================
-
-   make test            run unit tests
-
-==============================================
-WEB APP ======================================
-
-   FLASK (dev only)
-      make run             (dev only) run app with Flask
-
-   DOCKER (defaults to prod, for dev specify ENV=dev with the command)
-      make build           build app with docker-compose
-      make up              start existing container
-      make down            stop running container
-      make logs            attach docker-compose logs
-      make bash            enter running container and start bash session
-      make destroy         shut down and destroy container (remove volumes & images)
-      make restart         restart container
-
-==============================================
+==============================================================
+Available Make commands ======================================
+==============================================================
+For Docker commands: default is ENV=prod; for dev set ENV=dev)
+==============================================================
+requirements_lib           Install pip requirements for lib only
+requirements_app           Install pip requirements for app only
+requirements               Install all pip requirements
+env                        Generate .env files
+setup                      Full setup of the project
+setup_lib                  Setup of lib only
+setup_app                  Setup of the project
+test                       Run all unit tests
+test_app                   Run unit tests for app
+test_lib                   Run unit tests for lib
+create_app_data            Create data for web app from simulation results
+batch_upload_experiments   Upload experiment results
+run                        Run web app with Flask dev server (dev only)
+build                      Build web app with docker-compose
+up                         Start existing container 
+down                       Stop running container 
+logs                       Attach docker compose logs 
+bash                       Start bash inside container 
+destroy                    Shut down containers, remove volumes, remove images
+restart                    Restart container 
+clear-data                 Clear downloaded app data
+help                       Print available commands
 ```
 
 To see this output, run ```make help```.
 
 ## Project Structure
+
+The project contains three top-level folders:
+
+#### `app` (red in the diagram)
+Contains the sources for the EpiSim web application.
+- `app/app`: Dash web application
+- `app/nginx`: NGINX server for production
+
+#### `lib` (blue in the diagram)
+Contains the source code for the epidemic models, networks, as well as the 
+experiments run with these models.
+- `lib/experiments`: Contains Jupyter notebooks and utils for running the simulations, 
+  running analyses, and creating output for the thesis
+- `lib/model`: Contains epidemic models and networks
+
+#### `setup` (green in the diagram)
+Contains setup scripts and .env file templates used in the setup.
+
 ![Project Structure][img-project-structure]
+
 
 ## Requirements
 We developed the project using Python 3.9, and recommend using this version. 
 However, the project is backward compatible for Python versions 3.6+.
 
-Since the web application and the model can 
-be run on its own, the requirements are listed in two separate requirements.txt files:
+Since the `app` and the `lib` can be used independently of each other, 
+the requirements are listed in two separate requirements.txt files:
 
-- `requirements.txt`: Requirements required for modelling
-- `app/requirements.txt`: Requirements required for web application
+- `lib/requirements.txt`: Requirements required for modelling
+- `app/app/requirements.txt`: Requirements required for the web application
 
 If you want to install all requirements (both app and model) in one go, run
 
@@ -81,6 +112,26 @@ from within your virtual environment.
 
 To build the project using docker compose, you also need those installed on your machine
 ([Docker](https://docs.docker.com/engine/install/), [Docker compose](https://docs.docker.com/compose/install/)).
+
+## Testing
+Critical features of the project were tested using unit tests.  
+You can either run all tests :
+
+```shell
+make test
+```
+
+... or only those for `lib`:
+
+```shell
+make test_lib
+```
+
+... or only those for `app`:
+
+```shell
+make test_app
+```
 
 ## Lib
 
