@@ -106,6 +106,7 @@ the requirements are listed in two separate requirements.txt files:
 If you want to install all requirements (both app and model) in one go, run
 
 ```shell
+# from project root
 make requirements
 ```
 
@@ -119,18 +120,21 @@ Critical features of the project were tested using unit tests.
 You can either run all tests :
 
 ```shell
+# from project root
 make test
 ```
 
 ... or only those for `lib`:
 
 ```shell
+# from project root
 make test_lib
 ```
 
 ... or only those for `app`:
 
 ```shell
+# from project root
 make test_app
 ```
 
