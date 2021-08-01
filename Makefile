@@ -116,15 +116,6 @@ logs:
 bash:
 	docker-compose -f $(DOCK_COMP) run --rm app bash
 
-.PHONY: destroy
-# Shut down containers, remove volumes, remove images
-destroy:
-	docker-compose -f $(DOCK_COMP) down --volumes
-	if [ ! -z "$(shell docker images -a -q)" ]; then \
-		docker rmi $(shell docker images -a -q); \
-	fi
-	docker-compose -f $(DOCK_COMP) ps
-
 .PHONY: restart
 # Restart container 
 restart:

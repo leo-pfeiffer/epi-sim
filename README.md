@@ -64,7 +64,6 @@ up                         Start existing container
 down                       Stop running container 
 logs                       Attach docker compose logs 
 bash                       Start bash inside container 
-destroy                    Shut down containers, remove volumes, remove images
 restart                    Restart container 
 clear-data                 Clear downloaded app data
 help                       Print available commands
