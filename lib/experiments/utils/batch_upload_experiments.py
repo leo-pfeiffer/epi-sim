@@ -3,8 +3,8 @@
 #  directory.
 #
 # This use case works in accordance to the files created in the
-#  2_network_creation.ipynb Notebook if the files are not directly uploaded
-#  to the repo.
+#  2_create_and_simulate.ipynb Notebook if the files are not directly uploaded
+#  to the repo (which should usually be the case, though)
 #
 # Model experiments are recognised as such if their file name starts with
 #  'seir' or 'seivr'. These files will be uploaded to the MODEL_DIR folder in

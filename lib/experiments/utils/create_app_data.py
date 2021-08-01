@@ -2,7 +2,12 @@
 #  in the web application. Data frames are pickled and uploaded to the data
 #  repo.
 #
-# All files specified in lib/experiments/scripts/simulation_files are included.
+# If the main() command is called, the experiment results must be in the
+#  lib/experiments/experiment_results directory. All files specified in
+#  lib/experiments/scripts/simulation_files are included.
+#
+# Calling main_custom_files() lets you specify a custom directory and
+#  custom files.
 
 import sys
 
