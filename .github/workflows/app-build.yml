@@ -9,19 +9,22 @@ on:
     - main
 
 jobs:
-  docker:
+  docker-build:
+  
     timeout-minutes: 10
     runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        environment: [ prod, dev ]
 
     steps:
     - name: Checkout
       uses: actions/checkout@v2
 
     - name: Start containers
-      # run: docker-compose -f "docker-compose.yml" up -d --build
-      run: make build
+      run: make build ENV={{matrix.environment}}
 
     - name: Stop containers
       if: always()
-      # run: docker-compose -f "docker-compose.yml" down
-      run: make down
+      run: make down ENV={{matrix.environment}}
