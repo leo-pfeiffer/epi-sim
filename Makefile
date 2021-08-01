@@ -83,6 +83,7 @@ batch_upload_experiments:
 # Run web app with Flask dev server (dev only)
 run:
 	make env
+	export FLASK_ENV=development; \
 	python app/app/run.py
 
 .PHONY: build
