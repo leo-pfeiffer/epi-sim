@@ -185,7 +185,10 @@ def test_get_data_after_date():
     )
 
     assert len(after) == 2
-    assert np.datetime64('2021-01-20') not in after.my_date.values
+
+    expected_dates = [0, 7]
+    for i, d in enumerate(after.my_date.values):
+        assert d == expected_dates[i]
 
 
 def test_make_counts_relative():
