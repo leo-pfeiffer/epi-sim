@@ -56,7 +56,10 @@ def make_heatmap(param, network, disease, model_filters):
     fig = Figure(
         data=Heatmap(
             z=z, x=x, y=y,
-            colorscale=[[0, 'rgb(237, 198, 48)'], [1, 'rgb(5, 38, 150)']]
+            colorscale=[[0, 'rgb(237, 198, 48)'], [1, 'rgb(5, 38, 150)']],
+            colorbar=dict(title={'text': 'epidemic_size', 'side': 'right'}),
+            hovertemplate=param+': %{x}<br>Model: %{y}<br>'
+                                'epidemic_size: %{z}<extra></extra>'
         ),
         layout=Layout(template=px_template)
     )
