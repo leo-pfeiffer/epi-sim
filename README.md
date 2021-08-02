@@ -221,3 +221,4 @@ For easy access and updating of the simulation data underlying the application,
 the data is stored in a [public data git repository hosted on GitHub](https://github.com/leo-pfeiffer/epi-sim-data).
 Since the repository is public and the web app only requires read access, there is no direct need to change the remote source. However, one could set a different repository as source in the `app/.env` file. We recommend against this, since a lot of the application assumes the exact directory structure that is found in the default data repository.
 
+---
