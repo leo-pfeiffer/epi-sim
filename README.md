@@ -167,6 +167,7 @@ The `experiments` package contains several Jupyter notebooks which were used to 
   - `3_network_analysis`: Visualise the network metrics result and compare mobility network to Google COVID-19 Mobility report
   - `4_model_validation`: Visualise the results of the model validation simulations
   - `5_extension_influenza`: Model simulations with Influenza parameterisation
+  - `9_thesis_graphics`: Generation of other graphics in the thesis
 
 The `utils` directory contains various utility functinos that are used accross the notebooks. Most are them are fairly trivial, however the `data_repo_api` module is quite important. 
 
