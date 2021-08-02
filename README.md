@@ -15,7 +15,8 @@ Repository for my MSc Thesis *A Web Application for Compartmental Network Models
 + [:stethoscope: Testing](#testing)
 + [:chart_with_upwards_trend: Lib](#lib)
   - [Setup](#setup)
-  - [Analysis](#analysis)
+  - [Model](#model)
+  - [Experiments](#experiments)
 + [:globe_with_meridians: Web Application](#web-application-episim)
   - [Build with Docker Compose](#build-web-app-with-docker-compose-prod--dev)
   - [Run with Flask](#run-web-app-with-flask-only-dev)
@@ -153,18 +154,29 @@ make setup_lib
 
 This will install all requirements in your virtual environment and generate the required `.env` files.
 
-### Data Repo API
-The Data Repo API is a simple client for the GitHub API to upload and retrieve
-simulation results. The default repo URLs are automatically included in the
-`.env` file when you run `make env`. 
+### model
+The `model` package in `lib` contains the source code defining the epidemic models (`/compartmental_model`), the networks (`/network`), as well as related utility functions.
 
-Reading from the (public) repository is possible without authentication.
-However, any write operations require you to set your own repository in the 'lib/.env' file
-and add your own [GitHub Personal Access Token](https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token).
+### experiments
+The `experiments` package contains several Jupyter notebooks which were used to run different workflows described in the thesis, both for creating the mobility networks as well as running the simulations.
 
-### Analysis
+##### Notebooks
+  - `0_extraction`: Extract mobility data from raw files (either local or from remote host 'http://209.182.235.76/data/msc/')
+  - `1_transformation`: Transform extracted data from last step into correct format and save to data repo
+  - `2_create_and_simulate`: Create networks and run metric calculations; Create model configurations and run simulations; Run simulations for model validation
+  - `3_network_analysis`: Visualise the network metrics result and compare mobility network to Google COVID-19 Mobility report
+  - `4_model_validation`: Visualise the results of the model validation simulations
+  - `5_extension_influenza`: Model simulations with Influenza parameterisation
 
-todo....
+The `utils` directory contains various utility functinos that are used accross the notebooks. Most are them are fairly trivial, however the `data_repo_api` module is quite important. 
+
+##### DataRepoAPI
+The DataRepoAPI class is a simple client for the GitHub API. We use it to backup results produced by the output as well as to store the final simulation results as input for the web app.
+
+The default repo URLs are automatically included in the `lib/.env` file when you run `make env`. 
+
+Reading from the (public) repository is possible without authentication. However, any write operations require you to set your own repository in the 'lib/.env' file and add your own [GitHub Personal Access Token](https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token).
+
 
 ## Web Application `EpiSim`
 The web application can be run independently of `lib`. You can either build it using docker compose (recommended for production), or the built-in Werkzeug server that comes with Flask (recommended for development).
@@ -207,6 +219,5 @@ as an environment variable is used.
 ### Data source of the application
 For easy access and updating of the simulation data underlying the application,
 the data is stored in a [public data git repository hosted on GitHub](https://github.com/leo-pfeiffer/epi-sim-data).
+Since the repository is public and the web app only requires read access, there is no direct need to change the remote source. However, one could set a different repository as source in the `app/.env` file. We recommend against this, since a lot of the application assumes the exact directory structure that is found in the default data repository.
 
-todo
-However, the data source can be changed to any URL via the `.env` variable ....
