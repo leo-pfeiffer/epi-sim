@@ -37,6 +37,23 @@
     display: grid;
 }
 
+#heatmap-size-warning {
+    display: none;
+}
+
+@media only screen and (max-height: 770px) {
+    #heatmap-graph {
+        display: none;
+    }
+    #heatmap-size-warning {
+        display: inline-block;
+    }
+}
+
+.card-body {
+    overflow-y: auto;
+    overflow-x: auto;
+}
 
 #footer {
     grid-area: f;

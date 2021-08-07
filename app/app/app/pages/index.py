@@ -210,7 +210,10 @@ heatmap_tabs = dbc.Card(
             )
         ),
         dbc.CardBody(
-            dcc.Graph(id="heatmap-graph", responsive=True)
+            [dcc.Graph(id="heatmap-graph", responsive=True),
+             html.P("This graph requires more space. Please increase the "
+                    "window size or zoom out. You might need to refresh "
+                    "this page as well.", id="heatmap-size-warning")]
         )
     ],
     id='heatmap'
