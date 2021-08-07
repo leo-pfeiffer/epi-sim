@@ -11,7 +11,7 @@ html {
             "h"
             "x"
             "f ";
-    grid-template-rows: 4.5rem 1fr 0;
+    grid-template-rows: 4.05rem 1fr 0;
     grid-row-gap: 3px;
 }
 

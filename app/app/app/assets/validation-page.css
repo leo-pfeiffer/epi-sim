@@ -8,7 +8,7 @@
             "c1  g1   d"
             "c1  g2   d"
             "f    f   f";
-    grid-template-rows: 4.5rem 1fr 1fr 0;
+    grid-template-rows: 4.05rem 1fr 1fr 0;
     grid-template-columns: 250px 2fr 1fr;
     grid-row-gap: 3px;
     grid-column-gap: 3px;

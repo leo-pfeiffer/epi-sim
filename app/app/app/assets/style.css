@@ -1,6 +1,10 @@
+body, html {
+    font-size: 90%;
+}
+
 #brand {
     grid-area: h;
-    font-size: 1.5rem;
+    font-size: 1.35rem;
     display: flex;
     align-items: center;
     padding: 5px;
@@ -41,7 +45,7 @@
     display: none;
 }
 
-@media only screen and (max-height: 770px), (max-width: 800px) {
+@media only screen and (max-height: 740px), (max-width: 900px) {
     #heatmap-graph {
         display: none;
     }
