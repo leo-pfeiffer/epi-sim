@@ -41,7 +41,7 @@
     display: none;
 }
 
-@media only screen and (max-height: 770px) {
+@media only screen and (max-height: 770px), (max-width: 800px) {
     #heatmap-graph {
         display: none;
     }
