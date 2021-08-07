@@ -28,6 +28,7 @@
 
 #validation-controls {
     grid-area: c1;
+    overflow-y: auto;
 }
 
 #text-container {
