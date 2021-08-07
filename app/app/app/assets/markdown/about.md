@@ -18,6 +18,6 @@ conducted in the thesis is included on the [validation page](/validation).
 If you would like to find out more about the project, the source code is available 
 on [GitHub](https://github.com/leo-pfeiffer/epi-sim). 
 
-You can also read my thesis [here](/).
+You can also read my thesis [here](https://github.com/leo-pfeiffer/epi-sim/blob/main/thesis.pdf).
 
 Thanks for trying out EpiSim!

@@ -47,9 +47,11 @@ footer = html.Div(
                     html.Hr(),
                     html.Div([
                         "Created as part of my MSc dissertation ",
-                        html.Strong(
+                        html.A(
                             "A Web Application for Compartmental Network "
-                            "Models Illustrated Using COVID-19"),
+                            "Models Illustrated Using COVID-19",
+                            href="https://github.com/leo-pfeiffer/"
+                                 "epi-sim/blob/main/thesis.pdf"),
                         "."
                     ]),
                     html.Div([

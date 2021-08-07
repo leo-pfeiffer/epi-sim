@@ -47,7 +47,7 @@ In the Post network, the number of connections between CBGs is reduced based on
 the empirical reduction in mobility between these CBGs from Feb 2020 to Apr 
 2020.
 
-For more details on the algorithm, have a read through my [thesis]().
+For more details on the algorithm, have a read through my [thesis](https://github.com/leo-pfeiffer/epi-sim/blob/main/thesis.pdf).
 
 ### PLC networks
 Power-law with cutoff (PLC) networks try to account for the fact that in most
