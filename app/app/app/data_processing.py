@@ -3,6 +3,7 @@ from typing import Dict, List
 
 if sys.version_info >= (3, 8):
     from typing import Final
+    import pickle
 else:
     from typing_extensions import Final
     import pickle5 as pickle
@@ -13,7 +14,6 @@ import os
 import logging
 from tqdm import tqdm
 import pandas as pd
-import pickle
 from urllib.request import urlopen
 from urllib.error import HTTPError
 
