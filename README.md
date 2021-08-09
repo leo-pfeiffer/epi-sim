@@ -7,6 +7,8 @@
 # EpiSim
 Repository for my MSc Thesis *A Web Application for Compartmental Network Models Illustrated Using COVID-19*
 
+[Find this repo on GitHub.](https://github.com/leo-pfeiffer/epi-sim)
+
 ---
 + [:rocket: Quickstart](#quickstart)
 + [:gear: Make](#make)
@@ -28,7 +30,11 @@ Repository for my MSc Thesis *A Web Application for Compartmental Network Models
 Execute the following steps for the basic setup of the project.
 
 ```shell
+
+# if you don't have a copy yet, clone the repo:
 git clone https://github.com/leo-pfeiffer/epi-sim.git
+
+# move into the project root
 cd epi-sim
 python -m venv venv
 source venv/bin/activate
@@ -145,14 +151,16 @@ make test_app
 For setting up the modelling environment, do:
 
 ```shell
-# assuming you're in the project root and don't have a virtualenv there yet.
+# Assuming you're in the project root and don't have a virtualenv there yet.
+# You don't need to do this if you've already done the steps in Quickstart
 python -m venv venv
 source venv/bin/activate
 
 make setup_lib
 ```
 
-This will install all requirements in your virtual environment and generate the required `.env` files.
+This will install all `lib` requirements in your virtual environment and 
+generate the required `.env` files.
 
 ### model
 The `model` package in `lib` contains the source code defining the epidemic models (`/compartmental_model`), the networks (`/network`), as well as related utility functions.
@@ -180,7 +188,9 @@ Reading from the (public) repository is possible without authentication. However
 
 
 ## Web Application `EpiSim`
-The web application can be run independently of `lib`. You can either build it using docker compose (recommended for production), or the built-in Werkzeug server that comes with Flask (recommended for development).
+The web application can be run independently of `lib`. 
+You can either build it using docker compose (recommended for production), 
+or the built-in Werkzeug server that comes with Flask (recommended for development).
 
 ### Build web app with docker compose (prod / dev)
 The web application can be built using docker compose using Nginx as the HTTP server 
@@ -205,11 +215,18 @@ The application starts at whichever port is specified in `app/.env` as an enviro
 variable for `PORT` (default 80) and `DEV_PORT` (default 4401).
 
 ### Run web app with Flask only (dev)
-Alternatively, you can also run the web app using the built-in Werkzeug server of Flask, which is 
-not suitable for production but much simpler for development and test purposes.
+Alternatively, you can also run the web app using the built-in Werkzeug server 
+of Flask, which is not suitable for production but much simpler 
+for development and test purposes.
 
 ```shell
-# from project root
+# Assuming you're in the project root and don't have a virtualenv there yet.
+# You don't need to do this if you've already done the steps in Quickstart
+python -m venv venv
+source venv/bin/activate
+make setup_app
+
+# the following starts the server
 make run
 ```
 
