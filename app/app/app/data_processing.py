@@ -5,6 +5,7 @@ if sys.version_info >= (3, 8):
     from typing import Final
 else:
     from typing_extensions import Final
+    import pickle5 as pickle
 
 from abc import ABC
 import numpy as np
